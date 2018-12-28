@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="jumbotron text-center">
+        <h1>The End of The World</h1>
+        <h2>A different zomby game</h2>
+        <img src="{{ asset('images/design/zombies2.jpg') }}" />
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+
+                <p>Login</p>
+                <form method="post">
+                    <input type="hidden" name="_csrf_token"
+                           value="{{ csrf_token('authenticate') }}"
+                    >
+                    <label for="username">Username:</label>
+                    <input type="text" name="_username" id="username" />
+                    <label for="password">Password:</label>
+                    <input type="password" name="_password" id="password" /><br />
+                    <button type="submit" class="btn btn-primary" formnovalidate>Login</button>
+                </form>
+            </div>
+        </div>
+        <p>Create an account: <a href="{{ path('user_register_form') }}">Register</a></p>
+    </div>
+{% endblock %}
