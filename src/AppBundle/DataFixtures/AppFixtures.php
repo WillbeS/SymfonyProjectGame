@@ -1,66 +1,39 @@
 <?php
-// src/DataFixtures/AppFixtures.php
+
 namespace AppBundle\DataFixtures;
 
-use AppBundle\Entity\Item;
-use AppBundle\Entity\Role;
+
+use AppBundle\Entity\Grid;
+use AppBundle\Entity\Terrain;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
-    const USER_ROLES = [
-        'ROLE_MODERATOR',
-        'ROLE_GUEST'
-    ];
-
-    const ITEMS = [
-        [
-            'name' => 'Tomatoe',
-            'description' => 'Red, fresh',
-            'energy' => 18
-        ],
-        [
-            'name' => 'Apple',
-            'description' => 'Red, fresh',
-            'energy' => 28
-        ],
-        [
-            'name' => 'Chicken',
-            'description' => 'White meat, no fat',
-            'energy' => 39
-        ],
-        [
-            'name' => 'Olive Oil',
-            'description' => '',
-            'energy' => 822
-        ],
-    ];
-
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    // Loading command:
-    // php bin/console doctrine:fixtures:load --append
-
-    // Help command
-    // php bin/console doctrine:fixtures:load --help
-    //////////////////////////////////////////////////////////////////////////////////////////////
+    const MAP_SIZE = 100;
 
     public function load(ObjectManager $manager)
     {
-        //Load roles
-//        foreach (self::USER_ROLES as $roleName) {
-//            $role = new Role();
-//            $role->setName($roleName);
-//            $manager->persist($role);
-//        }
+        $terrains = $manager->getRepository(Terrain::class)->findAll();
+        $terrainsWithRatio = [];
 
-        //load items
-        foreach (self::ITEMS as $itemData) {
-            $item = new Item();
-            $item->setName($itemData['name']);
-            $item->setDescription($itemData['description']);
-            $item->setEnergy($itemData['energy']);
-            $manager->persist($item);
+        foreach ($terrains as $terrain) {
+            for ($i = 0; $i < $terrain->getRandomFactor(); $i++) {
+                $terrainsWithRatio[] = $terrain;
+            }
+        }
+        $max = count($terrainsWithRatio) - 1;
+
+        for ($row = 1; $row <= self::MAP_SIZE; $row++) {
+            for ($col = 1; $col <= self::MAP_SIZE; $col++) {
+                $terrain = $terrainsWithRatio[rand(0, $max)];
+                $grid = new Grid();
+                $grid
+                    ->setRow($row)
+                    ->setCol($col)
+                    ->setTerrain($terrain);
+                $manager->persist($grid);
+            }
         }
 
         $manager->flush();

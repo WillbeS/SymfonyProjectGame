@@ -1,35 +1,25 @@
-<header id="my-header">
-{% block mainHeading %}<h1>{{ h1 }}</h1>{% endblock %}
-<a class="logo-big" href="{{ path('homepage') }}"><img src="{{ asset('images/design/logo-orange-clean.png') }}"></a>
-<div id="header-thumbs">
-    <div class="thumbs-gallery">
-        {%  for game in appData.fibGames %}
-            <div class="thumbs-box"><a href="{{ path('show_game_info', {'slug': game.slug}) }}" title = "{{ game.fullTitle }}"><img src="{{ asset('images/design/fib-' ~ game.imageName) }}" alt = "{{ game.fullTitle }}" width="155" ></a></div>
-        {% endfor %}
-    </div>
-</div>
-<nav class="navbar navbar-default margin-bottom-0">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+<header>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">GameName</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="{{ path('homepage') }}">Home</a></li>
+                    <li><a href="{{ path('map_local') }}">Map</a></li>
+                    <li><a href="#">Rankings</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-            <button type="button" class="btn btn-warning navbar-right special">Още</button>
-            <ul class="nav navbar-nav navbar-right">
-                {% for category in appData.topCategories %}
-                    {% set active = '' %}
-                    {% if appData.selCategory and category.alias == appData.selCategory.alias %}
-                        {% set active = ' class=active' %}
-                    {% endif %}
-                    <li{{ active }}><a href="{{ path('show_category', {'alias': category.alias}) }}">{{ category.menuName }}</a></li>
-                {% endfor %}
-                {#<li><a class="special" href="#">Още</a></li>#}
-            </ul>
-        </div>
-    </div>
-</nav>
+    </nav>
 </header>

@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Map</h1>
+    <table id="map">
+        {% for x in range(0, size - 1)  %}
+            <tr>
+            {% for y in range(x * size, x * size + (size - 1))  %}
+                {% set cell = map[y] %}
+                {% set tdStyle = cell.terrain.name %}
+                {% if cell.platform %}
+                    {% set tdStyle = cell.terrain.name ~ ' platform' %}
+                {% endif %}
+                <td class="{{ tdStyle }}"></td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

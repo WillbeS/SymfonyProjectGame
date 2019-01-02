@@ -46,9 +46,18 @@ class User implements UserInterface
      */
     private $roles;
 
+    /**
+     * @var ArrayCollection|Platform[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Platform", mappedBy="user", cascade={"persist"})
+     */
+    private $platforms;
+
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->platforms = new ArrayCollection();
     }
 
 
@@ -144,6 +153,25 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Platform[]|ArrayCollection
+     */
+    public function getPlatforms()
+    {
+        return $this->platforms;
+    }
+
+    /**
+     * @param Platform[]|ArrayCollection $platforms
+     * @return User
+     */
+    public function addPlatform(Platform $platform)
+    {
+        $this->platforms->add($platform);
+
+        return $this;
     }
 }
 

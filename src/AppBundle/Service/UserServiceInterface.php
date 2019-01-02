@@ -10,7 +10,10 @@ use Symfony\Component\Security\Core\Tests\Encoder\PasswordEncoder;
 
 interface UserServiceInterface
 {
-    public function register(UserPasswordEncoderInterface $encoder, User $user);
+    public function register(
+        MapServiceInterface $mapService,
+        UserPasswordEncoderInterface $encoder,
+        User $user);
 
     /**
      * @return User[]

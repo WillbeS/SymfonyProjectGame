@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use AppBundle\Service\MapServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,14 +47,16 @@ class UserController extends Controller
      * @Route("/register", name="user_register_process", methods={"POST"})
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function registerProcessAction(Request $request, UserPasswordEncoderInterface $encoder)
+    public function registerProcessAction(Request $request,
+                                          UserPasswordEncoderInterface $encoder,
+                                          MapServiceInterface $mapService)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $this->userService->register($encoder, $user);
+            $this->userService->register($mapService, $encoder, $user);
             return $this->redirectToRoute('login');
         }
 

@@ -2,12 +2,15 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Grid;
+use AppBundle\Entity\Platform;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Repository\RoleRepository;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\EventListener\ProfilerListener;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserService implements UserServiceInterface
@@ -41,15 +44,10 @@ class UserService implements UserServiceInterface
     }
 
 
-    /**
-     * @return User[]
-     */
-    public function viewAll(): array
-    {
-        return $this->userRepository->findAll();
-    }
-
-    public function register(UserPasswordEncoderInterface $encoder, User $user)
+    public function register(
+        MapServiceInterface $mapService,
+        UserPasswordEncoderInterface $encoder,
+        User $user)
     {
         $hashedPassword = $encoder->encodePassword(
             $user,
@@ -57,8 +55,17 @@ class UserService implements UserServiceInterface
         );
         /** @var Role $userRole */
         $userRole = $this->roleRepository->findOneBy(['name' => 'ROLE_USER']);
+
+        $platform = new Platform();
+        $platform->setName('Settlement of ' . $user->getUsername())
+            ->setUser($user)
+            ->setHealth(100)
+            ->setGrid($this->getRandomGridCell($mapService->findAvailableByDistrict(1)));
+
+
         $user->setPassword($hashedPassword)
-            ->addRole($userRole);
+            ->addRole($userRole)
+            ->addPlatform($platform);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -67,5 +74,23 @@ class UserService implements UserServiceInterface
     public function getUsername()
     {
         // TODO: Implement getUsername() method.
+    }
+
+    /**
+     * @return User[]
+     */
+    public function viewAll(): array
+    {
+        return $this->userRepository->findAll();
+    }
+
+    /**
+     * @param array $grid
+     * @return Grid
+     */
+    private function getRandomGridCell(array $grid): Grid
+    {
+        $max = count($grid) - 1;
+        return $grid[rand(0, $max)];
     }
 }

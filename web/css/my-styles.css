@@ -1,0 +1,32 @@
+#map {
+    border: 1px solid black;
+    background-color: green;
+}
+
+#map td {
+    width: 10px;
+    height: 10px;
+}
+
+#map td.local {
+    width: 100px;
+    height: 100px;
+    padding: 5px;
+    border: 1px dotted darkslategray;
+}
+
+.rocks {
+    background-color: #6E6E6E;
+}
+
+.water {
+    background-color: #218BC3;
+}
+
+.forest {
+    background-color: #A46A1F;
+}
+
+.platform {
+    background-color: blue;
+}
