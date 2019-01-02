@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * BuildingType
  *
- * @ORM\Table(name="building_type")
+ * @ORM\Table(name="building_types")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BuildingTypeRepository")
  */
 class BuildingType
@@ -31,37 +31,30 @@ class BuildingType
     /**
      * @var int
      *
-     * @ORM\Column(name="woodCost", type="integer")
+     * @ORM\Column(name="wood_cost", type="integer")
      */
     private $woodCost;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="foodCost", type="integer")
+     * @ORM\Column(name="food_cost", type="integer")
      */
     private $foodCost;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="suppliesCost", type="integer", nullable=true)
+     * @ORM\Column(name="supplies_cost", type="integer", nullable=true)
      */
     private $suppliesCost;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="buildTime", type="integer")
+     * @ORM\Column(name="build_time", type="integer")
      */
     private $buildTime;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="income", type="integer", nullable=true)
-     */
-    private $income;
 
 
     /**
@@ -192,30 +185,6 @@ class BuildingType
     public function getBuildTime()
     {
         return $this->buildTime;
-    }
-
-    /**
-     * Set income
-     *
-     * @param integer $income
-     *
-     * @return BuildingType
-     */
-    public function setIncome($income)
-    {
-        $this->income = $income;
-
-        return $this;
-    }
-
-    /**
-     * Get income
-     *
-     * @return int
-     */
-    public function getIncome()
-    {
-        return $this->income;
     }
 }
 

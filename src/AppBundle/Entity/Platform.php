@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Tests\Encoder\PlaintextPasswordEncoderTest;
 
@@ -51,6 +52,17 @@ class Platform
      */
     private $user;
 
+    /**
+     * @var ArrayCollection|Building[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building", mappedBy="platform")
+     */
+    private $buildings;
+
+    public function __construct()
+    {
+        $this->buildings = new ArrayCollection();
+    }
 
 
     /**
@@ -149,6 +161,14 @@ class Platform
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @return Building[]|ArrayCollection
+     */
+    public function getBuildings()
+    {
+        return $this->buildings;
     }
 }
 

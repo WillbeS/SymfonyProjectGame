@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Building
  *
- * @ORM\Table(name="building")
+ * @ORM\Table(name="buildings")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BuildingRepository")
  */
 class Building
@@ -27,6 +27,14 @@ class Building
      * @ORM\Column(name="level", type="integer")
      */
     private $level;
+
+
+    /**
+     * @var Platform
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Platform", inversedBy="buildings")
+     */
+    private $platform;
 
 
     /**
@@ -61,6 +69,26 @@ class Building
     public function getLevel()
     {
         return $this->level;
+    }
+
+    /**
+     * @return Platform
+     */
+    public function getPlatform(): Platform
+    {
+        return $this->platform;
+    }
+
+    /**
+     * @param Platform $platform
+     *
+     * @return Building
+     */
+    public function setPlatform(Platform $platform)
+    {
+        $this->platform = $platform;
+
+        return $this;
     }
 }
 
