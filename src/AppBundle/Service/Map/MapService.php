@@ -3,13 +3,13 @@
 namespace AppBundle\Service;
 
 
-use AppBundle\Entity\Grid;
+use AppBundle\Entity\GridCell;
 use AppBundle\Repository\GridRepository;
 
 class MapService implements MapServiceInterface
 {
+    const NEW_SETTLEMENT_DISTRICT = 1;
     const DISTRICT_SIZE = 5;
-
     const MAP_SIZE = 100;
 
     /**
@@ -34,15 +34,28 @@ class MapService implements MapServiceInterface
         return $this->gridRepository->findByCoords($x1, $x2, $y1, $y2);
     }
 
+    public function findAvailableGridCell() : ?GridCell
+    {
+        return $this
+            ->getRandomGridCell($this
+                ->findAvailableByDistrict(self::NEW_SETTLEMENT_DISTRICT));
+    }
+
     public function findAvailableByDistrict(int $district): array
     {
         [$x1, $x2, $y1, $y2] = $this->getRangeByDistrict($district);
 
         $cells = $this->gridRepository->findByCoords($x1, $x2, $y1, $y2);
+        $available = [];
 
-        return array_filter($cells, function (Grid $cell) {
-            return (null === $cell->getPlatform()) && 'grass' === $cell->getTerrain()->getName();
-        });
+        foreach ($cells as  $cell) {
+            /** @var GridCell $cell */
+            if ((null === $cell->getPlatform()) && 'grass' === $cell->getTerrain()->getName()) {
+                $available[] = $cell;
+            }
+        }
+
+        return $available;
     }
 
     private function getRangeByDistrict(int $district) {
@@ -57,5 +70,15 @@ class MapService implements MapServiceInterface
         $x2 = $col * self::DISTRICT_SIZE;
 
         return [$x1, $x2, $y1, $y2];
+    }
+
+    /**
+     * @param array $grid
+     * @return GridCell
+     */
+    private function getRandomGridCell(array $grid): GridCell
+    {
+        $max = count($grid) - 1;
+        return $grid[rand(0, $max)];
     }
 }

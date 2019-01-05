@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Building\Building;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,19 +30,18 @@ class Resource
     private $name;
 
     /**
-     * @var integer
+     * @var Building
      *
-     * @ORM\Column(name="base_income", type="integer", length=11)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Building\Building")
      */
-    private $baseIncome;
+    private $building;
 
     /**
-     * @var BuildingType
+     * @var int
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\BuildingType")
+     * @ORM\Column(name="base_income", type="integer")
      */
-    private $buildingType;
-
+    private $baseIncome;
 
     /**
      * Get id
@@ -78,21 +78,21 @@ class Resource
     }
 
     /**
-     * @return BuildingType
+     * @return Building
      */
-    public function getBuildingType(): BuildingType
+    public function getBuilding(): Building
     {
-        return $this->buildingType;
+        return $this->building;
     }
 
     /**
-     * @param BuildingType $buildingType
+     * @param Building $building
      *
      * @return \AppBundle\Entity\Resource $this
      */
-    public function setBuildingType(BuildingType $buildingType)
+    public function setBuilding(Building $building)
     {
-        $this->buildingType = $buildingType;
+        $this->building = $building;
 
         return $this;
     }
@@ -116,5 +116,6 @@ class Resource
 
         return $this;
     }
+
 }
 

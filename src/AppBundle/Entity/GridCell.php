@@ -44,7 +44,7 @@ class Grid
     /**
      * @var Platform
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Platform", mappedBy="grid")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Platform", mappedBy="gridCell")
      */
     private $platform;
 
