@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Map;
 
 
 use AppBundle\Entity\GridCell;

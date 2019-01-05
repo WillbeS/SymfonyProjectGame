@@ -1,15 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: CeXChester
- * Date: 05/01/2019
- * Time: 16:33
- */
 
 namespace AppBundle\Service\App;
 
 
+use AppBundle\Entity\GameResource;
+use AppBundle\Entity\Platform;
+
 interface AppServiceInterface
 {
-
+    public function updateTotalResource(Platform $platform);
 }

@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Grid;
-use AppBundle\Service\MapServiceInterface;
+use AppBundle\Entity\GridCell;
+use AppBundle\Service\Map\MapServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,7 +18,7 @@ class MapController extends Controller
     public function showAllAction(MapServiceInterface $mapService)
     {
         $map = $this->getDoctrine()
-            ->getRepository(Grid::class)
+            ->getRepository(GridCell::class)
             ->findBy([], ['row' => 'ASC', 'col' => 'ASC']);
 
         return $this->render('map/index.html.twig', [

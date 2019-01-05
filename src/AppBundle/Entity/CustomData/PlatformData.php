@@ -1,16 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: CeXChester
- * Date: 05/01/2019
- * Time: 17:49
- */
 
 namespace AppBundle\Entity\CustomData;
 
 
+use AppBundle\Entity\Platform;
+
 class PlatformData
 {
+    /**
+     * @var Platform
+     */
+    private $entity;
+
     /**
      * @var int
      */
@@ -26,6 +27,11 @@ class PlatformData
      */
     private $suppliesIncome;
 
+    public function __construct(Platform $platform)
+    {
+        $this->entity = $platform;
+    }
+
     /**
      * @return int
      */
@@ -36,10 +42,14 @@ class PlatformData
 
     /**
      * @param int $woodIncome
+     *
+     * @return PlatformData
      */
     public function setWoodIncome(int $woodIncome)
     {
         $this->woodIncome = $woodIncome;
+
+        return $this;
     }
 
     /**
@@ -52,10 +62,14 @@ class PlatformData
 
     /**
      * @param int $foodIncome
+     *
+     * @return PlatformData
      */
     public function setFoodIncome(int $foodIncome)
     {
         $this->foodIncome = $foodIncome;
+
+        return $this;
     }
 
     /**
@@ -68,9 +82,33 @@ class PlatformData
 
     /**
      * @param int $suppliesIncome
+     *
+     * @return PlatformData
      */
     public function setSuppliesIncome(int $suppliesIncome)
     {
         $this->suppliesIncome = $suppliesIncome;
+
+        return $this;
+    }
+
+    /**
+     * @return Platform
+     */
+    public function getEntity(): Platform
+    {
+        return $this->entity;
+    }
+
+    /**
+     * @param Platform $entity
+     *
+     * @return PlatformData
+     */
+    public function setEntity(Platform $entity)
+    {
+        $this->entity = $entity;
+
+        return $this;
     }
 }

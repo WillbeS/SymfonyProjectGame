@@ -9,7 +9,7 @@
 namespace AppBundle\Service\Platform;
 
 
-class PlatformStateServiceInterface
+interface PlatformStateServiceInterface
 {
-
+    //TODO - Decide whether to keep logic in only 1 service or in many more focused ones
 }

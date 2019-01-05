@@ -1,14 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: CeXChester
- * Date: 03/01/2019
- * Time: 13:16
- */
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Platform;
 
-
+use AppBundle\Entity\CustomData\PlatformData;
+use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\User;
 
@@ -19,4 +14,6 @@ interface PlatformServiceInterface
     public function findOneByUser(User $user): ?Platform;
 
     public function getNewPlatform(User $user = null): ?Platform;
+
+    public function getPlatformData(Platform $platform): PlatformData;
 }

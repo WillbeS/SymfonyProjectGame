@@ -9,7 +9,7 @@
 namespace AppBundle\Service\Platform;
 
 
-class PlatformState
+class PlatformState implements PlatformStateServiceInterface
 {
 
 }

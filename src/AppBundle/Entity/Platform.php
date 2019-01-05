@@ -2,9 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Building\Building;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\Tests\Encoder\PlaintextPasswordEncoderTest;
 
 /**
  * Platform
@@ -31,19 +31,32 @@ class Platform
     private $name;
 
     /**
-     * @var int
+     * @var GameResource
      *
-     * @ORM\Column(name="health", type="integer")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
      */
-    private $health;
-
+    private $food;
 
     /**
-     * @var Grid
+     * @var GameResource
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Grid", inversedBy="platform")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
      */
-    private $grid;
+    private $wood;
+
+    /**
+     * @var GameResource
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
+     */
+    private $supplies;
+
+    /**
+     * @var GridCell
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\GridCell", inversedBy="platform")
+     */
+    private $gridCell;
 
     /**
      * @var User
@@ -52,16 +65,20 @@ class Platform
      */
     private $user;
 
+
     /**
      * @var ArrayCollection|Building[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building", mappedBy="platform")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building\Building", mappedBy="platform", cascade={"persist"})
      */
     private $buildings;
+
+
 
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
+        $this->resources = new ArrayCollection();
     }
 
 
@@ -100,45 +117,21 @@ class Platform
     }
 
     /**
-     * Set health
-     *
-     * @param integer $health
+     * @return GridCell
+     */
+    public function getGridCell(): ?GridCell
+    {
+        return $this->gridCell;
+    }
+
+    /**
+     * @param GridCell $grid
      *
      * @return Platform
      */
-    public function setHealth($health)
+    public function setGridCell(GridCell $gridCell)
     {
-        $this->health = $health;
-
-        return $this;
-    }
-
-    /**
-     * Get health
-     *
-     * @return int
-     */
-    public function getHealth()
-    {
-        return $this->health;
-    }
-
-    /**
-     * @return Grid
-     */
-    public function getGrid(): ?Grid
-    {
-        return $this->grid;
-    }
-
-    /**
-     * @param Grid $grid
-     *
-     * @return Platform
-     */
-    public function setGrid(Grid $grid)
-    {
-        $this->grid = $grid;
+        $this->gridCell = $gridCell;
 
         return $this;
     }
@@ -164,11 +157,84 @@ class Platform
     }
 
     /**
+     * @return GameResource
+     */
+    public function getFood(): ?GameResource
+    {
+        return $this->food;
+    }
+
+    /**
+     * @param int $food
+     *
+     * @return Platform
+     */
+    public function setFood(GameResource $food)
+    {
+        $this->food = $food;
+
+        return $this;
+    }
+
+    /**
      * @return Building[]|ArrayCollection
      */
     public function getBuildings()
     {
         return $this->buildings;
     }
+
+    /**
+     * @param Building[]|ArrayCollection $buildings
+     *
+     * @return Platform
+     */
+    public function addBuilding(Building $building)
+    {
+        $this->buildings->add($building);
+
+        return $this;
+    }
+
+    /**
+     * @return GameResource
+     */
+    public function getWood(): ?GameResource
+    {
+        return $this->wood;
+    }
+
+    /**
+     * @param GameResource $wood
+     *
+     * @return Platform
+     */
+    public function setWood(GameResource $wood)
+    {
+        $this->wood = $wood;
+
+        return $this;
+    }
+
+    /**
+     * @return GameResource
+     */
+    public function getSupplies(): ?GameResource
+    {
+        return $this->supplies;
+    }
+
+    /**
+     * @param GameResource $supplies
+     *
+     * @return Platform
+     */
+    public function setSupplies(GameResource $supplies)
+    {
+        $this->supplies = $supplies;
+
+        return $this;
+    }
+
 }
 

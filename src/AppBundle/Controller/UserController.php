@@ -2,16 +2,15 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Role;
+
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
-use AppBundle\Service\MapServiceInterface;
+use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Tests\Encoder\PasswordEncoder;
 
 class UserController extends Controller
 {
@@ -49,14 +48,14 @@ class UserController extends Controller
      */
     public function registerProcessAction(Request $request,
                                           UserPasswordEncoderInterface $encoder,
-                                          MapServiceInterface $mapService)
+                                          PlatformServiceInterface $platformService)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $this->userService->register($mapService, $encoder, $user);
+            $this->userService->register($platformService, $encoder, $user);
             return $this->redirectToRoute('login');
         }
 

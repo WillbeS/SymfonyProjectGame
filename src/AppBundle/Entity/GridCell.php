@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Grid
+ * GridCell
  *
- * @ORM\Table(name="grids")
+ * @ORM\Table(name="grid_cells")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\GridRepository")
  */
-class Grid
+class GridCell
 {
     /**
      * @var int
@@ -64,7 +64,7 @@ class Grid
      *
      * @param integer $row
      *
-     * @return Grid
+     * @return GridCell
      */
     public function setRow($row)
     {
@@ -88,7 +88,7 @@ class Grid
      *
      * @param integer $col
      *
-     * @return Grid
+     * @return GridCell
      */
     public function setCol($col)
     {
@@ -118,7 +118,7 @@ class Grid
     /**
      * @param Terrain $terrain
      *
-     * @return Grid
+     * @return GridCell
      */
     public function setTerrain(Terrain $terrain)
     {
@@ -138,7 +138,7 @@ class Grid
     /**
      * @param Platform $platform
      *
-     * @return Grid
+     * @return GridCell
      */
     public function setPlatform(Platform $platform)
     {

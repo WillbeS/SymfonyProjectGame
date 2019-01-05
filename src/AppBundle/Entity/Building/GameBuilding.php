@@ -2,15 +2,17 @@
 
 namespace AppBundle\Entity\Building;
 
+use AppBundle\Entity\Platform;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * BuildingType
  *
- * @ORM\Table(name="building_types")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\BuildingTypeRepository")
+ * @ORM\Table(name="game_buildings")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\GameBuildingRepository")
  */
-class BuildingType
+class GameBuilding
 {
     /**
      * @var int
@@ -72,7 +74,7 @@ class BuildingType
      *
      * @param string $name
      *
-     * @return BuildingType
+     * @return GameBuilding
      */
     public function setName($name)
     {
@@ -96,7 +98,7 @@ class BuildingType
      *
      * @param integer $woodCost
      *
-     * @return BuildingType
+     * @return GameBuilding
      */
     public function setWoodCost($woodCost)
     {
@@ -120,7 +122,7 @@ class BuildingType
      *
      * @param integer $foodCost
      *
-     * @return BuildingType
+     * @return GameBuilding
      */
     public function setFoodCost($foodCost)
     {
@@ -144,7 +146,7 @@ class BuildingType
      *
      * @param integer $suppliesCost
      *
-     * @return BuildingType
+     * @return GameBuilding
      */
     public function setSuppliesCost($suppliesCost)
     {
@@ -168,7 +170,7 @@ class BuildingType
      *
      * @param integer $buildTime
      *
-     * @return BuildingType
+     * @return GameBuilding
      */
     public function setBuildTime($buildTime)
     {

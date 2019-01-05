@@ -4,14 +4,13 @@ namespace AppBundle\Service;
 
 
 use AppBundle\Entity\User;
-use AppBundle\Repository\RoleRepository;
+use AppBundle\Service\Platform\PlatformServiceInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Tests\Encoder\PasswordEncoder;
 
 interface UserServiceInterface
 {
     public function register(
-        MapServiceInterface $mapService,
+        PlatformServiceInterface $platformService,
         UserPasswordEncoderInterface $encoder,
         User $user);
 
@@ -19,6 +18,4 @@ interface UserServiceInterface
      * @return User[]
      */
     public function viewAll(): array;
-
-    public function getUsername();
 }

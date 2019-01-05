@@ -3,7 +3,7 @@
 namespace AppBundle\DataFixtures;
 
 
-use AppBundle\Entity\Grid;
+use AppBundle\Entity\GridCell;
 use AppBundle\Entity\Terrain;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -27,7 +27,7 @@ class AppFixtures extends Fixture
         for ($row = 1; $row <= self::MAP_SIZE; $row++) {
             for ($col = 1; $col <= self::MAP_SIZE; $col++) {
                 $terrain = $terrainsWithRatio[rand(0, $max)];
-                $grid = new Grid();
+                $grid = new GridCell();
                 $grid
                     ->setRow($row)
                     ->setCol($col)

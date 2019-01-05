@@ -3,15 +3,17 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Building\Building;
+use AppBundle\Entity\Building\GameBuilding;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Resource
+ * ResourceType
  *
- * @ORM\Table(name="resources")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ResourceRepository")
+ * @ORM\Table(name="resource_types")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ResourceTypeRepository")
  */
-class Resource
+class ResourceType
 {
     /**
      * @var int
@@ -30,18 +32,18 @@ class Resource
     private $name;
 
     /**
-     * @var Building
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Building\Building")
-     */
-    private $building;
-
-    /**
      * @var int
      *
      * @ORM\Column(name="base_income", type="integer")
      */
     private $baseIncome;
+
+    /**
+     * @var GameBuilding
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Building\GameBuilding")
+     */
+    private $gameBuilding;
 
     /**
      * Get id
@@ -58,7 +60,7 @@ class Resource
      *
      * @param string $name
      *
-     * @return \AppBundle\Entity\Resource $this
+     * @return \AppBundle\Entity\ResourceType $this
      */
     public function setName($name)
     {
@@ -78,26 +80,6 @@ class Resource
     }
 
     /**
-     * @return Building
-     */
-    public function getBuilding(): Building
-    {
-        return $this->building;
-    }
-
-    /**
-     * @param Building $building
-     *
-     * @return \AppBundle\Entity\Resource $this
-     */
-    public function setBuilding(Building $building)
-    {
-        $this->building = $building;
-
-        return $this;
-    }
-
-    /**
      * @return int
      */
     public function getBaseIncome(): int
@@ -108,11 +90,31 @@ class Resource
     /**
      * @param int $baseIncome
      *
-     * @return \AppBundle\Entity\Resource $this
+     * @return \AppBundle\Entity\ResourceType $this
      */
     public function setBaseIncome(int $baseIncome)
     {
         $this->baseIncome = $baseIncome;
+
+        return $this;
+    }
+
+    /**
+     * @return GameBuilding
+     */
+    public function getGameBuilding(): ?GameBuilding
+    {
+        return $this->gameBuilding;
+    }
+
+    /**
+     * @param GameBuilding $gameBuilding
+     *
+     * @return ResourceType
+     */
+    public function setGameBuilding(GameBuilding $gameBuilding)
+    {
+        $this->gameBuilding = $gameBuilding;
 
         return $this;
     }

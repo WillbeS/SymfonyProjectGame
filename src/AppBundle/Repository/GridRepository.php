@@ -1,7 +1,7 @@
 <?php
 
 namespace AppBundle\Repository;
-use AppBundle\Entity\Grid;
+use AppBundle\Entity\GridCell;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping;
 
@@ -15,7 +15,7 @@ class GridRepository extends \Doctrine\ORM\EntityRepository
 {
     public function __construct(EntityManagerInterface $em)
     {
-        parent::__construct($em, new Mapping\ClassMetadata(Grid::class));
+        parent::__construct($em, new Mapping\ClassMetadata(GridCell::class));
     }
 
     public function findByIdRange($start, $end)

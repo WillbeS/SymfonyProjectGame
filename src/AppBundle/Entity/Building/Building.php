@@ -6,14 +6,14 @@ use AppBundle\Entity\Platform;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ProductionBuilding
+ * Building
  *
- * @ORM\Table(name="production_buildings")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductionBuildingRepository")
+ * @ORM\Table(name="buildings")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\BuildingRepository")
  */
-class ProductionBuilding extends BaseBuilding
+class Building
 {
-    const BUILDING_TYPE = 'production';
+    const COST_FACTOR = 1.15; //TODO - add as property to gameBuilding
 
     /**
      * @var int
@@ -27,22 +27,24 @@ class ProductionBuilding extends BaseBuilding
     /**
      * @var int
      *
-     * @ORM\Column(name="base_income", type="integer")
+     * @ORM\Column(name="level", type="integer")
      */
-    private $baseIncome;
+    private $level;
 
     /**
-     * @var Resource
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Resource")
-     */
-    private $resource;
-
-    /**
-     * @var BuildingType
+     * @var GameBuilding
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Building\BuildingType")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Building\GameBuilding")
      */
-    private $type;
+    private $gameBuilding;
+
+    /**
+     * @var Platform
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Platform", inversedBy="buildings")
+     */
+    private $platform;
+
 
 
     /**
@@ -56,66 +58,89 @@ class ProductionBuilding extends BaseBuilding
     }
 
     /**
-     * Set income
+     * Set level
      *
-     * @param integer $income
+     * @param integer $level
      *
-     * @return ProductionBuilding
+     * @return Building
      */
-    public function setBaseIncome($baseIncome)
+    public function setLevel($level)
     {
-        $this->baseIncome = $baseIncome;
+        $this->level = $level;
 
         return $this;
     }
 
     /**
-     * Get income
+     * Get level
      *
      * @return int
      */
-    public function getBaseIncome()
+    public function getLevel()
     {
-        return $this->baseIncome;
+        return $this->level;
     }
 
     /**
-     * @return Resource
+     * @return GameBuilding
      */
-    public function getResource(): Resource
+    public function getGameBuilding(): GameBuilding
     {
-        return $this->resource;
+        return $this->gameBuilding;
     }
 
     /**
-     * @param Resource $resource
-     * @return ProductionBuilding
-     */
-    public function setResource(Resource $resource)
-    {
-        $this->resource = $resource;
-
-        return $this;
-    }
-
-    /**
-     * @return BuildingType
-     */
-    public function getType(): BuildingType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param BuildingType $type
+     * @param GameBuilding $gameBuilding
      *
-     * @return ProductionBuilding
+     * @return Building
      */
-    public function setType(BuildingType $type)
+    public function setGameBuilding(GameBuilding $gameBuilding)
     {
-        $this->type = $type;
+        $this->gameBuilding = $gameBuilding;
 
         return $this;
     }
+
+    /**
+     * @return Platform
+     */
+    public function getPlatform(): Platform
+    {
+        return $this->platform;
+    }
+
+    /**
+     * @param Platform $platform
+     *
+     * @return Building
+     */
+    public function setPlatform(Platform $platform)
+    {
+        $this->platform = $platform;
+
+        return $this;
+    }
+
+    public function getWoodCost()
+    {
+        return $this->getCostPerLevel($this->gameBuilding->getWoodCost());
+    }
+
+    public function getFoodCost()
+    {
+        return $this->getCostPerLevel($this->gameBuilding->getFoodCost());
+    }
+
+    public function getSuppliesCost()
+    {
+        return $this->getCostPerLevel($this->gameBuilding->getSuppliesCost());
+    }
+
+    //TODO - get this logic out of here
+    private function getCostPerLevel(int $baseCost): int
+    {
+        return floor($baseCost + ($baseCost * $this->level * self::COST_FACTOR));
+    }
+
 }
 

@@ -1,19 +1,45 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>{{ platform.name }}</h1>
+    <h1>{{ settlement.entity.name }}</h1>
     <p>This is your first settlement. Try and keep it save from the dead walking outside your walls.</p>
 
     <h2>Resources</h2>
     <p>
-        <span>Food: {{ platform.food }}</span>
-        <span>Wood: {{ platform.wood }}</span>
-        <span>Supplies: {{ platform.supplies }}</span>
+        <span>Food: {{ settlement.entity.food.total|number_format }} | </span>
+        <span>Wood: {{ settlement.entity.wood.total|number_format }} | </span>
+        <span>Supplies: {{ settlement.entity.supplies.total|number_format }}</span>
+    </p>
+
+    <h2>Income per hour</h2>
+    <p>
+        <span>Food: {{ settlement.foodIncome }} | </span>
+        <span>Wood: {{ settlement.woodIncome }} | </span>
+        <span>Supplies: {{ settlement.suppliesIncome }}</span>
     </p>
 
     <h2>Buildings</h2>
-    {% for building in buildings %}
-        {{ building.type.name }}
-    {% endfor %}
+    <table>
+        <thead>
+        <tr>
+            <th>Building</th>
+            <th>Wood</th>
+            <th>Food</th>
+            <th>Supllies</th>
+            <th>Level</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        {% for building in buildings %}
+            <tr>
+                <td>{{ building.gameBuilding.name }}</td>
+                <td>{{ building.woodCost }}</td>
+                <td>{{ building.foodCost }}</td>
+                <td>{{ building.suppliesCost }}</td>
+                <td>{{ building.level }}</td>
+                <td><a href="{{ path('level_up', {'id': building.id}) }}">Upgrade</a></td>
+            </tr>
+        {% endfor %}
+    </table>
 
 {% endblock %}
