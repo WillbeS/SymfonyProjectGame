@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ building.name }}</h1>
+
+    <p>Some info about this building and it's purpose. It will come from the database so need to add another column - description. Will also add some image. May include all possbile levels and the cost(ot benefit?) from each.</p>
+{% endblock %}

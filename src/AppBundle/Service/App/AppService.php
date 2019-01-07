@@ -4,51 +4,60 @@ namespace AppBundle\Service\App;
 
 
 use AppBundle\Entity\GameResource;
-use AppBundle\Entity\Platform;
-use AppBundle\Service\Resource\ResourceServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\Utils\TimerServiceInterface;
 
+//TODO - move to utilities and change name to something more appropriate
 class AppService implements AppServiceInterface
 {
-    const UDATE_INTERVAL = 60;
+    const COST_FACTOR = 1.15;
+    const BUILD_TIME_FACTOR = 1.33;
+    const INCOME_FACTOR = .34;
 
     /**
-     * @var EntityManagerInterface
+     * @var TimerServiceInterface
      */
-    private $em;
+    private $timerService;
 
-    /**
-     * @var ResourceServiceInterface
-     */
-    private $resourceService;
-
-
-
-
-    public function __construct(EntityManagerInterface $entityManager,
-                                ResourceServiceInterface $resourceService)
+    public function __construct(TimerServiceInterface $timerService)
     {
-        $this->em = $entityManager;
-        $this->resourceService = $resourceService;
+        $this->timerService = $timerService;
     }
 
-    public function getPlatformCurrentState(Platform $platform)
+    public function getBuildTime(int $baseTime, $level): int
     {
-        //todo - calculate income per hour here
+        return floor($baseTime + ($baseTime * $level * self::BUILD_TIME_FACTOR));
     }
 
-    public function updateTotalResource(Platform $platform)
+    public function getBuildTimeFormated(int $baseTime, $level): string
     {
-        /** @var GameResource $wood */
-        $wood = $platform->getWood();
-        $now = new \DateTime('now');
-        $elapsedSeconds = $now->getTimestamp() - $wood->getUpdateTime()->getTimestamp();
+        return $this->timerService->formatTime($this->getBuildTime($baseTime, $level));
+    }
 
-        if ($elapsedSeconds >= self::UDATE_INTERVAL) {
-            var_dump('Will recieve res');
+    public function getCostPerLevel(int $baseCost, int $level): int
+    {
+        return floor($baseCost + ($baseCost * $level * self::COST_FACTOR));
+    }
+
+    public function getIncomePerHour(GameResource $resource): int
+    {
+        if(null == $resource->getBuilding()) {
+            return $resource->getResourceType()->getBaseIncome();
         }
 
+        $baseIncome = $resource->getResourceType()->getBaseIncome();
+        $buildingLevel = $resource->getBuilding()->getLevel();
+        $income = round($baseIncome + $baseIncome * $buildingLevel * self::INCOME_FACTOR);
 
-        var_dump($elapsedSeconds);
+        return $income;
+    }
+
+
+
+    public function getRemainingTime(\DateTime $startDate, int $baseTime, $level): int
+    {
+        $buildTime = $this->getBuildTime($baseTime, $level);
+        $elapsed = $this->timerService->getElapsedTime($startDate);
+
+        return $buildTime - $elapsed;
     }
 }

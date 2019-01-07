@@ -14,5 +14,5 @@ interface ResourceServiceInterface
 
     public function getResource(string $name, Platform $platform);
 
-    public function updateTotal(GameResource $resource, float $amount): GameResource;
+    public function updateTotal(GameResource $resource, float $amount);
 }

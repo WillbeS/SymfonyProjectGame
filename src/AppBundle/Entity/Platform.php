@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Building\Building;
+use AppBundle\Service\App\AppServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -69,16 +70,22 @@ class Platform
     /**
      * @var ArrayCollection|Building[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building\Building", mappedBy="platform", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building\Building", mappedBy="platform", cascade={"all"})
      */
-    private $buildings;
+    private $buildings; //todo - decide whether to remove when refactor registration process
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="res_update_time", type="datetime")
+     */
+    private $resourceUpdateTime;
 
 
 
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
-        $this->resources = new ArrayCollection();
     }
 
 
@@ -177,7 +184,7 @@ class Platform
     }
 
     /**
-     * @return Building[]|ArrayCollection
+     * @return Building[]
      */
     public function getBuildings()
     {
@@ -236,5 +243,65 @@ class Platform
         return $this;
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getResourceUpdateTime(): \DateTime
+    {
+        return $this->resourceUpdateTime;
+    }
+
+    /**
+     * @param \DateTime $resourceUpdateTime
+     *
+     * @return Platform
+     */
+    public function setResourceUpdateTime(\DateTime $resourceUpdateTime)
+    {
+        $this->resourceUpdateTime = $resourceUpdateTime;
+
+        return $this;
+    }
+
+
+
+    public function getTotalWood()
+    {
+        return floor($this->getWood()->getTotal());
+    }
+
+    public function getTotalFood()
+    {
+        return floor($this->getFood()->getTotal());
+    }
+
+    public function getTotalSupplies()
+    {
+        return floor($this->getSupplies()->getTotal());
+    }
+
+    /**
+     * @return int
+     */
+    public function getWoodIncome(AppServiceInterface $appService): int
+    {
+        return $appService->getIncomePerHour($this->wood);
+    }
+
+    /**
+     * @return int
+     */
+    public function getFoodIncome(AppServiceInterface $appService): int
+    {
+        return $appService->getIncomePerHour($this->food);
+    }
+
+    /**
+     * @return int
+     */
+    public function getSuppliesIncome(AppServiceInterface $appService): int
+    {
+        return $appService->getIncomePerHour($this->supplies);
+    }
 }
 

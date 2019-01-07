@@ -48,7 +48,7 @@ class GameResource
      *
      * @ORM\Column(name="update_time", type="datetime")
      */
-    private $updateTime;
+    private $updateTime; //todo - delete this when safe
 
 
     /**
@@ -64,7 +64,7 @@ class GameResource
     /**
      * @return float
      */
-    public function getTotal(): float
+    public function getTotal(): ?float
     {
         return $this->total;
     }
@@ -84,7 +84,7 @@ class GameResource
     /**
      * @return ResourceType
      */
-    public function getResourceType(): ResourceType
+    public function getResourceType(): ?ResourceType
     {
         return $this->resourceType;
     }

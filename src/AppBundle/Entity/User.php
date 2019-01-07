@@ -49,9 +49,15 @@ class User implements UserInterface
     /**
      * @var ArrayCollection|Platform[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Platform", mappedBy="user", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Platform", mappedBy="user")
      */
     private $platforms;
+
+    /**
+     * @var Platform
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Platform")
+     */
+    private $currentPlatform;
 
 
     public function __construct()
@@ -170,6 +176,26 @@ class User implements UserInterface
     public function addPlatform(Platform $platform)
     {
         $this->platforms->add($platform);
+
+        return $this;
+    }
+
+    /**
+     * @return Platform
+     */
+    public function getCurrentPlatform(): Platform
+    {
+        return $this->currentPlatform;
+    }
+
+    /**
+     * @param Platform $currentPlatform
+     *
+     * @return User
+     */
+    public function setCurrentPlatform(Platform $currentPlatform)
+    {
+        $this->currentPlatform = $currentPlatform;
 
         return $this;
     }

@@ -7,6 +7,7 @@ use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Repository\RoleRepository;
 use AppBundle\Repository\UserRepository;
+use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,6 +47,7 @@ class UserService implements UserServiceInterface
     public function register(
         PlatformServiceInterface $platformService,
         UserPasswordEncoderInterface $encoder,
+        BuildingServiceInterface $buildingService,
         User $user)
     {
         $hashedPassword = $encoder->encodePassword(
@@ -55,14 +57,25 @@ class UserService implements UserServiceInterface
         /** @var Role $userRole */
         $userRole = $this->roleRepository->findOneBy(['name' => 'ROLE_USER']);
 
-        $platform = $platformService->getNewPlatform($user);
+        $platform = $platformService->getNewPlatform($buildingService, $user);
 
         $user->setPassword($hashedPassword)
             ->addRole($userRole)
-            ->addPlatform($platform);
+            ->setCurrentPlatform($platform);
 
         $this->entityManager->persist($user);
+        $this->entityManager->persist($platform);
         $this->entityManager->flush();
+    }
+
+    public function getPlatformId(int $id): int
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->userRepository->find($id);
+
+        return $user->getCurrentPlatform()->getId();
     }
 
     /**

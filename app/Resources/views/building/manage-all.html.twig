@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>Manage Buildings</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Wood</th>
+            <th>Food</th>
+            <th>Supplies</th>
+            <th>BuildTime</th>
+            <th>Level</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for building in buildings %}
+            <tr>
+                <td>{{ building.name }}</td>
+                <td>{{ building.woodCost(appService) }}</td>
+                <td>{{ building.foodCost(appService) }}</td>
+                <td>{{ building.suppliesCost(appService) }}</td>
+                <td>{{ building.formatedBuildTime(appService) }}</td>
+                <td>
+                    {% if building.pending %}
+                        <span>{{ building.level }}</span>
+                        <span>Pending</span>
+                    {% else %}
+                        <span>{{ building.level }}</span>
+                        <a href="{{ path('start_upgrade', {'platformId': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}
+

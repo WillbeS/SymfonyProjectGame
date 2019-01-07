@@ -1,17 +1,12 @@
 <?php
 
-namespace AppBundle\Entity\CustomData;
+namespace AppBundle\Entity\ViewData;
 
 
 use AppBundle\Entity\Platform;
 
 class PlatformData
 {
-    /**
-     * @var Platform
-     */
-    private $entity;
-
     /**
      * @var int
      */
@@ -26,11 +21,6 @@ class PlatformData
      * @var int
      */
     private $suppliesIncome;
-
-    public function __construct(Platform $platform)
-    {
-        $this->entity = $platform;
-    }
 
     /**
      * @return int
@@ -88,26 +78,6 @@ class PlatformData
     public function setSuppliesIncome(int $suppliesIncome)
     {
         $this->suppliesIncome = $suppliesIncome;
-
-        return $this;
-    }
-
-    /**
-     * @return Platform
-     */
-    public function getEntity(): Platform
-    {
-        return $this->entity;
-    }
-
-    /**
-     * @param Platform $entity
-     *
-     * @return PlatformData
-     */
-    public function setEntity(Platform $entity)
-    {
-        $this->entity = $entity;
 
         return $this;
     }

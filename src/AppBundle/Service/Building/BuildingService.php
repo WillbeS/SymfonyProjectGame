@@ -6,16 +6,20 @@ namespace AppBundle\Service\Building;
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Building\GameBuilding;
 use AppBundle\Entity\Platform;
+use AppBundle\Entity\ViewData\BuildingData;
 use AppBundle\Repository\BuildingRepository;
 use AppBundle\Repository\GameBuildingRepository;
-use AppBundle\Repository\ProductionBuildingRepository;
+use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
-use AppBundle\Service\Resource\ResourceService;
 use AppBundle\Service\Resource\ResourceServiceInterface;
+use AppBundle\Service\Utils\TimerServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class BuildingService implements BuildingServiceInterface
 {
+    const COST_FACTOR = 1.15;
+    //const BUILD_TIME_FACTOR = 1.33;
 
     /**
      * @var EntityManagerInterface
@@ -32,52 +36,45 @@ class BuildingService implements BuildingServiceInterface
      */
     private $buildingRepo;
 
+    /**
+     * @var TimerServiceInterface
+     */
+    private $timerService;
+
+    /**
+     * @var Building
+     */
+    private $building;
+
 
     public function __construct(GameBuildingRepository $gameBuildingRepo,
                                 BuildingRepository $buildingRepository,
-                                EntityManagerInterface $em)
+                                EntityManagerInterface $em,
+                                TimerServiceInterface $timerService)
     {
         $this->gameBuildingRepo = $gameBuildingRepo;
         $this->buildingRepo = $buildingRepository;
         $this->em = $em;
+        $this->timerService = $timerService;
     }
 
-    public function levelUp(Building $building, ResourceServiceInterface $resourceService)
+    public function findById(int $id): Building
     {
-        $platform = $building->getPlatform();
-        $availableWood = $platform->getWood()->getTotal();
-        $availableFood = $platform->getFood()->getTotal();
-        $availableSupplies = $platform->getSupplies()->getTotal();
+        /**
+         * @var Building $building
+         */
+        $building = $this->buildingRepo->find($id);
+        return $building;
+    }
 
-        if ($building->getWoodCost() > $availableWood ||
-            $building->getFoodCost() > $availableFood ||
-            $building->getSuppliesCost() > $availableSupplies
-        ) {
-            //TODO Flush message
-            dump('Not enough resources');
-            return;
-        }
-
-
-        $platform
-            ->setWood($resourceService
-                ->updateTotal($platform->getWood(), $building->getWoodCost() * -1));
-
-        $platform
-            ->setFood($resourceService
-                ->updateTotal($platform->getFood(), $building->getFoodCost() * -1));
-
-        $platform
-            ->setSupplies($resourceService
-                ->updateTotal($platform->getSupplies(), $building->getSuppliesCost() * -1));
-
-
-        //TODO - add maxLevel
-        $newLevel = $building->getLevel() + 1;
-        $building->setLevel($newLevel);
-        $this->em->persist($building);
-        $this->em->persist($platform);
-        $this->em->flush();
+    /**
+     * @param Platform|null $platform
+     * @return Building[]
+     */
+    public function getPending(Platform $platform = null): array
+    {
+        $pending = $this->buildingRepo->findPending($platform);
+        return $pending;
     }
 
     /**
@@ -107,6 +104,40 @@ class BuildingService implements BuildingServiceInterface
 
     public function getByGameBuilding(GameBuilding $gameBuilding): ?Building
     {
-        $buildiing = $this->buildingRepo->findOneBy(['gameBuilding' => $gameBuilding]);
+        return $this->buildingRepo->findOneBy(['gameBuilding' => $gameBuilding]);
     }
+
+
+
+    public function startUpgrade(int $id,
+                                 PlatformServiceInterface $platformService,
+                                 AppServiceInterface $appService)
+    {
+        //TODO - add maxLevel
+        $building = $this->findById($id);
+
+        if ($building->isPending()) {
+            throw new Exception('Already is building.');
+        }
+
+        $platformService->payResources($building->getPlatform(),
+                                        $building->getWoodCost($appService),
+                                        $building->getFoodCost($appService),
+                                        $building->getSuppliesCost($appService));
+
+        $building
+            ->setStartBuild(new \DateTime('now'));
+        $this->em->flush();
+    }
+
+    public function finishBuilding(Building $building)
+    {
+        $building
+            ->setStartBuild(null)
+            ->setLevel($building->getLevel() + 1);
+
+        $this->em->persist($building);
+        $this->em->flush();
+    }
+
 }

@@ -4,9 +4,16 @@ namespace AppBundle\Service\App;
 
 
 use AppBundle\Entity\GameResource;
-use AppBundle\Entity\Platform;
 
 interface AppServiceInterface
 {
-    public function updateTotalResource(Platform $platform);
+    public function getBuildTime(int $baseTime, $level): int;
+
+    public function getBuildTimeFormated(int $baseTime, $level): string;
+
+    public function getRemainingTime(\DateTime $startDate, int $baseTime, $level): int;
+
+    public function getCostPerLevel(int $baseCost, int $level): int;
+
+    public function getIncomePerHour(GameResource $resource): int;
 }

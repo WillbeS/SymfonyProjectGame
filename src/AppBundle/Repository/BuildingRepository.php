@@ -4,6 +4,7 @@ namespace AppBundle\Repository;
 
 
 use AppBundle\Entity\Building\Building;
+use AppBundle\Entity\Platform;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping;
 
@@ -18,5 +19,17 @@ class BuildingRepository extends \Doctrine\ORM\EntityRepository
     public function __construct(EntityManagerInterface $em)
     {
         parent::__construct($em, new Mapping\ClassMetadata(Building::class));
+    }
+
+    public function findPending(Platform $platform = null)
+    {
+        $qb = $this->createQueryBuilder('building');
+        $qb->where('building.startBuild is not null');
+        if ($platform !== null) {
+            $qb->andWhere('building.platform = :platform')
+                ->setParameter('platform', $platform);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -9,6 +9,7 @@ use AppBundle\Entity\ResourceType;
 use AppBundle\Repository\ResourceRepository;
 use AppBundle\Repository\ResourceTypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class ResourceService implements ResourceServiceInterface
 {
@@ -59,7 +60,9 @@ class ResourceService implements ResourceServiceInterface
         $resource->setBuilding($building)
             ->setResourceType($resourceType);
 
-        return $this->updateTotal($resource, self::DEFAULT_STARTUP);
+        $this->updateTotal($resource, self::DEFAULT_STARTUP);
+
+        return $resource;
     }
 
     private function getBuilding(Platform $platform, ResourceType $resourceType)
@@ -76,11 +79,15 @@ class ResourceService implements ResourceServiceInterface
         return $building;
     }
 
-    public function updateTotal(GameResource $resource, float $amount): GameResource
+    public function updateTotal(GameResource $resource, float $amount)
     {
+        $current = $resource->getTotal();
+
+        if($current + $amount < 0) {
+            throw new Exception('Insufficient ' . $resource->getResourceType()->getName());
+        }
+
         $resource->setTotal($resource->getTotal() + $amount)
             ->setUpdateTime(new \DateTime('now'));
-
-        return $resource;
     }
 }
