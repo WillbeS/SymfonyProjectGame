@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>Units</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Requirements</th>
+            <th>Status</th>
+            <th>Building</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for unit in units %}
+            <tr>
+                <td>
+                    <a href="{{ path('view_unit_type', {'platformId': platform.id, 'unitTypeId': unit.unitType.id}) }}">{{ unit.unitType.name }}</a>
+                </td>
+                <td>
+                    <ul>
+                    {% for requirement in unit.unitType.requirements %}
+                        <li>{{ requirement.buildingAndLevel }}</li>
+                    {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ unit.status }}</td>
+                <td><a href="{{ path('recruit', {'platformId': platform.id, 'unitId': unit.id}) }}">{{ unit.building.name }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

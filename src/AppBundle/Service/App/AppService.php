@@ -53,6 +53,14 @@ class AppService implements AppServiceInterface
 
 
 
+    //TODO - Refactor - only 1 method for remaining time (this)
+    public function getRemainingTimeNew(\DateTime $startDate, int $totalTime, int $count = 1): int
+    {
+        $elapsed = $this->timerService->getElapsedTime($startDate);
+
+        return $totalTime * $count - $elapsed;
+    }
+
     public function getRemainingTime(\DateTime $startDate, int $baseTime, $level): int
     {
         $buildTime = $this->getBuildTime($baseTime, $level);

@@ -11,6 +11,8 @@ interface GameStateServiceInterface
 {
     public function updateBuildingsState(Platform $platform = null);
 
+    public function updateUnitsInTrainingState(Platform $platform = null);
+
     public function updatePlatformResourcesState(Platform $platform,
                                                  PlatformServiceInterface $platformService);
 

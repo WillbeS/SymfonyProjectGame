@@ -13,6 +13,7 @@
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="{{ path('homepage') }}">Home</a></li>
                     <li><a href="{{ path('manage_buildings', {'id': platform.id}) }}">Buildings</a></li>
+                    <li><a href="{{ path('manage_units', {'platformId': platform.id}) }}">Units</a></li>
                     <li><a href="{{ path('map_local', {'id': platform.id}) }}">Map</a></li>
                     <li><a href="#">Rankings</a></li>
                 </ul>

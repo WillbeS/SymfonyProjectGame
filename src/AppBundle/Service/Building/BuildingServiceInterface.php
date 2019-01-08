@@ -12,12 +12,12 @@ interface BuildingServiceInterface
 {
     ///////////////// Common////////////////////////////////////////////////////
     public function findById(int $id):Building;
+
+    public function getByGameBuilding(GameBuilding $gameBuilding, Platform $platform): Building;
     ////////////////////////////////////////////////////////////////////////////
 
     //////////////////////////For registration???////////////////////////////////////////
     public function getNewBuilding(GameBuilding $gameBuilding, Platform $platform): Building;
-
-    public function getByGameBuilding(GameBuilding $gameBuilding): ?Building;
 
     public function getGameBuildings(): array; /////////////////maybe common???
     ////////////////////////////////////////////////////////////////////////////////////

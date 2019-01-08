@@ -22,11 +22,10 @@ class BuildingController extends MainController
 
     public function __construct(PlatformServiceInterface $platformService,
                                 GameStateServiceInterface $gameStateService,
-                                TimerServiceInterface $timerService,
                                 BuildingServiceInterface $buildingService,
                                 AppServiceInterface $appService)
     {
-        parent::__construct($appService, $gameStateService, $platformService, $timerService); //TODO clean up when safe
+        parent::__construct($appService, $gameStateService, $platformService); //TODO clean up when safe
         $this->buildingService = $buildingService;
     }
 

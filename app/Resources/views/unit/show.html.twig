@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ unitType.name }}</h1>
+    <p>Todo - add picture</p>
+    <p>Some description (can kill all zombies, is scared of cats)</p>
+    <h2>Unit Type Details</h2>
+    <table class="table">
+        <tr>
+            <th class="text-center" colspan="4">Battle Stats</th>
+        </tr>
+        <tr>
+            <th>Attack</th>
+            <th>Defense</th>
+            <th>HP</th>
+            <th>Speed</th>
+        </tr>
+        <tr>
+            <td>{{ unitType.attack }}</td>
+            <td>{{ unitType.defense }}</td>
+            <td>{{ unitType.health }}</td>
+            <td>{{ unitType.speed }}</td>
+        </tr>
+
+        <tr>
+            <th class="text-center" colspan="4">Base cost</th>
+        </tr>
+        <tr>
+            <th>Wood</th>
+            <th>Food</th>
+            <th>Supplies</th>
+            <th>Build Time</th>
+        </tr>
+        <tr>
+            <td>{{ unitType.woodCost }}</td>
+            <td>{{ unitType.foodCost }}</td>
+            <td>{{ unitType.suppliesCost }}</td>
+            <td>{{ unitType.buildTime }}</td>
+        </tr>
+    </table>
+
+{% endblock %}

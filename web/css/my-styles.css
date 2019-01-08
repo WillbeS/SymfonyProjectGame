@@ -1,3 +1,11 @@
+.recruit td {
+    width: 100px;
+}
+
+/*
+--------------------------- Map Styles ----------------------------
+ */
+
 #map {
     border: 1px solid black;
     background-color: green;
@@ -30,3 +38,4 @@
 .platform {
     background-color: blue;
 }
+

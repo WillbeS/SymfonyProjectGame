@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MapController extends MainController
 {
-    const VISIBLE_MAP_SIZE = 5;
+    const VISIBLE_MAP_SIZE = 10;
 
     /**
      * @Route("/settlement/{id}/map/", name="map_all", requirements={"id" = "\d+"})

@@ -9,7 +9,7 @@ use AppBundle\Repository\GridRepository;
 class MapService implements MapServiceInterface
 {
     const NEW_SETTLEMENT_DISTRICT = 1;
-    const DISTRICT_SIZE = 5;
+    const DISTRICT_SIZE = 10;
     const MAP_SIZE = 100;
 
     /**

@@ -102,9 +102,17 @@ class BuildingService implements BuildingServiceInterface
         return $building;
     }
 
-    public function getByGameBuilding(GameBuilding $gameBuilding): ?Building
+    public function getByGameBuilding(GameBuilding $gameBuilding, Platform $platform): Building
     {
-        return $this->buildingRepo->findOneBy(['gameBuilding' => $gameBuilding]);
+        /**
+         * @var Building $building
+         */
+        $building = $this->buildingRepo->findOneBy([
+            'gameBuilding' => $gameBuilding,
+            'platform' => $platform
+        ]);
+
+        return $building;
     }
 
 

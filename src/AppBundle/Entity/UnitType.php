@@ -2,12 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Building\GameBuilding;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * UnitType
  *
- * @ORM\Table(name="unit_type")
+ * @ORM\Table(name="unit_types")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UnitTypeRepository")
  */
 class UnitType
@@ -83,6 +85,26 @@ class UnitType
      * @ORM\Column(name="defense", type="integer")
      */
     private $defense;
+
+    /**
+     * @var GameBuilding
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Building\GameBuilding")
+     */
+    private $gameBuilding;
+
+    /**
+     * @var ArrayCollection|UnitType[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Requirement", mappedBy="unitType")
+     */
+    private $requirements;
+
+
+    public function __construct()
+    {
+        $this->requirements = new ArrayCollection();
+    }
 
 
     /**
@@ -309,6 +331,46 @@ class UnitType
     public function getDefense()
     {
         return $this->defense;
+    }
+
+    /**
+     * @return GameBuilding
+     */
+    public function getGameBuilding(): GameBuilding
+    {
+        return $this->gameBuilding;
+    }
+
+    /**
+     * @param GameBuilding $gameBuilding
+     *
+     * @return UnitType
+     */
+    public function setGameBuilding(GameBuilding $gameBuilding)
+    {
+        $this->gameBuilding = $gameBuilding;
+
+        return $this;
+    }
+
+    /**
+     * @return UnitType[]|ArrayCollection
+     */
+    public function getRequirements()
+    {
+        return $this->requirements;
+    }
+
+    /**
+     * @param UnitType[]|ArrayCollection $requirements
+     *
+     * @return UnitType
+     */
+    public function setRequirements($requirements)
+    {
+        $this->requirements = $requirements;
+
+        return $this;
     }
 }
 

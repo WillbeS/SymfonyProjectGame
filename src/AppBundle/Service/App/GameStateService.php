@@ -4,8 +4,10 @@ namespace AppBundle\Service\App;
 
 
 use AppBundle\Entity\Platform;
+use AppBundle\Entity\Unit;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
+use AppBundle\Service\Unit\UnitServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
 
 class GameStateService implements GameStateServiceInterface
@@ -19,6 +21,11 @@ class GameStateService implements GameStateServiceInterface
     private $buildingService;
 
     /**
+     * @var UnitServiceInterface
+     */
+    private $unitService;
+
+    /**
      * @var AppServiceInterface
      */
     private $appService;
@@ -30,10 +37,12 @@ class GameStateService implements GameStateServiceInterface
 
 
     public function __construct(BuildingServiceInterface $buildingService,
+                                UnitServiceInterface $unitService,
                                 AppServiceInterface $appService,
                                 TimerServiceInterface $timerService)
     {
         $this->buildingService = $buildingService;
+        $this->unitService = $unitService;
         $this->appService = $appService;
         $this->timerService = $timerService;
     }
@@ -45,7 +54,19 @@ class GameStateService implements GameStateServiceInterface
         foreach ($buildings as $building) {
             if ($building->getRemainingTime($this->appService) < 0) {
                 $this->buildingService->finishBuilding($building);
+                $this->unitService->updateUnitStatus($platform);
             }
+        }
+    }
+
+    public function updateUnitsInTrainingState(Platform $platform = null)
+    {
+        $unitsInTraining = $this->unitService->getWithUnitsInTraining($platform);
+
+        foreach ($unitsInTraining as $unit) {
+            /** @var Unit $unit $elapsed */
+            $elapsed = $this->timerService->getElapsedTime($unit->getStartBuild());
+            $this->unitService->updateUnitInTraining($elapsed, $unit);
         }
     }
 
