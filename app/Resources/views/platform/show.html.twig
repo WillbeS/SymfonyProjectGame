@@ -15,22 +15,22 @@
     <h1>{{ platform.name }}</h1>
     <p>This is your first settlement. Try and keep it save from the dead walking outside your walls.</p>
 
-    <h2>Buildings</h2>
-    <p>Note: These will be pictures instead</p>
-
-    <table>
-        <thead>
-        <tr>
-            <th>Building name</th>
-        </tr>
-        </thead>
+    <h3>Buildings</h3>
+    <div id="buildings-map">
+        <div class="row">
         {% for building in buildings %}
-            <tr>
-                <td>
-                    <a href="{{ path('show_building', {'platformId': platform.id, 'buildingId': building.id}) }}">{{ building.name }}</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <a href="{{ path('show_building', {'platformId': platform.id, 'buildingId': building.id}) }}">
+                        <img class="img-rounded" src="{{ asset('images/design/' ~ building.slug ~ '.jpg') }}" alt="{{ building.name }}" style="width:100%">
+                    </a>
+                    <div class="caption">
+                        <p>{{ building.name }} <span class="small">Level: {{ building.level }}</span></p>
+                    </div>
+                </div>
 
+            </div>
+        {% endfor %}
+        </div>
+    </div>
 {% endblock %}

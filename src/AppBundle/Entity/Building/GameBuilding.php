@@ -58,6 +58,13 @@ class GameBuilding
      */
     private $buildTime;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text")
+     */
+    private $description;
+
 
     /**
      * Get id
@@ -188,5 +195,27 @@ class GameBuilding
     {
         return $this->buildTime;
     }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return GameBuilding
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+
 }
 

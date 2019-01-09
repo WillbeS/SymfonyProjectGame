@@ -11,11 +11,11 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="{{ path('homepage') }}">Home</a></li>
-                    <li><a href="{{ path('manage_buildings', {'id': platform.id}) }}">Buildings</a></li>
-                    <li><a href="{{ path('manage_units', {'platformId': platform.id}) }}">Units</a></li>
-                    <li><a href="{{ path('map_local', {'id': platform.id}) }}">Map</a></li>
-                    <li><a href="#">Rankings</a></li>
+                    <li {% if currentPage is defined and currentPage == 'platform' %} class="active" {% endif %}><a href="{{ path('homepage') }}">Home</a></li>
+                    <li {% if currentPage is defined and currentPage == 'building' %} class="active" {% endif %}><a href="{{ path('manage_buildings', {'id': platform.id}) }}">Buildings</a></li>
+                    <li {% if currentPage is defined and currentPage == 'unit' %} class="active" {% endif %}><a href="{{ path('manage_units', {'platformId': platform.id}) }}">Units</a></li>
+                    <li {% if currentPage is defined and currentPage == 'map' %} class="active" {% endif %}><a href="{{ path('map_local', {'id': platform.id}) }}">Map</a></li>
+                    <li {% if currentPage is defined and currentPage == 'user' %} class="active" {% endif %}><a href="#">Ranking</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Profile</a></li>

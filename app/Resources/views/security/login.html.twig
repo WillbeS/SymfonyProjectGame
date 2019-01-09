@@ -1,26 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
+{% block guestBody %}
+    <div class="row text-center">
+    <div class="col-sm-6 col-sm-offset-3">
+        <h1 class="guest">After The End</h1>
+        <h3>A multiplayer strategy game.</h3>
+    </div>
+    </div>
     <div class="jumbotron text-center">
-        <h1>After The End</h1>
-        <h2>A multiplayer strategy game.</h2>
-        <img src="{{ asset('images/design/zombies2.jpg') }}" />
-        <div class="row">
-            <div class="col-sm-4 col-sm-offset-4">
-
+        <div class="row" id="login">
+            <div class="col-sm-4 col-sm-offset-4 login-bg">
                 <p>Login</p>
                 <form method="post">
-                    <input type="hidden" name="_csrf_token"
-                           value="{{ csrf_token('authenticate') }}"
-                    >
-                    <label for="username">Username:</label>
-                    <input type="text" name="_username" id="username" />
-                    <label for="password">Password:</label>
-                    <input type="password" name="_password" id="password" /><br />
-                    <button type="submit" class="btn btn-primary" formnovalidate>Login</button>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+
+                    <div class="form-group">
+                        <label for="username" class="control-label required">Username</label>
+                        <input id="username" class="form-control" type="text" name="_username" /><br/>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label">Password</label>
+                        <input id="password" class="form-control" type="password" name="_password" /><br/>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" formnovalidate>Login</button>
+                    </div>
                 </form>
             </div>
         </div>
-        <p>Create an account: <a href="{{ path('user_register_form') }}">Register</a></p>
     </div>
+    <p class="text-center">Create an account: <a href="{{ path('user_register_form') }}">Register</a></p>
+{% endblock %}
+
+{% block game %}
 {% endblock %}

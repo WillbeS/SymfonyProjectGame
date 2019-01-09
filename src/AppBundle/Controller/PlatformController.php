@@ -35,6 +35,7 @@ class PlatformController extends MainController
             'platform' => $platform,
             'buildings' => $buildings,
             'appService' => $this->appService,
+            'currentPage' => 'platform'
         ]);
     }
 

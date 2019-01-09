@@ -13,41 +13,42 @@
 
 {% block body %}
     <h1>{{ unitType.name }}</h1>
-    <p>Todo - add picture</p>
-    <p>Some description (can kill all zombies, is scared of cats)</p>
-    <h2>Unit Type Details</h2>
+
+    <img src="{{ asset('images/design/' ~ unitType.slug ~ '.jpg') }}">
+    <hr />
+    <p>{{ unitType.description }}</p>
+    <hr />
+
+    <h2>Stats</h2>
     <table class="table">
-        <tr>
-            <th class="text-center" colspan="4">Battle Stats</th>
-        </tr>
         <tr>
             <th>Attack</th>
             <th>Defense</th>
             <th>HP</th>
             <th>Speed</th>
+            <th>Wood</th>
+            <th>Food</th>
+            <th>Supplies</th>
         </tr>
         <tr>
             <td>{{ unitType.attack }}</td>
             <td>{{ unitType.defense }}</td>
             <td>{{ unitType.health }}</td>
             <td>{{ unitType.speed }}</td>
-        </tr>
-
-        <tr>
-            <th class="text-center" colspan="4">Base cost</th>
-        </tr>
-        <tr>
-            <th>Wood</th>
-            <th>Food</th>
-            <th>Supplies</th>
-            <th>Build Time</th>
-        </tr>
-        <tr>
             <td>{{ unitType.woodCost }}</td>
             <td>{{ unitType.foodCost }}</td>
             <td>{{ unitType.suppliesCost }}</td>
-            <td>{{ unitType.buildTime }}</td>
         </tr>
     </table>
+
+    <h2>Requirements</h2>
+
+    <ul>
+        {% for requirement in unitType.requirements %}
+            <li>{{ requirement.buildingAndLevel }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('manage_units', {'platformId': platform.id}) }}">Back to all units</a>
 
 {% endblock %}

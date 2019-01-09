@@ -26,9 +26,20 @@
             </div>
         {% endfor %}
 
-        {% block platformCommon %}
+        {% block guestBody %}
         {% endblock %}
-        {% block body %}
+
+        {% block game %}
+            <div class="row wrapper light-grey-bg">
+                <div class="col-sm-9 main">
+                    {% block body %}
+                    {% endblock %}
+                </div>
+                <div class="col-sm-2 sidebar">
+                    {% block platformCommon %}
+                    {% endblock %}
+                </div>
+            </div>
         {% endblock %}
     </div>
         {% block javascripts %}

@@ -17,25 +17,30 @@
         <thead>
         <tr>
             <th>Unit</th>
+            <th>Here</th>
+            <th>Outside</th>
             <th>Total</th>
             <th>In Training</th>
+            {% if unit.haveInTraining %}
+                <th>Ready in</th>
+            {% endif %}
             <th>Recruit</th>
         </tr>
         </thead>
         <tbody>
             <tr>
                 <td>{{ unit.unitType.name }}</td>
+                <td>{{ unit.iddle }}</td>
+                <td>{{ unit.inBattle }}</td>
                 <td>{{ unit.total }}</td>
                 <td>{{ unit.inTraining }}</td>
-                <th>
-                    <form method="post">
-
-                        <input type="number" name="unit[forTraining]" />
-                        <input type="submit" value="recruit" />
-                        {{ form_row(form._token) }}
-                    </form>
-                </th>
+                {% if unit.haveInTraining %}
+                <td>{{ unit.remainingTimeFormated(appService) }}</td>
+                {% endif %}
+                <td>{% include 'unit/recruit-form.html.twig' %}</td>
             </tr>
         </tbody>
     </table>
+
+    <a href="{{ path('manage_units', {'platformId': platform.id}) }}">Back to all units</a>
 {% endblock %}

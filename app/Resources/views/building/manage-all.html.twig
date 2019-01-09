@@ -13,31 +13,32 @@
 
 {% block body %}
     <h1>Manage Buildings</h1>
+    <p><i>All buildings and their cost for next level.</i></p>
     <table class="table">
         <thead>
         <tr>
             <th>Name</th>
+            <th>Level</th>
             <th>Wood</th>
             <th>Food</th>
             <th>Supplies</th>
             <th>BuildTime</th>
-            <th>Level</th>
+            <th>Upgrade</th>
         </tr>
         </thead>
         <tbody>
         {% for building in buildings %}
             <tr>
                 <td>{{ building.name }}</td>
+                <td>{{ building.level }}</td>
                 <td>{{ building.woodCost(appService) }}</td>
                 <td>{{ building.foodCost(appService) }}</td>
                 <td>{{ building.suppliesCost(appService) }}</td>
                 <td>{{ building.formatedBuildTime(appService) }}</td>
                 <td>
                     {% if building.pending %}
-                        <span>{{ building.level }}</span>
-                        <span>Pending</span>
+                        <span>{{ building.remainingTimeFormated(appService) }}</span>
                     {% else %}
-                        <span>{{ building.level }}</span>
                         <a href="{{ path('start_upgrade', {'platformId': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
                     {% endif %}
                 </td>

@@ -1,4 +1,6 @@
-{{ form_start(unitRecruit) }}
-            {{ form_widget(unitRecruit) }}
-<button type="submit" class="btn btn-primary" formnovalidate>Recruit</button>
-{{ form_end(unitRecruit) }}
+<form method="post">
+
+    <input type="number" name="unit[forTraining]" />
+    <input type="submit" value="recruit" />
+    {{ form_row(form._token) }}
+</form>

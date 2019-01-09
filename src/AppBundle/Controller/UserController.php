@@ -5,7 +5,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
+use AppBundle\Service\Unit\UnitServiceInterface;
+use AppBundle\Service\Unit\UnitTypeServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,14 +51,22 @@ class UserController extends Controller
      */
     public function registerProcessAction(Request $request,
                                           UserPasswordEncoderInterface $encoder,
-                                          PlatformServiceInterface $platformService)
+                                          PlatformServiceInterface $platformService,
+                                          BuildingServiceInterface $buildingService,
+                                          UnitServiceInterface $unitService)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $this->userService->register($platformService, $encoder, $user);
+            $user = $this->userService
+                ->register($user, $platformService, $encoder, $buildingService, $unitService);
+
+            if($user) {
+                $unitService->createAllTypes($user->getCurrentPlatform(), $buildingService);
+            }
+
             return $this->redirectToRoute('login');
         }
 

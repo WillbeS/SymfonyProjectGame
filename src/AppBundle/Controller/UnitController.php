@@ -60,6 +60,7 @@ class UnitController extends MainController
             'platform' => $platform,
             'appService' => $this->appService,
             'units' => $units,
+            'currentPage' => 'unit'
         ]);
     }
 
@@ -78,7 +79,8 @@ class UnitController extends MainController
         return $this->render('unit/show.html.twig', [
             'platform' => $platform,
             'appService' => $this->appService,
-            'unitType' => $unitType
+            'unitType' => $unitType,
+            'currentPage' => 'unit',
         ]);
     }
 
@@ -110,7 +112,8 @@ class UnitController extends MainController
             'platform' => $platform,
             'appService' => $this->appService,
             'unit' => $unit,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'currentPage' => 'unit'
         ]);
     }
 }

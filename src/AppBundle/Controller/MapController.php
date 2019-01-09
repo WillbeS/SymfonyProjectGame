@@ -28,6 +28,7 @@ class MapController extends MainController
             'size' => 100,
             'platform' => $platform,
             'appService' => $this->appService,
+            'currentPage' => 'map'
         ]);
     }
 
@@ -45,6 +46,7 @@ class MapController extends MainController
             'size' => self::VISIBLE_MAP_SIZE,
             'platform' => $platform,
             'appService' => $this->appService,
+            'currentPage' => 'map'
         ]);
     }
 }

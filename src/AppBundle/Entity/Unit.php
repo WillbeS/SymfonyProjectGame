@@ -3,7 +3,9 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Building\Building;
+use AppBundle\Service\App\AppServiceInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Unit
@@ -23,6 +25,18 @@ class Unit
     private $id;
 
     /**
+     * @Assert\NotBlank()
+     *
+     * @Assert\Range(
+     *     min = 0,
+     *     max = 1000,
+     *     minMessage = "Quantity cannot be less than {{ limit }}",
+     *     maxMessage = "Quantity cannot be greater than {{ limit }}"
+     * )
+     *
+     * @Assert\Type(type="integer")
+     *
+     *
      * @var int
      *
      * @ORM\Column(name="in_training", type="integer")
@@ -74,11 +88,22 @@ class Unit
     /**
      * @var Platform
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Platform")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Platform", inversedBy="units")
      */
     private $platform;
 
     /**
+     * @Assert\NotBlank()
+     *
+     * @Assert\Range(
+     *     min = 0,
+     *     max = 1000,
+     *     minMessage = "Quantity cannot be less than {{ limit }}",
+     *     maxMessage = "Quantity cannot be greater than {{ limit }}"
+     * )
+     *
+     * @Assert\Type(type="integer")
+     *
      * @var int
      */
     private $forTraining;
@@ -284,6 +309,25 @@ class Unit
         $this->inTraining = $this->inTraining + $newCount;
 
         return $this;
+    }
+
+    public function getRemainingTrainingTime(AppServiceInterface $appService): int
+    {
+        return $appService->getRemainingTimeNew($this->getStartBuild(),
+                                                $this->unitType->getBuildTime(),
+                                                $this->inTraining);
+    }
+
+    public function getRemainingTimeFormated(AppServiceInterface $appService): string
+    {
+        $remaining = $this->getRemainingTrainingTime($appService);
+
+        return $appService->formatTime($remaining);
+    }
+
+    public function haveInTraining()
+    {
+        return null !== $this->startBuild;
     }
 }
 

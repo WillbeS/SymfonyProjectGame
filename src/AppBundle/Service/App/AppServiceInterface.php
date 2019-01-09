@@ -18,4 +18,6 @@ interface AppServiceInterface
     public function getCostPerLevel(int $baseCost, int $level): int;
 
     public function getIncomePerHour(GameResource $resource): int;
+
+    public function formatTime(int $allSeconds): string;
 }

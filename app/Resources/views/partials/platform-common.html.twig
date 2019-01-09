@@ -1,13 +1,27 @@
 <h2>Resources</h2>
 <p>
-    <span>Food: {{ platform.totalFood }} | </span>
-    <span>Wood: {{ platform.totalWood }} | </span>
-    <span>Supplies: {{ platform.totalSupplies }}</span>
+    <b>Food:</b> {{ platform.totalFood }} <br />
+    <b>Wood:</b> {{ platform.totalWood }} <br />
+    <b>Supplies:</b> {{ platform.totalSupplies }} <br />
 </p>
+<hr />
 
 <h2>Income per hour</h2>
 <p>
-    <span>Food: {{ platform.foodIncome(appService) }} | </span>
-    <span>Wood: {{ platform.woodIncome(appService) }} | </span>
-    <span>Supplies: {{ platform.suppliesIncome(appService) }}</span>
+    <b>Food:</b> {{ platform.foodIncome(appService) }}<br />
+    <b>Wood:</b> {{ platform.woodIncome(appService) }}<br />
+    <b>Supplies:</b> {{ platform.suppliesIncome(appService) }}<br />
 </p>
+<hr />
+
+<h2>Units</h2>
+<p>
+    {% for unit in platform.units %}
+        {% if unit.total > 0 %}
+        <b>{{ unit.unitType.name }}:</b> {{ unit.total }} <br />
+        {% endif %}
+    {% endfor %}
+</p>
+<br/>
+
+<p class="small"><i>This information is for the current settlement.</i></p>

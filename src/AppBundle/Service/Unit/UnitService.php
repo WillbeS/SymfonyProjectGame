@@ -6,7 +6,9 @@ namespace AppBundle\Service\Unit;
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
+use AppBundle\Entity\UnitType;
 use AppBundle\Repository\UnitRepository;
+use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -65,6 +67,39 @@ class UnitService implements UnitServiceInterface
         return $this->unitRepository->findInTraining($platform);
     }
 
+    public function createAllTypes(Platform $platform,
+                                       BuildingServiceInterface $buildingService)
+    {
+        $types = $this->unitTypeService->findAll();
+
+        foreach ($types as $type) {
+            $unit = $this->generateUnit($type, $platform, $buildingService);
+            $this->em->persist($unit);
+        }
+
+        $this->em->flush();
+    }
+
+    public function generateUnit(UnitType $unitType,
+                               Platform $platform,
+                               BuildingServiceInterface $buildingService): Unit
+    {
+        $building = $buildingService->getByGameBuilding($unitType->getGameBuilding(), $platform);
+
+        $unit = new Unit();
+
+        $unit
+            ->setUnitType($unitType)
+            ->setPlatform($platform)
+            ->setBuilding($building)
+            ->addForTraining(0)
+            ->setIddle(0)
+            ->setInBattle(0)
+            ->setIsAvailable(false);
+
+        return $unit;
+    }
+
 
     public function updateUnitStatus(Platform $platform)
     {
@@ -109,6 +144,11 @@ class UnitService implements UnitServiceInterface
                                     PlatformServiceInterface $platformService)
     {
         $count = $unit->getForTraining();
+
+        if(null == $count || $count < 0) {
+            return;
+        }
+
         $woodCost = $unit->getUnitType()->getWoodCost() * $count;
         $foodCost = $unit->getUnitType()->getFoodCost() * $count;
         $suppliesCost = $unit->getUnitType()->getSuppliesCost() * $count;

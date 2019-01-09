@@ -5,6 +5,8 @@ namespace AppBundle\Service\Unit;
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
+use AppBundle\Entity\UnitType;
+use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 
 interface UnitServiceInterface
@@ -28,6 +30,17 @@ interface UnitServiceInterface
     public function startRecruiting(Unit $unit,
                                     Platform $platform,
                                     PlatformServiceInterface $platformService); //flushes
+
+    public function generateUnit(UnitType $unitType,
+                               Platform $platform,
+                               BuildingServiceInterface $buildingService): Unit;
+
+    /**
+     * @param Platform $platform
+     * @return Unit[]
+     */
+    public function createAllTypes(Platform $platform,
+                                   BuildingServiceInterface $buildingService);
 
 
 }

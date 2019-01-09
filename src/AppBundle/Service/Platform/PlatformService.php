@@ -94,9 +94,11 @@ class PlatformService implements PlatformServiceInterface
         $wood = $this->resourceService->getResource('Wood', $platform);
         $supplies = $this->resourceService->getResource('Supplies', $platform);
 
-        $platform->setFood($food);
-        $platform->setWood($wood);
-        $platform->setSupplies($supplies);
+        $platform
+            ->setFood($food)
+            ->setWood($wood)
+            ->setSupplies($supplies)
+            ->setResourceUpdateTime(new \DateTime('now'));
 
         return $platform;
     }

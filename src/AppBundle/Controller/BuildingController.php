@@ -51,6 +51,7 @@ class BuildingController extends MainController
             'platform' => $platform,
             'building' => $building,
             'appService' => $this->appService,
+            'currentPage' => 'building'
         ]);
     }
 
@@ -69,6 +70,7 @@ class BuildingController extends MainController
             'platform' => $platform,
             'buildings' => $buildings,
             'appService' => $this->appService,
+            'currentPage' => 'building'
         ]);
     }
 

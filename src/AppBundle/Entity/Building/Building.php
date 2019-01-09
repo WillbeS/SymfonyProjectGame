@@ -209,5 +209,21 @@ class Building
                                             $this->gameBuilding->getBuildTime(),
                                             $this->level);
     }
+
+    public function getRemainingTimeFormated(AppServiceInterface $appService): string
+    {
+        $remaining = $this->getRemainingTime($appService);
+
+        return $appService->formatTime($remaining);
+    }
+
+    public function getSlug()
+    {
+        return preg_replace(
+            '/\s+/',
+            '-',
+            strtolower(trim($this->getName()))
+        );
+    }
 }
 

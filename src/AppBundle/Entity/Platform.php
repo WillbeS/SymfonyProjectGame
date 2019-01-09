@@ -72,7 +72,7 @@ class Platform
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building\Building", mappedBy="platform", cascade={"all"})
      */
-    private $buildings; //todo - decide whether to remove when refactor registration process
+    private $buildings;
 
     /**
      * @var \DateTime
@@ -81,11 +81,19 @@ class Platform
      */
     private $resourceUpdateTime;
 
+    /**
+     * @var ArrayCollection|Unit[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Unit", mappedBy="platform")
+     */
+    private $units;
+
 
 
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
+        $this->units = new ArrayCollection();
     }
 
 
@@ -302,6 +310,14 @@ class Platform
     public function getSuppliesIncome(AppServiceInterface $appService): int
     {
         return $appService->getIncomePerHour($this->supplies);
+    }
+
+    /**
+     * @return Unit[]|ArrayCollection
+     */
+    public function getUnits()
+    {
+        return $this->units;
     }
 }
 

@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Item
@@ -24,6 +25,20 @@ class User implements UserInterface
     private $id;
 
     /**
+     * @Assert\NotBlank()
+     *
+     * @Assert\Length(
+     *     min = 3,
+     *     max = 20,
+     *     minMessage = "Username must be at least {{ limit }} characters long",
+     *     maxMessage = "Username cannot be longer than {{ limit }} characters"
+     * )
+     *
+     * @Assert\Regex(
+     *     pattern="/^[a-zA-Z\d]+$/",
+     *     message="Username can be letters and digits only"
+     * )
+     *
      * @var string
      *
      * @ORM\Column(name="username", type="string", length=255, unique=true)
@@ -31,6 +46,18 @@ class User implements UserInterface
     private $username;
 
     /**
+     * @Assert\NotBlank()
+     *
+     * @Assert\Length(
+     *      min = 3,
+     *      minMessage = "Password must be at least {{ limit }} characters long",
+     * )
+     *
+     * @Assert\Regex(
+     *      pattern="/^[a-zA-Z\d]+$/",
+     *     message="Password can have only letters and digits"
+     * )
+     *
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
@@ -45,6 +72,18 @@ class User implements UserInterface
      *    inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")})
      */
     private $roles;
+
+    /**
+     * @var string
+     *
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email.",
+     *     checkMX = true
+     * )
+     *
+     * @ORM\Column(name="email", type="string", length=255, unique=true, nullable=true)
+     */
+    private $email;
 
     /**
      * @var ArrayCollection|Platform[]
@@ -108,6 +147,30 @@ class User implements UserInterface
     {
         $this->password = $password;
         return $this;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return User
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
 

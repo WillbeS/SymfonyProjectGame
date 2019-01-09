@@ -1,5 +1,50 @@
-.recruit td {
-    width: 100px;
+div.jumbotron {
+    background-image: url("../images/design/zombies2.jpg");
+}
+
+div.login-bg {
+    background:rgba(0,0,0,0.7);
+}
+
+#login {
+    color: #FFFFFF;
+}
+
+h1.guest {
+    font-size: 2.2em;
+}
+
+.wrapper {
+    padding: 10px 20px;
+    padding-right: 0;
+}
+
+.main {
+    border-right: 1px dotted gray;
+    padding: 10px 30px;
+}
+
+.sidebar {
+    padding: 20px 30px;
+    margin-left: 30px;
+    margin-top: 30px;
+}
+
+.sidebar h2 {
+    font-size: 1.5em;
+}
+
+#buildings-map {
+    background-color: #cecece;
+    padding: 10px 30px;
+}
+
+table {
+    background-color: #FFFFFF;
+}
+
+th {
+    background-color: #CCCCCC;
 }
 
 /*
@@ -39,3 +84,19 @@
     background-color: blue;
 }
 
+/*
+--------------------------- Common ----------------------------
+ */
+
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}
+
+.light-grey-bg {
+    background-color: #e6e6e6;
+}
+
+.green-bg {
+    background-color: #136322;
+    border: none;
+}

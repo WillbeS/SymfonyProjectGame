@@ -4,8 +4,8 @@ namespace AppBundle\Service\Unit;
 
 
 use AppBundle\Entity\Platform;
+use AppBundle\Entity\Unit;
 use AppBundle\Entity\UnitType;
-use AppBundle\Service\Building\BuildingServiceInterface;
 
 interface UnitTypeServiceInterface
 {

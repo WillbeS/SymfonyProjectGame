@@ -100,6 +100,13 @@ class UnitType
      */
     private $requirements;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text")
+     */
+    private $description;
+
 
     public function __construct()
     {
@@ -369,6 +376,35 @@ class UnitType
     public function setRequirements($requirements)
     {
         $this->requirements = $requirements;
+
+        return $this;
+    }
+
+    public function getSlug()
+    {
+        return preg_replace(
+            '/\s+/',
+            '-',
+            strtolower(trim($this->getName()))
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return UnitType
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
 
         return $this;
     }
