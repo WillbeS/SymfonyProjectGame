@@ -54,6 +54,7 @@ th {
 #map {
     border: 1px solid black;
     background-color: green;
+    background-image: url("../images/design/grass-tile.jpg");
 }
 
 #map td {
@@ -62,26 +63,38 @@ th {
 }
 
 #map td.local {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     padding: 5px;
     border: 1px dotted darkslategray;
 }
 
 .rocks {
-    background-color: #6E6E6E;
+    background-color: #7e735d;
+    background-image: url("../images/design/rock-tile.png");
 }
 
 .water {
-    background-color: #218BC3;
+    background-color: #1481a0;
+    background-image: url("../images/design/water-tile.png");
 }
 
 .forest {
-    background-color: #A46A1F;
+    background-color: #4a5d3f;
+    background-image: url("../images/design/forest-tile.png");
 }
 
 .platform {
-    background-color: blue;
+    background-color: #bbb197;
+    background-image: url("../images/design/platform-tile.png");
+}
+
+.platform-map a {
+    display: block;
+    width: 60px;
+    height: 60px;
+    margin: 0;
+    padding: 0;
 }
 
 /*

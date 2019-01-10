@@ -5,6 +5,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use AppBundle\Service\App\AppServiceInterface;
+use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
@@ -15,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserController extends Controller
+class UserController extends MainController
 {
     /**
      * @var UserServiceInterface
@@ -26,8 +28,12 @@ class UserController extends Controller
      * UserController constructor.
      * @param UserServiceInterface $userService
      */
-    public function __construct(UserServiceInterface $userService)
+    public function __construct(UserServiceInterface $userService,
+                                AppServiceInterface $appService,
+                                GameStateServiceInterface $gameStateService,
+                                PlatformServiceInterface $platformService)
     {
+        parent::__construct($appService, $gameStateService, $platformService); //TODO clean up when safe
         $this->userService = $userService;
     }
 
@@ -73,5 +79,38 @@ class UserController extends Controller
         return $this->render('user/register.html.twig', array(
             'form' => $form->createView(),
         ));
+    }
+
+    /**
+     * @Route("/settlement/{platformId}/player/all", name="players_all")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function showAllAction(int $platformId)
+    {
+        $platform = $this->getPlatform($platformId);
+        $players = $this->userService->getAll();
+
+        return $this->render('user/all.html.twig', [
+            'currentPage' => 'player',
+            'players' => $players,
+            'platform' => $platform,
+            'appService' => $this->appService
+        ]);
+    }
+
+    /**
+     * @Route("/settlement/{platformId}/player/profile/{userId}", name="view_public_profile")
+     *
+     */
+    public function viewPublicProfile(int $platformId, int $userId)
+    {
+        $platform = $this->getPlatform($platformId);
+        $user = $this->userService->getById($userId);
+        return $this->render('user/profile.html.twig', [
+            'player' => $user,
+            'platform' => $platform,
+            'appService' => $this->appService,
+        ]);
     }
 }

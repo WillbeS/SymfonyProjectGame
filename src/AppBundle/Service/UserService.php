@@ -83,8 +83,13 @@ class UserService implements UserServiceInterface
     /**
      * @return User[]
      */
-    public function viewAll(): array
+    public function getAll(): array
     {
         return $this->userRepository->findAll();
+    }
+
+    public function getById(int $id): User
+    {
+        return $this->userRepository->find($id);
     }
 }

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>All Players</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Settlement</th>
+            <th>Email</th>
+            <th>Profile</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for player in players %}
+            <tr>
+                <td>{{ player.username }}</td>
+                <td>{{ player.currentPlatform.name }}</td>
+                <td>{{ player.email }}</td>
+                <td><a href="{{ path('view_public_profile', {'platformId': platform.id, 'userId': player.id}) }}">Got to profile</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

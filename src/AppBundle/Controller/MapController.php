@@ -39,6 +39,9 @@ class MapController extends MainController
     public function showLocalAction(int $id, MapServiceInterface $mapService)
     {
         $platform = $this->getPlatform($id);
+        /**
+         * @var GridCell[] $map
+         */
         $map = $mapService->findAllByDistrict(1);
 
         return $this->render('map/show-local.html.twig', [

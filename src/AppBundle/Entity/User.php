@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    const DEFAULT_AVATAR = 'avatar.png';
+
     /**
      * @var int
      *
@@ -84,6 +86,13 @@ class User implements UserInterface
      * @ORM\Column(name="email", type="string", length=255, unique=true, nullable=true)
      */
     private $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="image", type="string", length=255, nullable=true)
+     */
+    private $avatar;
 
     /**
      * @var ArrayCollection|Platform[]
@@ -170,7 +179,29 @@ class User implements UserInterface
      */
     public function getEmail()
     {
-        return $this->email;
+        $email = null !== $this->email ? $this->email : 'N/A';
+
+        return $email;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAvatar(): string
+    {
+        return null !== $this->avatar ? $this->avatar : self::DEFAULT_AVATAR;
+    }
+
+    /**
+     * @param string $avatar
+     *
+     * @return User
+     */
+    public function setAvatar(string $avatar)
+    {
+        $this->avatar = $avatar;
+
+        return $this;
     }
 
 
@@ -190,9 +221,9 @@ class User implements UserInterface
      */
     public function getRoles()
     {
-        return array_map(function (Role $role) {
-            return $role->getName();
-        }, $this->roles->toArray());
+        return $this->roles.map(function (Role $role) {
+                return $role->getName();
+            });
     }
 
     public function addRole(Role $role)

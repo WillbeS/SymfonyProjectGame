@@ -23,5 +23,7 @@ interface UserServiceInterface
     /**
      * @return User[]
      */
-    public function viewAll(): array;
+    public function getAll(): array;
+
+    public function getById(int $id): User;
 }
