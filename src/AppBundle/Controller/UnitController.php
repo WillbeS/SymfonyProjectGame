@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Platform;
+use AppBundle\Entity\Unit;
 use AppBundle\Form\UnitType as UnitForm;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\App\GameStateServiceInterface;
@@ -10,9 +12,9 @@ use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
 use AppBundle\Service\Unit\UnitTypeServiceInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UnitController extends MainController
@@ -47,13 +49,15 @@ class UnitController extends MainController
 
 
     /**
-     * @Route("/settlement/{platformId}/units/all", name="manage_units")
+     * @Route("/settlement/{id}/units/all", name="manage_units", requirements={"id" = "\d+"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAllAction($platformId)
+    public function showAllAction(Platform $platform)
     {
-        $platform = $this->getPlatform($platformId);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->updateState($platform);
+
         $units = $this->unitService->getAllByPlatform($platform);
 
         return $this->render('unit/all.html.twig', [
@@ -65,16 +69,18 @@ class UnitController extends MainController
     }
 
     /**
-     * @Route("/settlement/{platformId}/unit/type/{unitTypeId}", name="view_unit_type", requirements={"platformId" = "\d+"})
+     * @Route("/settlement/{id}/unit/type/{unit_type_id}", name="view_unit_type",
+     *     requirements={"id" = "\d+"})
+     *
+     * @ParamConverter("unitType", class="AppBundle\Entity\UnitType", options={"id" = "unit_type_id"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showTypeAction(int $platformId,
-                                   int $unitTypeId,
-                                   UnitTypeServiceInterface $unitTypeService)
+    public function showTypeAction(Platform $platform,
+                                   \AppBundle\Entity\UnitType $unitType)
     {
-        $platform = $this->getPlatform($platformId);
-        $unitType = $unitTypeService->findById($unitTypeId);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->updateState($platform);
 
         return $this->render('unit/show.html.twig', [
             'platform' => $platform,
@@ -85,17 +91,20 @@ class UnitController extends MainController
     }
 
     /**
-     * @Route("/settlement/{platformId}/recruit/{unitId}", name="recruit",
-     *     requirements={"platformId" = "\d+"})
+     * @Route("/settlement/{id}/recruit/{unit_id}", name="recruit",
+     *     requirements={"id" = "\d+"})
+     *
+     * @ParamConverter("unit", class="AppBundle\Entity\Unit", options={"id" = "unit_id"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function recruit(int $platformId, int $unitId, Request $request)
+    public function recruit(Platform $platform, Unit $unit, Request $request)
     {
-        $platform = $this->getPlatform($platformId);
-        $unit = $this->unitService->getById($unitId);
-        $form = $this->createForm(UnitForm::class, $unit);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->denyAccessUnlessGranted('edit', $unit); //TODO - check if this works for post method
+        $this->updateState($platform);
 
+        $form = $this->createForm(UnitForm::class, $unit);
         $form->handleRequest($request);
 
         if($form->isSubmitted()) {
@@ -105,7 +114,10 @@ class UnitController extends MainController
                 echo $exception->getMessage(); //todo flush messaging for both cases
             }
 
-            return $this->redirectToRoute('recruit', ['platformId' => $platformId, 'unitId' => $unitId]);
+            return $this->redirectToRoute('recruit', [
+                'id' => $platform->getId(),
+                'unit_id' => $unit->getId()
+            ]);
         }
 
         return $this->render('unit/recruit.html.twig', [

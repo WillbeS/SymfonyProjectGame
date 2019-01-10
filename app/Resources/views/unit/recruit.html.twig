@@ -37,10 +37,18 @@
                 {% if unit.haveInTraining %}
                 <td>{{ unit.remainingTimeFormated(appService) }}</td>
                 {% endif %}
-                <td>{% include 'unit/recruit-form.html.twig' %}</td>
+                <td>
+                    {#<form method="post">#}
+
+                        {#<input type="number" name="unit[forTraining]" />#}
+                        {#<input type="submit" value="recruit" />#}
+                        {#{{ form_row(form._token) }}#}
+                    {#</form>#}
+                    {% include 'unit/recruit-form.html.twig' %}
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('manage_units', {'platformId': platform.id}) }}">Back to all units</a>
+    <a href="{{ path('manage_units', {'id': platform.id}) }}">Back to all units</a>
 {% endblock %}

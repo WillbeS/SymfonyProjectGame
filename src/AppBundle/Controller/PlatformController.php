@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\Building\Building;
+use AppBundle\Entity\Platform;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
@@ -13,7 +14,9 @@ class PlatformController extends MainController
 {
     /**
      * @Route("/", name="homepage")
-     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @param UserServiceInterface $userService
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function homeAction(UserServiceInterface $userService)
     {
@@ -23,11 +26,15 @@ class PlatformController extends MainController
 
     /**
      * @Route("/settlement/{id}", name="platform_show")
+     *
+     * @param Platform $platform
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAction(int $id)
+    public function showAction(Platform $platform)
     {
-        $platform = $this->getPlatform($id);
+        $this->updateState($platform);
+        $this->denyAccessUnlessGranted('view', $platform);
+
         /** @var Building[] $buildings */
         $buildings = $platform->getBuildings();
 

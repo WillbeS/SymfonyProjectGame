@@ -33,7 +33,7 @@ interface BuildingServiceInterface
 
 
     ////////////////// For Level upgrade/////////////////////////////////////////////
-    public function startUpgrade(int $id,
+    public function startUpgrade(Building $building,
                                  PlatformServiceInterface $platformService,
                                  AppServiceInterface $appService); //flushes
 

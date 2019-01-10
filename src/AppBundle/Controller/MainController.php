@@ -48,11 +48,10 @@ class MainController extends Controller
         $this->gameStateService = $gameStateService;
     }
 
+    // TODO - Remove when safe
     protected function getPlatform(int $id)
     {
         $platform = $this->platformService->getById($id);
-        $this->getAuthorization($platform);
-
         $this->gameStateService->updateBuildingsState($platform);
         $this->gameStateService->updatePlatformResourcesState($platform, $this->platformService);
         $this->gameStateService->updateUnitsInTrainingState($platform);
@@ -60,12 +59,11 @@ class MainController extends Controller
         return $platform;
     }
 
-    protected function getAuthorization(Platform $platform)
+    // TODO - Move this into a service
+    protected function updateState(Platform $platform)
     {
-        //TODO more
-        if ($platform->getUser()->getId() !== $this->getUser()->getId())
-        {
-            return $this->redirectToRoute('homepage');
-        }
+        $this->gameStateService->updateBuildingsState($platform);
+        $this->gameStateService->updatePlatformResourcesState($platform, $this->platformService);
+        $this->gameStateService->updateUnitsInTrainingState($platform);
     }
 }

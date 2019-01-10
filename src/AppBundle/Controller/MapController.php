@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\GridCell;
+use AppBundle\Entity\Platform;
 use AppBundle\Service\Map\MapServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,10 +16,12 @@ class MapController extends MainController
      * @Route("/settlement/{id}/map/", name="map_all", requirements={"id" = "\d+"})
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAllAction(int $id, MapServiceInterface $mapService)
+    public function showAllAction(Platform $platform, MapServiceInterface $mapService)
     {
         //TODO - Refactor or delete
-        $platform = $this->getPlatform($id);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->updateState($platform);
+
         $map = $this->getDoctrine()
             ->getRepository(GridCell::class)
             ->findBy([], ['row' => 'ASC', 'col' => 'ASC']);
@@ -36,9 +39,11 @@ class MapController extends MainController
      * @Route("/settlement/{id}/map/local", name="map_local", requirements={"id" = "\d+"})
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showLocalAction(int $id, MapServiceInterface $mapService)
+    public function showLocalAction(Platform $platform, MapServiceInterface $mapService)
     {
-        $platform = $this->getPlatform($id);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->updateState($platform);
+
         /**
          * @var GridCell[] $map
          */

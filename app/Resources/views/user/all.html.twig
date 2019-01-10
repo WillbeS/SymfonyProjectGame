@@ -29,7 +29,7 @@
                 <td>{{ player.username }}</td>
                 <td>{{ player.currentPlatform.name }}</td>
                 <td>{{ player.email }}</td>
-                <td><a href="{{ path('view_public_profile', {'platformId': platform.id, 'userId': player.id}) }}">Got to profile</a></td>
+                <td><a href="{{ path('view_public_profile', {'id': platform.id, 'user_id': player.id}) }}">Got to profile</a></td>
             </tr>
         {% endfor %}
         </tbody>

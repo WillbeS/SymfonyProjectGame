@@ -319,5 +319,10 @@ class Platform
     {
         return $this->units;
     }
+
+    public function isPrivate()
+    {
+        return true;
+    }
 }
 

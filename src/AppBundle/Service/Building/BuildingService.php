@@ -117,12 +117,12 @@ class BuildingService implements BuildingServiceInterface
 
 
 
-    public function startUpgrade(int $id,
+    public function startUpgrade(Building $building,
                                  PlatformServiceInterface $platformService,
                                  AppServiceInterface $appService)
     {
         //TODO - add maxLevel
-        $building = $this->findById($id);
+        //$building = $this->findById($id);
 
         if ($building->isPending()) {
             throw new Exception('Already is building.');

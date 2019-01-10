@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Platform;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
 use AppBundle\Service\App\AppServiceInterface;
@@ -10,9 +11,8 @@ use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
-use AppBundle\Service\Unit\UnitTypeServiceInterface;
 use AppBundle\Service\UserServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -82,13 +82,15 @@ class UserController extends MainController
     }
 
     /**
-     * @Route("/settlement/{platformId}/player/all", name="players_all")
+     * @Route("/settlement/{id}/player/all", name="players_all")
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAllAction(int $platformId)
+    public function showAllAction(Platform $platform)
     {
-        $platform = $this->getPlatform($platformId);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->updateState($platform);
+
         $players = $this->userService->getAll();
 
         return $this->render('user/all.html.twig', [
@@ -100,13 +102,15 @@ class UserController extends MainController
     }
 
     /**
-     * @Route("/settlement/{platformId}/player/profile/{userId}", name="view_public_profile")
+     * @Route("/settlement/{id}/player/profile/{user_id}", name="view_public_profile")
      *
+     * @ParamConverter("user", class="AppBundle\Entity\User", options={"id" = "user_id"})
      */
-    public function viewPublicProfile(int $platformId, int $userId)
+    public function viewPublicProfile(Platform $platform, User $user)
     {
-        $platform = $this->getPlatform($platformId);
-        $user = $this->userService->getById($userId);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->updateState($platform);
+
         return $this->render('user/profile.html.twig', [
             'player' => $user,
             'platform' => $platform,

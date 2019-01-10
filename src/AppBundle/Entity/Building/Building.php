@@ -225,5 +225,15 @@ class Building
             strtolower(trim($this->getName()))
         );
     }
+
+    public function isPrivate()
+    {
+        return true;
+    }
+
+    public function getOwner()
+    {
+        return $this->platform->getUser();
+    }
 }
 

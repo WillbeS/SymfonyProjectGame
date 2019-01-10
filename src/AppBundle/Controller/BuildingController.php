@@ -3,14 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Building\Building;
-use AppBundle\Entity\ViewData\BuildingData;
+use AppBundle\Entity\Platform;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
-use AppBundle\Service\Resource\ResourceServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BuildingController extends MainController
@@ -31,21 +30,21 @@ class BuildingController extends MainController
 
 
     /**
-     * @Route("/settlement/{platformId}/building/view/{buildingId}",
-     *     name="show_building",
+     * @Route("/settlement/{id}/building/view/{building_id}", name="show_building",
      *     requirements={"platformId" = "\d+"}
      *     )
+     *
+     * @ParamConverter("building", class="AppBundle\Entity\Building\Building", options={"id" = "building_id"})
      *
      * @param PlatformServiceInterface $platformService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function showAction(int $platformId,
-                               int $buildingId)
+    public function showAction(Platform $platform,
+                               Building $building)
     {
-
-        /** @var Building $building */
-        $building = $this->buildingService->findById($buildingId);
-        $platform = $this->getPlatform($platformId);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->denyAccessUnlessGranted('view', $building);
+        $this->updateState($platform);
 
         return $this->render('building/show.html.twig', [
             'platform' => $platform,
@@ -58,9 +57,11 @@ class BuildingController extends MainController
     /**
      * @Route("settlement/{id}/buildings/manage/", name="manage_buildings", requirements={"id" = "\d+"})
      */
-    public function manageAllAction($id, TimerServiceInterface $timerService)
+    public function manageAllAction(Platform $platform, TimerServiceInterface $timerService)
     {
-        $platform = $this->getPlatform($id);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->updateState($platform);
+
         /**
          * @var Building[] $buildings
          */
@@ -75,14 +76,20 @@ class BuildingController extends MainController
     }
 
     /**
-     * @Route("/settlement/{platformId}/building/upgrade/{buildingId}",
+     * @Route("/settlement/{id}/building/upgrade/{building_id}",
      *     name="start_upgrade",
      *     requirements={"platformId" = "\d+"}
      *     )
+     *
+     *  @ParamConverter("building", class="AppBundle\Entity\Building\Building", options={"id" = "building_id"})
      */
-    public function startUpgradeAction($platformId, $buildingId)
+    public function startUpgradeAction(Platform $platform, Building $building)
     {
-        $this->buildingService->startUpgrade($buildingId, $this->platformService, $this->appService);
-        return $this->redirectToRoute('manage_buildings', ['id' => $platformId]);
+        $this->denyAccessUnlessGranted('view', $platform);
+        $this->denyAccessUnlessGranted('view', $building);
+        $this->updateState($platform);
+
+        $this->buildingService->startUpgrade($building, $this->platformService, $this->appService);
+        return $this->redirectToRoute('manage_buildings', ['id' => $platform->getId()]);
     }
 }

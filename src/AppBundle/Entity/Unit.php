@@ -329,5 +329,15 @@ class Unit
     {
         return null !== $this->startBuild;
     }
+
+    public function isPrivate()
+    {
+        return true;
+    }
+
+    public function getOwner()
+    {
+        return $this->platform->getUser();
+    }
 }
 
