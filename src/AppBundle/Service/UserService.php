@@ -10,7 +10,7 @@ use AppBundle\Repository\UserRepository;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
-use AppBundle\Service\Unit\UnitTypeServiceInterface;
+use AppBundle\Service\Utils\EmDebuggerInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -33,16 +33,23 @@ class UserService implements UserServiceInterface
     private $roleRepository;
 
     /**
+     * @var EmDebuggerInterface
+     */
+    private $emDebugger;
+
+    /**
      * UserService constructor.
      * @param EntityManager $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager,
                                 UserRepository $userRepository,
-                                RoleRepository $roleRepository)
+                                RoleRepository $roleRepository,
+                                EmDebuggerInterface $emDebugger)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
+        $this->emDebugger = $emDebugger;
     }
 
 
@@ -56,8 +63,7 @@ class UserService implements UserServiceInterface
 
         /** @var Role $userRole */
         $userRole = $this->roleRepository->findOneBy(['name' => 'ROLE_USER']);
-
-        $platform = $platformService->getNewPlatform($buildingService, $user);
+        $platform = $platformService->getNewPlatform($buildingService, $unitService, $user);
 
         $user->setPassword($hashedPassword)
             ->addRole($userRole)
@@ -65,8 +71,11 @@ class UserService implements UserServiceInterface
 
         $this->entityManager->persist($user);
         $this->entityManager->persist($platform);
-        $this->entityManager->flush();
+//
+//       dump($this->emDebugger->getAllPersisted($this->entityManager));
+//        exit;
 
+        $this->entityManager->flush();
         return $user;
     }
 

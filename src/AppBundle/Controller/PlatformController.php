@@ -9,6 +9,7 @@ use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlatformController extends MainController
 {
@@ -30,8 +31,10 @@ class PlatformController extends MainController
      * @param Platform $platform
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAction(Platform $platform)
+    public function showAction(int $id)
     {
+        $platform = $this->platformService->getByIdJoined($id);
+
         $this->updateState($platform);
         $this->denyAccessUnlessGranted('view', $platform);
 

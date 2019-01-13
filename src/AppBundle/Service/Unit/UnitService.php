@@ -67,30 +67,27 @@ class UnitService implements UnitServiceInterface
         return $this->unitRepository->findInTraining($platform);
     }
 
-    public function createAllTypes(Platform $platform,
-                                       BuildingServiceInterface $buildingService)
+    public function createAllPlatformUnits(Platform $platform,
+                                   BuildingServiceInterface $buildingService)
     {
         $types = $this->unitTypeService->findAll();
 
         foreach ($types as $type) {
             $unit = $this->generateUnit($type, $platform, $buildingService);
+            $platform->addUnit($unit);
             $this->em->persist($unit);
         }
-
-        $this->em->flush();
     }
 
     public function generateUnit(UnitType $unitType,
-                               Platform $platform,
-                               BuildingServiceInterface $buildingService): Unit
+                                 Platform $platform,
+                                 BuildingServiceInterface $buildingService): Unit
     {
-        $building = $buildingService->getByGameBuilding($unitType->getGameBuilding(), $platform);
-
+        $building = $buildingService->getFromPlatformBuildingsByType($platform->getBuildings(), $unitType->getGameBuilding());
         $unit = new Unit();
 
         $unit
             ->setUnitType($unitType)
-            ->setPlatform($platform)
             ->setBuilding($building)
             ->addForTraining(0)
             ->setIddle(0)
@@ -140,20 +137,16 @@ class UnitService implements UnitServiceInterface
 
 
     public function startRecruiting(Unit $unit,
-                                    Platform $platform,
                                     PlatformServiceInterface $platformService)
     {
         $count = $unit->getForTraining();
 
-        if(null == $count || $count < 0) {
+        if(null === $count || $count < 0) {
             return;
         }
 
-        $woodCost = $unit->getUnitType()->getWoodCost() * $count;
-        $foodCost = $unit->getUnitType()->getFoodCost() * $count;
-        $suppliesCost = $unit->getUnitType()->getSuppliesCost() * $count;
+        $platformService->payPrice($unit->getPlatform(), $unit->getPrice($count));
 
-        $platformService->payResources($platform, $woodCost, $foodCost, $suppliesCost);
         $unit->addForTraining($count)
             ->setStartBuild(new \DateTime('now'));
 

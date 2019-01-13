@@ -69,9 +69,9 @@ class UserController extends MainController
             $user = $this->userService
                 ->register($user, $platformService, $encoder, $buildingService, $unitService);
 
-            if($user) {
-                $unitService->createAllTypes($user->getCurrentPlatform(), $buildingService);
-            }
+//            if($user) {
+//                $unitService->createAllTypes($user->getCurrentPlatform(), $buildingService);
+//            }
 
             return $this->redirectToRoute('login');
         }

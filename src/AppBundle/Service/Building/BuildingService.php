@@ -6,20 +6,17 @@ namespace AppBundle\Service\Building;
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Building\GameBuilding;
 use AppBundle\Entity\Platform;
-use AppBundle\Entity\ViewData\BuildingData;
 use AppBundle\Repository\BuildingRepository;
 use AppBundle\Repository\GameBuildingRepository;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
-use AppBundle\Service\Resource\ResourceServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BuildingService implements BuildingServiceInterface
 {
     const COST_FACTOR = 1.15;
-    //const BUILD_TIME_FACTOR = 1.33;
 
     /**
      * @var EntityManagerInterface
@@ -40,11 +37,6 @@ class BuildingService implements BuildingServiceInterface
      * @var TimerServiceInterface
      */
     private $timerService;
-
-    /**
-     * @var Building
-     */
-    private $building;
 
 
     public function __construct(GameBuildingRepository $gameBuildingRepo,
@@ -67,6 +59,17 @@ class BuildingService implements BuildingServiceInterface
         return $building;
     }
 
+    public function getByIdJoined($id):Building
+    {
+        $building = $this->buildingRepo->findByIdJoined($id);
+
+        if(null == $building) {
+            throw new NotFoundHttpException('Page Not Found');
+        }
+
+        return $building;
+    }
+
     /**
      * @param Platform|null $platform
      * @return Building[]
@@ -75,31 +78,6 @@ class BuildingService implements BuildingServiceInterface
     {
         $pending = $this->buildingRepo->findPending($platform);
         return $pending;
-    }
-
-    /**
-     * @return GameBuilding[]
-     */
-    public function getGameBuildings(): array
-    {
-        return $this->gameBuildingRepo->findAll();
-    }
-
-
-    /**
-     * @param GameBuilding $gameBuilding
-     * @param Platform $platform
-     * @return Building
-     */
-    public function getNewBuilding(GameBuilding $gameBuilding, Platform $platform): Building
-    {
-        $building = new Building();
-        $building
-            ->setLevel(0)
-            ->setPlatform($platform)
-            ->setGameBuilding($gameBuilding);
-
-        return $building;
     }
 
     public function getByGameBuilding(GameBuilding $gameBuilding, Platform $platform): Building
@@ -116,25 +94,17 @@ class BuildingService implements BuildingServiceInterface
     }
 
 
-
     public function startUpgrade(Building $building,
                                  PlatformServiceInterface $platformService,
                                  AppServiceInterface $appService)
     {
         //TODO - add maxLevel
-        //$building = $this->findById($id);
-
         if ($building->isPending()) {
-            throw new Exception('Already is building.');
+            return;
         }
 
-        $platformService->payResources($building->getPlatform(),
-                                        $building->getWoodCost($appService),
-                                        $building->getFoodCost($appService),
-                                        $building->getSuppliesCost($appService));
-
-        $building
-            ->setStartBuild(new \DateTime('now'));
+        $platformService->payPrice($building->getPlatform(), $building->getPrice($appService));
+        $building->setStartBuild(new \DateTime('now'));
         $this->em->flush();
     }
 
@@ -144,8 +114,34 @@ class BuildingService implements BuildingServiceInterface
             ->setStartBuild(null)
             ->setLevel($building->getLevel() + 1);
 
-        $this->em->persist($building);
         $this->em->flush();
     }
 
+    /////////////////////////// For Registration ///////////////////////////////
+    public function createAllPlatformBuildings(Platform $platform)
+    {
+        $gameBuildings = $this->gameBuildingRepo->findAll();
+
+        foreach ($gameBuildings as $gameBuilding) {
+            $building = new Building();
+            $building
+                ->setLevel(0)
+                ->setGameBuilding($gameBuilding);
+
+            $platform->addBuilding($building);
+            $this->em->persist($building);
+        }
+    }
+
+    public function getFromPlatformBuildingsByType($buildings, GameBuilding $buildingType)
+    {
+        foreach ($buildings as $building) {
+            /** @var $building Building */
+            if ($building->getGameBuilding()->getId() == $buildingType->getId()) {
+                return $building;
+            }
+        }
+
+        return null; //todo throw something (should always find one)
+    }
 }

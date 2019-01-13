@@ -10,13 +10,15 @@ use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Map\MapServiceInterface;
 use AppBundle\Service\Resource\ResourceServiceInterface;
+use AppBundle\Service\Unit\UnitServiceInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlatformService implements PlatformServiceInterface
 {
     const INCOME_FACTOR = .34;
-    const UDATE_INTERVAL = 60; //seconds
+    //const UDATE_INTERVAL = 60; //seconds
 
     /**
      * @var EntityManagerInterface
@@ -38,11 +40,6 @@ class PlatformService implements PlatformServiceInterface
      */
     private $resourceService;
 
-    /**
-     * @var boolean
-     */
-    private $platformChanged;
-
 
 
 
@@ -55,8 +52,6 @@ class PlatformService implements PlatformServiceInterface
         $this->platformRepossitory = $platformRepository;
         $this->mapService = $mapService;
         $this->resourceService = $resourceService;
-
-        $this->income = [];
     }
 
     public function getById(int $id): Platform
@@ -69,69 +64,45 @@ class PlatformService implements PlatformServiceInterface
         return $platform;
     }
 
-//    public function findOneByUser(User $user): ?Platform
-//    {
-//        return $this->platformRepossitory
-//            ->findBy(['user' => $user], ['id' => 'ASC'], 1)[0];
-//    }
+    public function getByIdJoined(int $id): Platform
+    {
+        $result = $this->platformRepossitory->findOneWithBuildings($id);
+
+        if(null == $result) {
+            throw new NotFoundHttpException('Page Not Found');
+        }
+
+        return $result;
+    }
 
     public function getNewPlatform(BuildingServiceInterface $buildingService,
+                                   UnitServiceInterface $unitService,
                                    User $user = null): ?Platform
     {
         $platform = new Platform();
-        $this->addBuildings($platform, $buildingService);
-
-        $platform
-            ->setName('Old ruins')
-            ->setGridCell($this->mapService->findAvailableGridCell());
+        $buildingService->createAllPlatformBuildings($platform);
+        $this->resourceService->createAllPlatformResources($platform, $buildingService);
+        $unitService->createAllPlatformUnits($platform, $buildingService);
 
         if (null !== $user) {
             $platform->setUser($user)
                 ->setName('Settlement of ' . $user->getUsername());
         }
 
-        $food = $this->resourceService->getResource('Food', $platform);
-        $wood = $this->resourceService->getResource('Wood', $platform);
-        $supplies = $this->resourceService->getResource('Supplies', $platform);
-
         $platform
-            ->setFood($food)
-            ->setWood($wood)
-            ->setSupplies($supplies)
+            ->setName('Old ruins')
+            ->setGridCell($this->mapService->findAvailableGridCell())
             ->setResourceUpdateTime(new \DateTime('now'));
 
         return $platform;
     }
 
-    private function addBuildings(Platform $platform, BuildingServiceInterface $buildingService)
+    public function payPrice(Platform $platform, array $price)
     {
-        $gameBuildings = $buildingService->getGameBuildings();
-
-        foreach ($gameBuildings as $gameBuilding) {
-            $building = $buildingService->getNewBuilding($gameBuilding, $platform);
-
-            $platform->addBuilding($building);
+        foreach ($price as $resourceName => $value) {
+            $resource = $this->findResourceByTypeName($resourceName, $platform->getResources());
+            $this->resourceService->updateTotal($resource, $value * -1);
         }
-    }
-
-    public function payResources(Platform $platform,
-                                         $woodCost,
-                                         $foodCost,
-                                         $suppliesCost)
-    {
-        if($platform->getTotalWood() < $woodCost ||
-           $platform->getTotalFood() < $foodCost ||
-           $platform->getTotalSupplies() < $suppliesCost
-        ) {
-            throw new Exception('Insufficient resources');
-        }
-
-        $this->resourceService
-            ->updateTotal($platform->getWood(), $woodCost * -1);
-        $this->resourceService
-            ->updateTotal($platform->getFood(), $foodCost * -1);
-        $this->resourceService
-            ->updateTotal($platform->getSupplies(), $suppliesCost * -1);
 
         $platform->setResourceUpdateTime(new \DateTime('now'));
     }
@@ -140,14 +111,23 @@ class PlatformService implements PlatformServiceInterface
                                          Platform $platform,
                                          AppServiceInterface $appService)
     {
-        $this->updateResource($elapsed, $platform->getWood(), $appService);
-        $this->updateResource($elapsed, $platform->getFood(), $appService);
-        $this->updateResource($elapsed, $platform->getSupplies(), $appService);
+        foreach ($platform->getResources() as $resource) {
+            $this->updateResource($elapsed, $resource, $appService);
+        }
 
         $platform->setResourceUpdateTime(new \DateTime('now'));
 
-        $this->entityManager->persist($platform);
         $this->entityManager->flush();
+    }
+
+
+    private function findResourceByTypeName(string $name, Collection $resources): GameResource
+    {
+        return $resources
+            ->filter(function (GameResource $resource) use ($name) {
+                return $resource->getResourceType()->getName() === $name;
+            })
+            ->first();
     }
 
     private function updateResource(int $elapsed,
@@ -166,5 +146,4 @@ class PlatformService implements PlatformServiceInterface
 
         return $amount;
     }
-
 }

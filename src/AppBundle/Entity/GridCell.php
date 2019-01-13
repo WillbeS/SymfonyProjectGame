@@ -3,11 +3,12 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Index;
 
 /**
  * GridCell
  *
- * @ORM\Table(name="grid_cells")
+ * @ORM\Table(name="grid_cells",indexes={@Index(name="search_idx", columns={"row", "col"})})
  * @ORM\Entity(repositoryClass="AppBundle\Repository\GridRepository")
  */
 class GridCell

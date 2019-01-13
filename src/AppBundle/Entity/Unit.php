@@ -339,5 +339,14 @@ class Unit
     {
         return $this->platform->getUser();
     }
+
+    public function getPrice(int $count = 1)
+    {
+        return [
+            'Wood' => $this->getUnitType()->getWoodCost() * $count,
+            'Food' => $this->getUnitType()->getFoodCost() * $count,
+            'Supplies' => $this->getUnitType()->getSuppliesCost() * $count
+        ];
+    }
 }
 

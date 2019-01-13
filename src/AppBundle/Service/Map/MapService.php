@@ -31,7 +31,10 @@ class MapService implements MapServiceInterface
     {
         [$x1, $x2, $y1, $y2] = $this->getRangeByDistrict($district);
 
-        return $this->gridRepository->findByCoords($x1, $x2, $y1, $y2);
+        $result = $this->gridRepository->findByCoords($x1, $x2, $y1, $y2);
+        var_dump(count($result));
+
+        return $result;
     }
 
     public function findAvailableGridCell() : ?GridCell

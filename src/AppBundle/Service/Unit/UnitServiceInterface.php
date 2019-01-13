@@ -28,7 +28,6 @@ interface UnitServiceInterface
     public function getAllByBuilding(Building $building): array;
 
     public function startRecruiting(Unit $unit,
-                                    Platform $platform,
                                     PlatformServiceInterface $platformService); //flushes
 
     public function generateUnit(UnitType $unitType,
@@ -39,7 +38,7 @@ interface UnitServiceInterface
      * @param Platform $platform
      * @return Unit[]
      */
-    public function createAllTypes(Platform $platform,
+    public function createAllPlatformUnits(Platform $platform,
                                    BuildingServiceInterface $buildingService);
 
 

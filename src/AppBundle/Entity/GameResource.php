@@ -50,6 +50,13 @@ class GameResource
      */
     private $updateTime; //todo - delete this when safe
 
+    /**
+     * @var Platform
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Platform", inversedBy="resources")
+     */
+    private $platform;
+
 
     /**
      * Get id
@@ -133,6 +140,26 @@ class GameResource
     public function setUpdateTime(\DateTime $updateTime)
     {
         $this->updateTime = $updateTime;
+
+        return $this;
+    }
+
+    /**
+     * @return Platform
+     */
+    public function getPlatform(): Platform
+    {
+        return $this->platform;
+    }
+
+    /**
+     * @param Platform $platform
+     *
+     * @return GameResource
+     */
+    public function setPlatform(Platform $platform)
+    {
+        $this->platform = $platform;
 
         return $this;
     }

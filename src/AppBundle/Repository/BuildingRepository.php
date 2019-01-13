@@ -25,4 +25,20 @@ class BuildingRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findByIdJoined(int $id)
+    {
+        return $this->createQueryBuilder('b')
+            ->join('b.platform', 'p')
+            ->join('b.gameBuilding', 'gb')
+            ->join('p.units', 'u')
+            ->addSelect('p')
+            ->addSelect('gb')
+            ->addSelect('u')
+            ->where('b.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+    }
 }

@@ -17,7 +17,6 @@ class MainController extends Controller
     //TODO - check autorisation of all views
     //TODO - handle exceptions
     //TODO - mark all methods that flush (must be all public)
-    //TODO - update unit available status after building finishes
 
     /**
      * @var AppServiceInterface
@@ -34,10 +33,6 @@ class MainController extends Controller
      */
     protected $platformService;
 
-    /**
-     * @var TimerServiceInterface
-     */
-    //protected $timerService; //TODO remove it when safe
 
     public function __construct(AppServiceInterface $appService,
                                 GameStateServiceInterface $gameStateService,
@@ -46,17 +41,6 @@ class MainController extends Controller
         $this->appService = $appService;
         $this->platformService = $platformService;
         $this->gameStateService = $gameStateService;
-    }
-
-    // TODO - Remove when safe
-    protected function getPlatform(int $id)
-    {
-        $platform = $this->platformService->getById($id);
-        $this->gameStateService->updateBuildingsState($platform);
-        $this->gameStateService->updatePlatformResourcesState($platform, $this->platformService);
-        $this->gameStateService->updateUnitsInTrainingState($platform);
-
-        return $platform;
     }
 
     // TODO - Move this into a service

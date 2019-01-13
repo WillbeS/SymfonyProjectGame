@@ -2,18 +2,18 @@
 
 namespace AppBundle\Service\Resource;
 
-
 use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\ResourceType;
 use AppBundle\Repository\ResourceRepository;
 use AppBundle\Repository\ResourceTypeRepository;
+use AppBundle\Service\Building\BuildingServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 class ResourceService implements ResourceServiceInterface
 {
-    const DEFAULT_STARTUP = 1000;
+    const DEFAULT_STARTUP = 500;
 
 
     /**
@@ -49,45 +49,38 @@ class ResourceService implements ResourceServiceInterface
         return $resourceType;
     }
 
-    public function getResource(string $name, Platform $platform): GameResource
-    {
-        /** @var ResourceType $resourceType */
-        $resourceType = $this->resourceTypeRepo
-            ->findOneBy(['name' => $name]);
-
-        $building = $this->getBuilding($platform, $resourceType);
-        $resource = new GameResource();
-        $resource->setBuilding($building)
-            ->setResourceType($resourceType);
-
-        $this->updateTotal($resource, self::DEFAULT_STARTUP);
-
-        return $resource;
-    }
-
-    private function getBuilding(Platform $platform, ResourceType $resourceType)
-    {
-        $building = null;
-
-        foreach ($platform->getBuildings() as $platformBuilding) {
-            if ($platformBuilding->getGameBuilding() === $resourceType->getGameBuilding()) {
-                $building = $platformBuilding;
-                break;
-            }
-        }
-
-        return $building;
-    }
-
     public function updateTotal(GameResource $resource, float $amount)
     {
-        $current = $resource->getTotal();
+        $newTotal = $resource->getTotal() + $amount;
 
-        if($current + $amount < 0) {
+        if($newTotal < 0) {
             throw new Exception('Insufficient ' . $resource->getResourceType()->getName());
         }
 
-        $resource->setTotal($resource->getTotal() + $amount)
+        $resource
+            ->setTotal($newTotal)
             ->setUpdateTime(new \DateTime('now'));
+    }
+
+    public function createAllPlatformResources(Platform $platform,
+                                               BuildingServiceInterface $buildingService)
+    {
+        $resourceTypes = $this->resourceTypeRepo->findAll();
+
+        foreach ($resourceTypes as $resourceType) {
+            /** @var  ResourceType $resourceType */
+            $resource = new GameResource();
+
+            $building = $buildingService->getFromPlatformBuildingsByType($platform->getBuildings(),
+                                                                        $resourceType->getGameBuilding());
+            $resource
+                ->setPlatform($platform)
+                ->setResourceType($resourceType)
+                ->setBuilding($building);
+
+            $this->updateTotal($resource, self::DEFAULT_STARTUP);
+            $platform->addResource($resource);
+            $this->em->persist($resource);
+        }
     }
 }

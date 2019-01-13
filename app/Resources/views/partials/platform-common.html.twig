@@ -1,17 +1,13 @@
 <h2>Resources</h2>
-<p>
-    <b>Food:</b> {{ platform.totalFood }} <br />
-    <b>Wood:</b> {{ platform.totalWood }} <br />
-    <b>Supplies:</b> {{ platform.totalSupplies }} <br />
-</p>
+{% for resource in platform.resources %}
+    <b>{{ resource.resourceType.name }}:</b> {{ resource.total|round(0, 'floor') }} <br />
+{% endfor %}
 <hr />
 
 <h2>Income per hour</h2>
-<p>
-    <b>Food:</b> {{ platform.foodIncome(appService) }}<br />
-    <b>Wood:</b> {{ platform.woodIncome(appService) }}<br />
-    <b>Supplies:</b> {{ platform.suppliesIncome(appService) }}<br />
-</p>
+{% for key, value in platform.income(appService) %}
+    <b>{{ key }}:</b> {{ value }}<br />
+{% endfor %}
 <hr />
 
 <h2>Units</h2>

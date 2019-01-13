@@ -10,6 +10,7 @@ use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BuildingController extends MainController
@@ -28,9 +29,33 @@ class BuildingController extends MainController
         $this->buildingService = $buildingService;
     }
 
-
     /**
      * @Route("/settlement/{id}/building/view/{building_id}", name="show_building",
+     *     requirements={"platformId" = "\d+"}
+     *     )
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function showInfoAction(int $id, int $building_id)
+    {
+        $building = $this->buildingService->getByIdJoined($building_id);
+        $platform = $building->getPlatform();
+
+        $this->denyAccessUnlessGranted('view', $building);
+        $this->updateState($platform);
+
+        return $this->render('building/show.html.twig', [
+            'platform' => $platform,
+            'building' => $building,
+            'appService' => $this->appService,
+            'currentPage' => 'building'
+        ]);
+    }
+
+
+
+    /**
+     * @Route("/settlement/{id}/building/view/{building_id}", name="show_building_old",
      *     requirements={"platformId" = "\d+"}
      *     )
      *
@@ -89,7 +114,12 @@ class BuildingController extends MainController
         $this->denyAccessUnlessGranted('view', $building);
         $this->updateState($platform);
 
-        $this->buildingService->startUpgrade($building, $this->platformService, $this->appService);
+        try {
+            $this->buildingService->startUpgrade($building, $this->platformService, $this->appService);
+        } catch (Exception $e) {
+            var_dump($e->getMessage()); // TODO flush messaging
+        }
+
         return $this->redirectToRoute('manage_buildings', ['id' => $platform->getId()]);
     }
 }

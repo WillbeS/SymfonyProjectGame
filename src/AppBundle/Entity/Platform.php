@@ -36,21 +36,21 @@ class Platform
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
      */
-    private $food;
+    private $food; //TODO - delete when safe
 
     /**
      * @var GameResource
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
      */
-    private $wood;
+    private $wood; //TODO - delete when safe
 
     /**
      * @var GameResource
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
      */
-    private $supplies;
+    private $supplies; //TODO - delete when safe
 
     /**
      * @var GridCell
@@ -70,7 +70,7 @@ class Platform
     /**
      * @var ArrayCollection|Building[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building\Building", mappedBy="platform", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building\Building", mappedBy="platform")
      */
     private $buildings;
 
@@ -88,11 +88,19 @@ class Platform
      */
     private $units;
 
+    /**
+     * @var ArrayCollection|GameResource[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GameResource", mappedBy="platform")
+     */
+    private $resources;
+
 
 
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
+        $this->resources = new ArrayCollection();
         $this->units = new ArrayCollection();
     }
 
@@ -172,26 +180,6 @@ class Platform
     }
 
     /**
-     * @return GameResource
-     */
-    public function getFood(): ?GameResource
-    {
-        return $this->food;
-    }
-
-    /**
-     * @param int $food
-     *
-     * @return Platform
-     */
-    public function setFood(GameResource $food)
-    {
-        $this->food = $food;
-
-        return $this;
-    }
-
-    /**
      * @return Building[]
      */
     public function getBuildings()
@@ -206,47 +194,10 @@ class Platform
      */
     public function addBuilding(Building $building)
     {
-        $this->buildings->add($building);
-
-        return $this;
-    }
-
-    /**
-     * @return GameResource
-     */
-    public function getWood(): ?GameResource
-    {
-        return $this->wood;
-    }
-
-    /**
-     * @param GameResource $wood
-     *
-     * @return Platform
-     */
-    public function setWood(GameResource $wood)
-    {
-        $this->wood = $wood;
-
-        return $this;
-    }
-
-    /**
-     * @return GameResource
-     */
-    public function getSupplies(): ?GameResource
-    {
-        return $this->supplies;
-    }
-
-    /**
-     * @param GameResource $supplies
-     *
-     * @return Platform
-     */
-    public function setSupplies(GameResource $supplies)
-    {
-        $this->supplies = $supplies;
+        if(!$this->buildings->contains($building)) {
+            $building->setPlatform($this);
+            $this->buildings->add($building);
+        }
 
         return $this;
     }
@@ -271,45 +222,19 @@ class Platform
         return $this;
     }
 
-
-
-    public function getTotalWood()
-    {
-        return floor($this->getWood()->getTotal());
-    }
-
-    public function getTotalFood()
-    {
-        return floor($this->getFood()->getTotal());
-    }
-
-    public function getTotalSupplies()
-    {
-        return floor($this->getSupplies()->getTotal());
-    }
-
     /**
-     * @return int
+     * @param AppServiceInterface $appService
+     * @return ArrayCollection
      */
-    public function getWoodIncome(AppServiceInterface $appService): int
+    public function getIncome(AppServiceInterface $appService): ArrayCollection
     {
-        return $appService->getIncomePerHour($this->wood);
-    }
+        $income = new ArrayCollection();
 
-    /**
-     * @return int
-     */
-    public function getFoodIncome(AppServiceInterface $appService): int
-    {
-        return $appService->getIncomePerHour($this->food);
-    }
+        foreach ($this->resources as $resource) {
+            $income[$resource->getResourceType()->getName()] = $appService->getIncomePerHour($resource);
+        }
 
-    /**
-     * @return int
-     */
-    public function getSuppliesIncome(AppServiceInterface $appService): int
-    {
-        return $appService->getIncomePerHour($this->supplies);
+        return $income;
     }
 
     /**
@@ -320,9 +245,44 @@ class Platform
         return $this->units;
     }
 
+    /**
+     * @param Unit $unit
+     * @return Platform
+     */
+    public function addUnit(Unit $unit)
+    {
+        if (!$this->units->contains($unit)) {
+            $unit->setPlatform($this);
+            $this->units->add($unit);
+        }
+
+        return $this;
+    }
+
     public function isPrivate()
     {
         return true;
+    }
+
+    /**
+     * @return GameResource[]|ArrayCollection
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
+
+    /**
+     * @param GameResource[]|ArrayCollection $resources
+     */
+    public function addResource(GameResource $resource)
+    {
+        if (!$this->resources->contains($resource)) {
+            $resource->setPlatform($this);
+            $this->resources->add($resource);
+        }
+
+        return $this;
     }
 }
 

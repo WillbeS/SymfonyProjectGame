@@ -109,7 +109,7 @@ class UnitController extends MainController
 
         if($form->isSubmitted()) {
             try {
-                $this->unitService->startRecruiting($unit, $platform, $this->platformService);
+                $this->unitService->startRecruiting($unit, $this->platformService);
             } catch (Exception $exception) {
                 echo $exception->getMessage(); //todo flush messaging for both cases
             }

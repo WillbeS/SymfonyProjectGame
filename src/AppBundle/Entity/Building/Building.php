@@ -6,6 +6,7 @@ use AppBundle\Entity\Platform;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -184,6 +185,15 @@ class Building
     {
         return $appService
             ->getCostPerLevel($this->gameBuilding->getSuppliesCost(), $this->level);
+    }
+
+    public function getPrice(AppServiceInterface $appService)
+    {
+        return [
+            'Wood' => $this->getWoodCost($appService),
+            'Food' => $this->getFoodCost($appService),
+            'Supplies' => $this->getSuppliesCost($appService)
+        ];
     }
 
     /**
