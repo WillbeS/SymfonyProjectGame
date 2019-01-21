@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>Reply to: {{ convo.topic.about }}</h1>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_widget(form) }}
+    <input type="submit" value="Send" class="btn btn-primary" />
+    {{ form_end(form) }}
+    <hr/>
+    <h3>Older replies:</h3>
+    {% for message in convo.messages %}
+        <p>{{ message.sender.username }}</p>
+        <p>{{ message.content }}</p>
+    {% endfor %}
+{% endblock %}

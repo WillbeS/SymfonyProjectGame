@@ -11,6 +11,7 @@ use AppBundle\Repository\GameBuildingRepository;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -50,6 +51,7 @@ class BuildingService implements BuildingServiceInterface
         $this->timerService = $timerService;
     }
 
+    // TODO - remove this if not used
     public function findById(int $id): Building
     {
         /**
@@ -71,13 +73,27 @@ class BuildingService implements BuildingServiceInterface
     }
 
     /**
-     * @param Platform|null $platform
+     * @param int $platformId
      * @return Building[]
      */
-    public function getPending(Platform $platform = null): array
+    public function getAllByPlatform(int $platformId): array
     {
-        $pending = $this->buildingRepo->findPending($platform);
-        return $pending;
+        return $this->buildingRepo->findByPlatformJoined($platformId);
+    }
+
+    /**
+     * @param Platform|null $platform
+     * @return Building[]|Collection
+     */
+    public function getPending(Platform $platform = null): Collection
+    {
+        if (!$platform) {
+            return $this->buildingRepo->findPending($platform);
+        }
+
+        return $platform->getBuildings()->filter(function (Building $building) {
+            return $building->getStartBuild() !== null;
+        });
     }
 
     public function getByGameBuilding(GameBuilding $gameBuilding, Platform $platform): Building
@@ -95,6 +111,7 @@ class BuildingService implements BuildingServiceInterface
 
 
     public function startUpgrade(Building $building,
+                                 Platform $platform,
                                  PlatformServiceInterface $platformService,
                                  AppServiceInterface $appService)
     {
@@ -103,7 +120,7 @@ class BuildingService implements BuildingServiceInterface
             return;
         }
 
-        $platformService->payPrice($building->getPlatform(), $building->getPrice($appService));
+        $platformService->payPrice($platform, $building->getPrice($appService));
         $building->setStartBuild(new \DateTime('now'));
         $this->em->flush();
     }

@@ -41,4 +41,15 @@ class BuildingRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
 
     }
+
+    public function findByPlatformJoined(int $platformId)
+    {
+        return $this->createQueryBuilder('b')
+            ->join('b.gameBuilding', 'gb')
+            ->addSelect('gb')
+            ->where('b.platform = :platformId')
+            ->setParameter('platformId', $platformId)
+            ->getQuery()
+            ->getResult();
+    }
 }

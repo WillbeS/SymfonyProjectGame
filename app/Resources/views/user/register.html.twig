@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-sm-4 col-sm-offset-4">
             <h1>User registration</h1>
-            {{ form_start(form) }}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
             {{ form_widget(form) }}
             {{  form_row(form._token) }}
             <button type="submit" class="btn btn-primary" formnovalidate>Register</button>

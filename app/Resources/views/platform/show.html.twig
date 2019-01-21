@@ -21,7 +21,7 @@
         {% for building in buildings %}
             <div class="col-md-4">
                 <div class="thumbnail">
-                    <a href="{{ path('show_building', {'id': platform.id, 'building_id': building.id}) }}">
+                    <a href="{{ path('show_building_info', {'id': platform.id, 'buildingId': building.id}) }}">
                         <img class="img-rounded" src="{{ asset('images/design/' ~ building.slug ~ '.jpg') }}" alt="{{ building.name }}" style="width:100%">
                     </a>
                     <div class="caption">

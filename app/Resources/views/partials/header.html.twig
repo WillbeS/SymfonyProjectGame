@@ -18,7 +18,13 @@
                     <li {% if currentPage is defined and currentPage == 'player' %} class="active" {% endif %}><a href="{{ path('players_all', {'id': platform.id}) }}">Players</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                    <li>
+                        <a href="{{ path('user_mailbox', {'id': platform.id}) }}">
+                            <span class="glyphicon glyphicon-envelope"></span> Mailbox
+                            ({{ app.user.newMessagesCount }})
+                        </a>
+                    </li>
+                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> {{ app.user.username }}</a></li>
                     <li><a href="{{ path('security_logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
             </div>

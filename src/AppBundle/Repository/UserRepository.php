@@ -12,4 +12,24 @@ class UserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, User::class);
     }
+
+    public function findAllWithPlatform()
+    {
+        return $this->createQueryBuilder('u')
+            ->join('u.currentPlatform', 'p')
+            ->addSelect('p')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOneWithPlatform(int $id)
+    {
+        return $this->createQueryBuilder('u')
+            ->join('u.currentPlatform', 'p')
+            ->addSelect('p')
+            ->where('u.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

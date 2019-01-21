@@ -2,8 +2,10 @@
 
 namespace AppBundle\Service\Platform;
 
+use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Platform;
+use AppBundle\Entity\Unit;
 use AppBundle\Entity\User;
 use AppBundle\Repository\PlatformRepository;
 use AppBundle\Service\App\AppServiceInterface;
@@ -13,6 +15,7 @@ use AppBundle\Service\Resource\ResourceServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlatformService implements PlatformServiceInterface
@@ -54,25 +57,53 @@ class PlatformService implements PlatformServiceInterface
         $this->resourceService = $resourceService;
     }
 
-    public function getById(int $id): Platform
+    public function getById(int $id): Platform //TODO - delete if not in use
     {
         /**
          * @var Platform $platform
          */
         $platform = $this->platformRepossitory->find($id);
+        $this->assertFound($platform);
 
         return $platform;
     }
 
-    public function getByIdJoined(int $id): Platform
+    public function getOneJoinedAll(int $id): Platform
     {
-        $result = $this->platformRepossitory->findOneWithBuildings($id);
-
-        if(null == $result) {
-            throw new NotFoundHttpException('Page Not Found');
-        }
+        $result = $this->platformRepossitory->findOneJoinedAll($id);
+        $this->assertFound($result);
 
         return $result;
+    }
+
+    public function getOneJoinedWithUnitsResources(int $id): Platform
+    {
+        $result = $this->platformRepossitory->findOneWithUnitsAndResources($id);
+        $this->assertFound($result);
+
+        return $result;
+    }
+
+    public function getPlatfomUnit(int $unitId, Platform $platform): Unit
+    {
+        $unit = $platform->getUnits()->filter(function (Unit $unit) use ($unitId) {
+            return $unit->getId() === $unitId;
+        })->first();
+
+        $this->assertFound($unit);
+
+        return $unit;
+    }
+
+    public function getPlatfomBuilding(int $buildingId, Platform $platform): Building
+    {
+        $building = $platform->getBuildings()->filter(function (Building $building) use ($buildingId) {
+            return $building->getId() === $buildingId;
+        })->first();
+
+        $this->assertFound($building);
+
+        return $building;
     }
 
     public function getNewPlatform(BuildingServiceInterface $buildingService,
@@ -83,14 +114,11 @@ class PlatformService implements PlatformServiceInterface
         $buildingService->createAllPlatformBuildings($platform);
         $this->resourceService->createAllPlatformResources($platform, $buildingService);
         $unitService->createAllPlatformUnits($platform, $buildingService);
-
-        if (null !== $user) {
-            $platform->setUser($user)
-                ->setName('Settlement of ' . $user->getUsername());
-        }
+        $platformName = null !== $user ? 'Settlement of ' . $user->getUsername() : 'Old ruins';
 
         $platform
-            ->setName('Old ruins')
+            ->setUser($user)
+            ->setName($platformName)
             ->setGridCell($this->mapService->findAvailableGridCell())
             ->setResourceUpdateTime(new \DateTime('now'));
 
@@ -145,5 +173,13 @@ class PlatformService implements PlatformServiceInterface
         $amount = $incomePerSecond * $seconds;
 
         return $amount;
+    }
+
+    private function assertFound($entity)
+    {
+        if(!$entity) {
+
+            throw new NotFoundHttpException('Page Not Found');
+        }
     }
 }

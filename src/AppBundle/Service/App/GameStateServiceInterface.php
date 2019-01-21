@@ -5,6 +5,7 @@ namespace AppBundle\Service\App;
 
 
 use AppBundle\Entity\Platform;
+use AppBundle\Service\Message\MessageServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 
 interface GameStateServiceInterface

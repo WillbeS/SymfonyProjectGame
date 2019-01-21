@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>Edit Profile</h1>
+    {{ form(form, {'attr': {'novalidate': 'novalidate'}}) }}
+{% endblock %}

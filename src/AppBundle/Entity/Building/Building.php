@@ -133,7 +133,7 @@ class Building
     /**
      * @return \DateTime
      */
-    public function getStartBuild(): \DateTime
+    public function getStartBuild(): ?\DateTime
     {
         return $this->startBuild;
     }

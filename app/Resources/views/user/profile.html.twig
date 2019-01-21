@@ -14,7 +14,7 @@
 {% block body %}
     <h1>Player Profile</h1>
     <div class="col-sm-5">
-        <img src="{{ asset('images/design/' ~ player.avatar) }}">
+        <img width="150" height="150" src="{{ asset('images/avatars/' ~ player.avatar) }}">
         <hr />
         <table class="table">
             <tr>
@@ -26,9 +26,12 @@
                 <td>{{ player.currentPlatform.name }}</td>
             </tr>
             <tr>
-                <th>Email</th>
-                <td>{{ player.email }}</td>
+                <th>Description</th>
+                <td>{{ player.description }}</td>
             </tr>
         </table>
     </div>
+    {% if app.user and app.user.id == player.id %}
+        <a class="btn btn-success" href="{{ path('edit_profile', {'id': platform.id, 'userId': player.id}) }}">Edit Profile</a>
+    {% endif %}
 {% endblock %}

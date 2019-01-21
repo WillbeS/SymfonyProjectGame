@@ -27,7 +27,8 @@ interface UnitServiceInterface
      */
     public function getAllByBuilding(Building $building): array;
 
-    public function startRecruiting(Unit $unit,
+    public function startRecruiting($count,
+                                    Unit $unit,
                                     PlatformServiceInterface $platformService); //flushes
 
     public function generateUnit(UnitType $unitType,

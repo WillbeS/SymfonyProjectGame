@@ -180,7 +180,7 @@ class Platform
     }
 
     /**
-     * @return Building[]
+     * @return Building[]|ArrayCollection
      */
     public function getBuildings()
     {
@@ -188,7 +188,7 @@ class Platform
     }
 
     /**
-     * @param Building[]|ArrayCollection $buildings
+     * @param Building
      *
      * @return Platform
      */

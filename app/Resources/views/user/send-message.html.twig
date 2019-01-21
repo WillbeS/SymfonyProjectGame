@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>Send Message</h1>
+    <h3><span>To: </span>{{ recipient.username }}</h3>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_widget(form) }}
+    <input type="submit" value="Send" class="btn btn-primary" />
+    {{ form_end(form) }}
+{% endblock %}

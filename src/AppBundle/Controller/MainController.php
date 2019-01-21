@@ -3,8 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Platform;
+use AppBundle\Entity\User;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\App\GameStateServiceInterface;
+use AppBundle\Service\Message\MessageServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -33,21 +35,31 @@ class MainController extends Controller
      */
     protected $platformService;
 
+    /**
+     * @var MessageServiceInterface
+     */
+    private $messageService;
+
 
     public function __construct(AppServiceInterface $appService,
                                 GameStateServiceInterface $gameStateService,
-                                PlatformServiceInterface $platformService)
+                                PlatformServiceInterface $platformService,
+                                MessageServiceInterface $messageService)
     {
         $this->appService = $appService;
         $this->platformService = $platformService;
         $this->gameStateService = $gameStateService;
+        $this->messageService = $messageService;
     }
 
-    // TODO - Move this into a service
+    // TODO - Move this into a service and call it with event
     protected function updateState(Platform $platform)
     {
         $this->gameStateService->updateBuildingsState($platform);
         $this->gameStateService->updatePlatformResourcesState($platform, $this->platformService);
         $this->gameStateService->updateUnitsInTrainingState($platform);
+        $newMessagesCount = $this->messageService->getNewTopicsCount($this->getUser()->getId());
+
+        $this->getUser()->setNewMessagesCount($newMessagesCount);
     }
 }

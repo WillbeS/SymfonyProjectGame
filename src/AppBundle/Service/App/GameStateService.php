@@ -49,6 +49,7 @@ class GameStateService implements GameStateServiceInterface
 
     public function updateBuildingsState(Platform $platform = null)
     {
+        //$buildings = $platform->getPendingBuildings();
         $buildings = $this->buildingService->getPending($platform);
 
         foreach ($buildings as $building) {
@@ -90,5 +91,17 @@ class GameStateService implements GameStateServiceInterface
         // Get the time of last scheduled update (by the interval const)
         // Get all platforms with res_update_date earlier than that time
         // Call updatePlatformResourcesState for all of them
+    }
+
+    // TODO **For future commands use**
+    public function updateBuildingsForAllPlatforms()
+    {
+        //TODO
+    }
+
+    // TODO **For future commands use**
+    public function updateUnitsForAllPlatforms()
+    {
+        //TODO
     }
 }

@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' with {'platform': platform} %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/platform-common.html.twig' with {
+    'platform': platform,
+    'appService': appService
+    } %}
+{% endblock %}
+
+{% block body %}
+    <h1>Mailbox</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>From / To</th>
+            <th>About</th>
+            <th>Last Reply on</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for userTopic in userTopics %}
+            {% set topic = userTopic.topic %}
+            <tr {% if userTopic.isRead == false %}class="not-read" {% endif %}>
+                <td>{{ userTopic.senderName(app.user) }} / {{ userTopic.recipientName(app.user) }}</td>
+                <td>
+                    <a href="{{ path('read_topic', {'id': platform.id, 'topicId': topic.id}) }}">
+                        {{ topic.about }}
+                        {% if topic.messagesCount > 1 %}
+                        ({{ topic.messagesCount }})
+                        {% endif %}
+                    </a>
+
+                </td>
+                <td>{{ topic.updatedOn | date('F jS \\a\\t g:ia ', 'Europe/Sofia') }}</td>
+                <td>
+                    <a href="#" data-toggle="popover"  data-trigger="focus" data-content="Are you sure you want to delete this conversation? <div class='text-center'><a  href='{{ path('delete_topic', {'id': platform.id, 'topicId': topic.id}) }}'>Delete!</a></div>"><i style="color: red" class="glyphicon glyphicon-trash"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            var popoverBtn = $("[data-toggle=popover]");
+            popoverBtn.click(function (event) {
+                event.preventDefault();
+            });
+
+            popoverBtn
+                .popover(
+                    {
+                        placement: 'top',
+                        html:true,
+                        title: '<button type="button" class="close">&times;</button>'
+                    }
+                );
+        });
+    </script>
+{% endblock %}

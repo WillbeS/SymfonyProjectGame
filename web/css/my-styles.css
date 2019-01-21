@@ -47,6 +47,36 @@ th {
     background-color: #CCCCCC;
 }
 
+hr {
+    border-color: #a0a0a0;
+}
+
+.not-read {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/*
+------------------------ Unit Recruiting Form -----------------------
+ */
+.unit-count .form-group {
+    display: inline-block;
+}
+
+.unit-count .form-group {
+    /*width: 150px;*/
+    margin-right: 5px;
+}
+
+/*removes the up / down arrows from a numeric input field*/
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
 /*
 --------------------------- Map Styles ----------------------------
  */

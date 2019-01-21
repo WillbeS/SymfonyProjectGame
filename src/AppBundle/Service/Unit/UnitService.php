@@ -64,7 +64,13 @@ class UnitService implements UnitServiceInterface
 
     public function getWithUnitsInTraining(Platform $platform = null)
     {
-        return $this->unitRepository->findInTraining($platform);
+        if (!$platform) {
+            return $this->unitRepository->findInTraining($platform);
+        }
+
+        return $platform->getUnits()->filter(function (Unit $unit) {
+            return $unit->getStartBuild() !== null;
+        });
     }
 
     public function createAllPlatformUnits(Platform $platform,
@@ -136,12 +142,11 @@ class UnitService implements UnitServiceInterface
     }
 
 
-    public function startRecruiting(Unit $unit,
+    public function startRecruiting($count,
+                                    Unit $unit,
                                     PlatformServiceInterface $platformService)
     {
-        $count = $unit->getForTraining();
-
-        if(null === $count || $count < 0) {
+        if(null === $count || !is_numeric($count) || $count <= 0 || $count > PHP_INT_MAX) {
             return;
         }
 

@@ -9,6 +9,7 @@ use AppBundle\Entity\Platform;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 interface BuildingServiceInterface
 {
@@ -17,18 +18,25 @@ interface BuildingServiceInterface
 
     public function getByIdJoined($id):Building;
 
+    /**
+     * @param int $platformId
+     * @return Building[]
+     */
+    public function getAllByPlatform(int $platformId): array;
+
     public function getByGameBuilding(GameBuilding $gameBuilding, Platform $platform): Building;
 
     /**
      * @param Platform|null $platform
      * @return Building[]
      */
-    public function getPending(Platform $platform = null): array;
+    public function getPending(Platform $platform = null): Collection;
     ////////////////////////////////////////////////////////////////////////////
 
 
     ////////////////// For Level upgrade/////////////////////////////////////////////
     public function startUpgrade(Building $building,
+                                 Platform $platform,
                                  PlatformServiceInterface $platformService,
                                  AppServiceInterface $appService); //flushes
 

@@ -34,3 +34,7 @@ services:
     #     arguments:
     #         $someArgument: 'some_value'
 
+    AppBundle\Service\Utils\FileService:
+        arguments:
+            $targetDirectory: '%app.avatars_directory%'
+

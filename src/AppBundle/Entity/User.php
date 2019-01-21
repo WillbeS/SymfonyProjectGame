@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
-class User implements UserInterface
+class User implements UserInterface, \Serializable
 {
     const DEFAULT_AVATAR = 'avatar.png';
 
@@ -48,16 +48,18 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(groups={"registration"})
      *
      * @Assert\Length(
      *      min = 3,
      *      minMessage = "Password must be at least {{ limit }} characters long",
+     *     groups={"registration"}
      * )
      *
      * @Assert\Regex(
      *      pattern="/^[a-zA-Z\d]+$/",
-     *     message="Password can have only letters and digits"
+     *     message="Password can have only letters and digits",
+     *     groups={"registration"}
      * )
      *
      * @var string
@@ -95,6 +97,28 @@ class User implements UserInterface
     private $avatar;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
+     *
+     *
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 1000,
+     *      minMessage = "Min length: {{ limit }} characters",
+     *      maxMessage = "Max length: {{ limit }} characters"
+     * )
+     */
+    private $description;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_joined", type="datetime")
+     */
+    private $dateJoined;
+
+    /**
      * @var ArrayCollection|Platform[]
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Platform", mappedBy="user")
@@ -107,11 +131,30 @@ class User implements UserInterface
      */
     private $currentPlatform;
 
+    /**
+     * @Assert\Image(
+     *     minWidth = 10,
+     *     maxWidth = 600,
+     *     minHeight = 10,
+     *     maxHeight = 600,
+     *     detectCorrupted = true,
+     *     corruptedMessage = "Product photo is corrupted. Upload it again."
+     * )
+     */
+    private $file;
+
+    /**
+     * @var int
+     */
+    private $newMessagesCount;
+
+
 
     public function __construct()
     {
         $this->roles = new ArrayCollection();
         $this->platforms = new ArrayCollection();
+        $this->dateJoined = new \DateTime('now');
     }
 
 
@@ -179,9 +222,7 @@ class User implements UserInterface
      */
     public function getEmail()
     {
-        $email = null !== $this->email ? $this->email : 'N/A';
-
-        return $email;
+        return $this->email;
     }
 
     /**
@@ -200,6 +241,46 @@ class User implements UserInterface
     public function setAvatar(string $avatar)
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return User
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateJoined(): \DateTime
+    {
+        return $this->dateJoined;
+    }
+
+    /**
+     * @param \DateTime $dateJoined
+     *
+     * @return User
+     */
+    public function setDateJoined(\DateTime $dateJoined)
+    {
+        $this->dateJoined = $dateJoined;
 
         return $this;
     }
@@ -290,6 +371,69 @@ class User implements UserInterface
     public function setCurrentPlatform(Platform $currentPlatform)
     {
         $this->currentPlatform = $currentPlatform;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @return User
+     */
+    public function setFile($file)
+    {
+        $this->file = $file;
+
+        return $this;
+    }
+
+    /** @see \Serializable::serialize() */
+    public function serialize()
+    {
+        return serialize([
+            $this->id,
+            $this->username,
+            $this->password,
+        ]);
+    }
+
+    /** @see \Serializable::unserialize() */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->username,
+            $this->password,
+            ) = unserialize($serialized, ['allowed_classes' => false]);
+    }
+
+    public function isPrivate()
+    {
+        return true;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNewMessagesCount(): ?int
+    {
+        return $this->newMessagesCount;
+    }
+
+    /**
+     * @param int $newMessagesCount
+     *
+     * @return User
+     */
+    public function setNewMessagesCount(int $newMessagesCount)
+    {
+        $this->newMessagesCount = $newMessagesCount;
 
         return $this;
     }

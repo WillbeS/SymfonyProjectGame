@@ -39,7 +39,7 @@
                     {% if building.pending %}
                         <span>{{ building.remainingTimeFormated(appService) }}</span>
                     {% else %}
-                        <a href="{{ path('start_upgrade', {'id': platform.id, 'building_id': building.id}) }}">Upgrade</a>
+                        <a href="{{ path('start_upgrade', {'id': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
                     {% endif %}
                 </td>
             </tr>

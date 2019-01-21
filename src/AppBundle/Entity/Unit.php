@@ -93,23 +93,6 @@ class Unit
     private $platform;
 
     /**
-     * @Assert\NotBlank()
-     *
-     * @Assert\Range(
-     *     min = 0,
-     *     max = 1000,
-     *     minMessage = "Quantity cannot be less than {{ limit }}",
-     *     maxMessage = "Quantity cannot be greater than {{ limit }}"
-     * )
-     *
-     * @Assert\Type(type="integer")
-     *
-     * @var int
-     */
-    private $forTraining;
-
-
-    /**
      * Get id
      *
      * @return int
@@ -279,25 +262,6 @@ class Unit
     public function getTotal()
     {
         return $this->inBattle + $this->iddle;
-    }
-
-    /**
-     * @return int
-     */
-    public function getForTraining()
-    {
-        return $this->forTraining;
-    }
-
-    /**
-     * @param int $forTraining
-     * @return Unit
-     */
-    public function setForTraining(int $forTraining)
-    {
-        $this->forTraining = $forTraining;
-
-        return $this;
     }
 
     /**

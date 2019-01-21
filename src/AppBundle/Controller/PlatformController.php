@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Platform;
+use AppBundle\Entity\User;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
@@ -16,13 +17,15 @@ class PlatformController extends MainController
     /**
      * @Route("/", name="homepage")
      *
-     * @param UserServiceInterface $userService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function homeAction(UserServiceInterface $userService)
+    public function homeAction()
     {
-        $platformId = $userService->getPlatformId($this->getUser()->getId());
-        return $this->redirectToRoute('platform_show', ['id' => $platformId]);
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+        return $this->redirectToRoute('platform_show', [
+            'id' => $currentUser->getCurrentPlatform()->getId()
+        ]);
     }
 
     /**
@@ -33,10 +36,9 @@ class PlatformController extends MainController
      */
     public function showAction(int $id)
     {
-        $platform = $this->platformService->getByIdJoined($id);
-
-        $this->updateState($platform);
+        $platform = $this->platformService->getOneJoinedAll($id);
         $this->denyAccessUnlessGranted('view', $platform);
+        $this->updateState($platform);
 
         /** @var Building[] $buildings */
         $buildings = $platform->getBuildings();
@@ -47,10 +49,5 @@ class PlatformController extends MainController
             'appService' => $this->appService,
             'currentPage' => 'platform'
         ]);
-    }
-
-    public function showAllAction()
-    {
-        //TODO - show all platforms
     }
 }
