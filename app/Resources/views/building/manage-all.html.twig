@@ -1,14 +1,13 @@
 {% extends 'base.html.twig' %}
+{# @var platform \AppBundle\Entity\Platform #}
+{% set platform = platform_data.currentPlatform %}
 
 {% block header %}
-    {% include 'partials/header.html.twig' with {'platform': platform} %}
+    {% include 'partials/header.html.twig' %}
 {% endblock %}
 
 {% block platformCommon %}
-    {% include 'partials/platform-common.html.twig' with {
-    'platform': platform,
-    'appService': appService
-    } %}
+    {% include 'partials/sidebar.html.twig' %}
 {% endblock %}
 
 {% block body %}
@@ -27,17 +26,17 @@
         </tr>
         </thead>
         <tbody>
-        {% for building in buildings %}
+        {% for building in platform.buildings %}
             <tr>
                 <td>{{ building.name }}</td>
                 <td>{{ building.level }}</td>
-                <td>{{ building.woodCost(appService) }}</td>
-                <td>{{ building.foodCost(appService) }}</td>
-                <td>{{ building.suppliesCost(appService) }}</td>
-                <td>{{ building.formatedBuildTime(appService) }}</td>
+                <td>{{ getCostPerLevel(building.gameBuilding.woodCost, building.level) }}</td>
+                <td>{{ getCostPerLevel(building.gameBuilding.foodCost, building.level) }}</td>
+                <td>{{ getCostPerLevel(building.gameBuilding.suppliesCost, building.level) }}</td>
+                <td>{{ getBuildTime(building)|formatTime }}</td>
                 <td>
                     {% if building.pending %}
-                        <span>{{ building.remainingTimeFormated(appService) }}</span>
+                        <span>{{ getRemainingBuildTime(building)|formatTime }}</span>
                     {% else %}
                         <a href="{{ path('start_upgrade', {'id': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
                     {% endif %}

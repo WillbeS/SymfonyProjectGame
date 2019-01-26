@@ -6,6 +6,7 @@ namespace AppBundle\Service\App;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
 use AppBundle\Service\Building\BuildingServiceInterface;
+use AppBundle\Service\Platform\PlatformDataServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
@@ -35,16 +36,42 @@ class GameStateService implements GameStateServiceInterface
      */
     private $timerService;
 
+    /**
+     * @var PlatformDataServiceInterface
+     */
+    private $platformService;
+
+    /**
+     * @var PlatformDataServiceInterface
+     */
+    private $platformDataService;
+
 
     public function __construct(BuildingServiceInterface $buildingService,
                                 UnitServiceInterface $unitService,
                                 AppServiceInterface $appService,
-                                TimerServiceInterface $timerService)
+                                TimerServiceInterface $timerService,
+                                PlatformDataServiceInterface $platformDataService,
+                                PlatformServiceInterface $platformService)
     {
         $this->buildingService = $buildingService;
         $this->unitService = $unitService;
         $this->appService = $appService;
         $this->timerService = $timerService;
+        $this->platformDataService = $platformDataService;
+        $this->platformService = $platformService;
+    }
+
+    // TODO - may need to make this per user and do update to all user platforms
+    // TODO - (when/if have many platforms functionality implemented)
+    public function updatePlatformState(): bool
+    {
+        $platform = $this->platformDataService->getCurrentPlatform();
+        $this->updateBuildingsState($platform);
+        $this->updatePlatformResourcesState($platform, $this->platformService);
+        $this->updateUnitsInTrainingState($platform);
+
+        return true;
     }
 
     public function updateBuildingsState(Platform $platform = null)

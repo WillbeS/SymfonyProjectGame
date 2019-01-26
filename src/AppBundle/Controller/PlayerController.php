@@ -7,7 +7,9 @@ use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Message\MessageServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\UserServiceInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 //TODO - reconsider if this is needed, already have second thoughts
 class PlayerController extends MainController
@@ -22,12 +24,15 @@ class PlayerController extends MainController
      * @param UserServiceInterface $userService
      */
     public function __construct(UserServiceInterface $userService,
-                                AppServiceInterface $appService,
                                 GameStateServiceInterface $gameStateService,
                                 PlatformServiceInterface $platformService,
-                                MessageServiceInterface $messageService)
+                                MessageServiceInterface $messageService,
+                                RequestStack $requestStack,
+                                Security $security)
     {
-        parent::__construct($appService, $gameStateService, $platformService, $messageService); //TODO clean up when safe
+        parent::__construct($gameStateService,
+                            $platformService);
+
         $this->userService = $userService;
     }
 
@@ -37,19 +42,13 @@ class PlayerController extends MainController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAllAction(int $id)
+    public function showAllAction()
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $this->denyAccessUnlessGranted('view', $platform);
-        $this->updateState($platform);
-
         $players = $this->userService->getAll();
 
         return $this->render('user/all.html.twig', [
             'currentPage' => 'player',
             'players' => $players,
-            'platform' => $platform,
-            'appService' => $this->appService
         ]);
     }
 }

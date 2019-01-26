@@ -111,7 +111,6 @@ class BuildingService implements BuildingServiceInterface
 
 
     public function startUpgrade(Building $building,
-                                 Platform $platform,
                                  PlatformServiceInterface $platformService,
                                  AppServiceInterface $appService)
     {
@@ -120,7 +119,7 @@ class BuildingService implements BuildingServiceInterface
             return;
         }
 
-        $platformService->payPrice($platform, $building->getPrice($appService));
+        $platformService->payPrice($building->getPlatform(), $building->getPrice($appService));
         $building->setStartBuild(new \DateTime('now'));
         $this->em->flush();
     }

@@ -1,14 +1,13 @@
 {% extends 'base.html.twig' %}
+{# @var platform \AppBundle\Entity\Platform #}
+{% set platform = platform_data.currentPlatform %}
 
 {% block header %}
-    {% include 'partials/header.html.twig' with {'platform': platform} %}
+    {% include 'partials/header.html.twig' %}
 {% endblock %}
 
 {% block platformCommon %}
-    {% include 'partials/platform-common.html.twig' with {
-    'platform': platform,
-    'appService': appService
-    } %}
+    {% include 'partials/sidebar.html.twig' %}
 {% endblock %}
 
 {% block body %}
@@ -45,8 +44,6 @@
                 {% else %}
                     <td>{{ unit.status }}</td>
                 {% endif %}
-
-
             </tr>
         {% endfor %}
         </tbody>

@@ -1,14 +1,13 @@
 {% extends 'base.html.twig' %}
+{# @var platform \AppBundle\Entity\Platform #}
+{% set platform = platform_data.currentPlatform %}
 
 {% block header %}
-    {% include 'partials/header.html.twig' with {'platform': platform} %}
+    {% include 'partials/header.html.twig' %}
 {% endblock %}
 
 {% block platformCommon %}
-    {% include 'partials/platform-common.html.twig' with {
-    'platform': platform,
-    'appService': appService
-    } %}
+    {% include 'partials/sidebar.html.twig' %}
 {% endblock %}
 
 {% block body %}
@@ -32,6 +31,6 @@
         </table>
     </div>
     {% if app.user and app.user.id == player.id %}
-        <a class="btn btn-success" href="{{ path('edit_profile', {'id': platform.id, 'userId': player.id}) }}">Edit Profile</a>
+        <a class="btn btn-success" href="{{ path('edit_profile', {'id': platform.id}) }}">Edit Profile</a>
     {% endif %}
 {% endblock %}

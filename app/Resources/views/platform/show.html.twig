@@ -1,24 +1,24 @@
 {% extends 'base.html.twig' %}
+{# @var platform \AppBundle\Entity\Platform #}
+{% set platform = platform_data.currentPlatform %}
 
 {% block header %}
-    {% include 'partials/header.html.twig' with {'platform': platform} %}
+    {% include 'partials/header.html.twig' %}
 {% endblock %}
 
 {% block platformCommon %}
-    {% include 'partials/platform-common.html.twig' with {
-    'platform': platform,
-    'appService': appService
-    } %}
+    {% include 'partials/sidebar.html.twig' %}
 {% endblock %}
 
 {% block body %}
+
     <h1>{{ platform.name }}</h1>
     <p>This is your first settlement. Try and keep it save from the dead walking outside your walls.</p>
 
     <h3>Buildings</h3>
     <div id="buildings-map">
         <div class="row">
-        {% for building in buildings %}
+        {% for building in platform.buildings %}
             <div class="col-md-4">
                 <div class="thumbnail">
                     <a href="{{ path('show_building_info', {'id': platform.id, 'buildingId': building.id}) }}">
@@ -28,7 +28,6 @@
                         <p>{{ building.name }} <span class="small">Level: {{ building.level }}</span></p>
                     </div>
                 </div>
-
             </div>
         {% endfor %}
         </div>

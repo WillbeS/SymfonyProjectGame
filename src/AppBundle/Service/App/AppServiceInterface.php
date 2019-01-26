@@ -13,7 +13,7 @@ interface AppServiceInterface
 
     public function getRemainingTime(\DateTime $startDate, int $baseTime, $level): int;
 
-    public function getRemainingTimeNew(\DateTime $startDate, int $buildTime, int $count = 1): int;
+    public function getRemainingTrainingTime(\DateTime $startDate, int $buildTime, int $count = 1): int;
 
     public function getCostPerLevel(int $baseCost, int $level): int;
 

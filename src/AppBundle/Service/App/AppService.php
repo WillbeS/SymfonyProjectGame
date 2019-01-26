@@ -38,6 +38,7 @@ class AppService implements AppServiceInterface
         return floor($baseCost + ($baseCost * $level * self::COST_FACTOR));
     }
 
+    //TODO - Move to ResourceService
     public function getIncomePerHour(GameResource $resource): int
     {
         if(null == $resource->getBuilding()) {
@@ -52,13 +53,11 @@ class AppService implements AppServiceInterface
     }
 
 
-
-    //TODO - Refactor - only 1 method for remaining time (this)
-    public function getRemainingTimeNew(\DateTime $startDate, int $totalTime, int $count = 1): int
+    public function getRemainingTrainingTime(\DateTime $startDate, int $buildTime, int $count = 1): int
     {
         $elapsed = $this->timerService->getElapsedTime($startDate);
 
-        return $totalTime * $count - $elapsed;
+        return $buildTime * $count - $elapsed;
     }
 
     public function getRemainingTime(\DateTime $startDate, int $baseTime, $level): int

@@ -277,7 +277,7 @@ class Unit
 
     public function getRemainingTrainingTime(AppServiceInterface $appService): int
     {
-        return $appService->getRemainingTimeNew($this->getStartBuild(),
+        return $appService->getRemainingTrainingTime($this->getStartBuild(),
                                                 $this->unitType->getBuildTime(),
                                                 $this->inTraining);
     }

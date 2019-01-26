@@ -226,16 +226,16 @@ class Platform
      * @param AppServiceInterface $appService
      * @return ArrayCollection
      */
-    public function getIncome(AppServiceInterface $appService): ArrayCollection
-    {
-        $income = new ArrayCollection();
-
-        foreach ($this->resources as $resource) {
-            $income[$resource->getResourceType()->getName()] = $appService->getIncomePerHour($resource);
-        }
-
-        return $income;
-    }
+//    public function getIncome(AppServiceInterface $appService): ArrayCollection
+//    {
+//        $income = new ArrayCollection();
+//
+//        foreach ($this->resources as $resource) {
+//            $income[$resource->getResourceType()->getName()] = $appService->getIncomePerHour($resource);
+//        }
+//
+//        return $income;
+//    }
 
     /**
      * @return Unit[]|ArrayCollection

@@ -36,10 +36,10 @@ interface BuildingServiceInterface
 
     ////////////////// For Level upgrade/////////////////////////////////////////////
     public function startUpgrade(Building $building,
-                                 Platform $platform,
                                  PlatformServiceInterface $platformService,
                                  AppServiceInterface $appService); //flushes
 
+    //TODO - rename to finishUpgrade
     public function finishBuilding(Building $building); //flushes
     //////////////////////////////////////////////////////////////////////////////////
 

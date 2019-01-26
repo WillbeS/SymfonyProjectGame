@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface, \Serializable
 {
-    const DEFAULT_AVATAR = 'avatar.png';
+    const DEFAULT_AVATAR = 'avatar.jpg';
 
     /**
      * @var int

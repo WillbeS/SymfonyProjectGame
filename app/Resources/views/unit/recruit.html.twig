@@ -1,14 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block header %}
-    {% include 'partials/header.html.twig' with {'platform': platform} %}
+    {% include 'partials/header.html.twig' %}
 {% endblock %}
 
 {% block platformCommon %}
-    {% include 'partials/platform-common.html.twig' with {
-    'platform': platform,
-    'appService': appService
-    } %}
+    {% include 'partials/sidebar.html.twig' %}
 {% endblock %}
 
 {% block body %}
@@ -35,7 +32,7 @@
                 <td>{{ unit.total }}</td>
                 <td>{{ unit.inTraining }}</td>
                 {% if unit.haveInTraining %}
-                <td>{{ unit.remainingTimeFormated(appService) }}</td>
+                    <td>{{ getRemainingTrainingTime(unit)|formatTime }}</td>
                 {% endif %}
                 <td class="unit-count">
                     {% include 'unit/recruit-form.html.twig' %}

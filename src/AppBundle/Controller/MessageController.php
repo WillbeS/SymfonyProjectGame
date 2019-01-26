@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Message;
 use AppBundle\Form\MessageType;
 use AppBundle\Form\ReplyType;
-use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Message\MessageServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
@@ -13,10 +12,11 @@ use AppBundle\Service\UserServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 /**
  * Class MessageController
  * @package AppBundle\Controller
+ *
+ * @Route("/settlement/{id}", requirements={"id" = "\d+"})
  */
 class MessageController extends MainController
 {
@@ -33,30 +33,39 @@ class MessageController extends MainController
     private $messageService;
 
 
-    public function __construct(AppServiceInterface $appService,
-                                GameStateServiceInterface $gameStateService,
+    public function __construct(GameStateServiceInterface $gameStateService,
                                 PlatformServiceInterface $platformService,
                                 UserServiceInterface $userService,
                                 MessageServiceInterface $messageService)
     {
-        parent::__construct($appService, $gameStateService, $platformService, $messageService);
+        parent::__construct($gameStateService,
+                            $platformService);
 
         $this->userService = $userService;
         $this->messageService = $messageService;
     }
 
     /**
-     * @Route("/settlement/{id}/message/new/recipient/{recipientId}", name="send_message",
-     *          requirements={"id" = "\d+", "recipientId" = "\d+"})
+     * @Route("/mailbox", name="user_mailbox")
+     */
+    public function mailboxAction(int $id)
+    {
+        $userTopics = $this->messageService->getTopicsByUser($this->getUser()->getId());
+
+        return $this->render('user/mailbox.html.twig', [
+            'userTopics' => $userTopics,
+        ]);
+
+    }
+
+    /**
+     * @Route("/message/new/recipient/{recipientId}", name="send_message",
+     *          requirements={"recipientId" = "\d+"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function sendMessageAction(int $id, int $recipientId, Request $request)
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $this->denyAccessUnlessGranted('view', $platform);
-        $this->updateState($platform);
-
         $recipient = $this->userService->getById($recipientId);
         $message = new Message();
         $form = $this->createForm(MessageType::class, $message);
@@ -71,102 +80,64 @@ class MessageController extends MainController
 
         return $this->render('user/send-message.html.twig', [
             'form' => $form->createView(),
-            'appService' => $this->appService,
-            'platform' => $platform,
             'recipient' => $recipient
         ]);
     }
 
     /**
-     * @Route("/settlement/{id}/message/{topicId}/reply", name="send_reply",
-     *          requirements={"id" = "\d+", "topicId" = "\d+"})
+     * @Route("/message/{topicId}/reply", name="send_reply",
+     *          requirements={"topicId" = "\d+"})
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function sendReplyAction(int $id,
                                   int $topicId,
                                   Request $request)
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $this->denyAccessUnlessGranted('view', $platform);
-        $this->updateState($platform);
-
         $reply = new Message();
-        $myConvo = $this->messageService->getOneUserTopic($this->getUser()->getId(),
-                                                          $topicId, true,
+        $userId = $this->getUser()->getId();
+        $myConvo = $this->messageService->getOneUserTopic($userId,
+                                                          $topicId,
+                                                          true,
                                                           MessageController::OLD_REPLIES_COUNT);
 
         $form = $this->createForm(ReplyType::class, $reply);
         $form->handleRequest($request);
 
         if($form->isSubmitted()) {
-
             $this->messageService->sendReply($reply, $myConvo->getTopic(), $this->getUser());
             $this->addFlash('success', 'Message sent successfully.');
 
-            return $this->redirectToRoute('user_mailbox', ['id' => $id]);
+            return $this->redirectToRoute('read_topic', ['id' => $id, 'topicId' => $topicId]);
         }
 
         return $this->render('user/send-reply.html.twig', [
             'form' => $form->createView(),
-            'appService' => $this->appService,
-            'platform' => $platform,
             'convo' => $myConvo,
         ]);
     }
 
-
     /**
-     * @Route("/settlement/{id}/mailbox", name="user_mailbox")
+     * @Route("/mailbox/message/{topicId}", name="read_topic",
+     *          requirements={"messageId" = "\d+"})
      */
-    public function mailboxAction(int $id)
+    public function readTopicAction(int $topicId)
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $this->denyAccessUnlessGranted('view', $platform);
-        $this->updateState($platform);
-
-        $userTopics = $this->messageService->getTopicsByUser($this->getUser()->getId());
-
-        return $this->render('user/mailbox.html.twig', [
-            'userTopics' => $userTopics,
-            'platform' => $platform,
-            'appService' => $this->appService
-        ]);
-
-    }
-
-    /**
-     * @Route("/settlement/{id}/mailbox/message/{topicId}", name="read_topic",
-     *          requirements={"id" = "\d+", "messageId" = "\d+"})
-     */
-    public function readTopicAction(int $id, int $topicId)
-    {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $this->denyAccessUnlessGranted('view', $platform);
-
         $convo = $this->messageService->readTopic($this->getUser()->getId(), $topicId);
-        $this->updateState($platform);
 
         return $this->render('user/message-read.html.twig', [
-            'platform' => $platform,
-            'appService' => $this->appService,
             'convo' => $convo,
-            'messages' => []
+            //'messages' => []
         ]);
 
     }
 
     /**
-     * @Route("/settlement/{id}/message/{topicId}/delete", name="delete_topic",
-     *          requirements={"id" = "\d+", "topicId" = "\d+"})
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route("/message/{topicId}/delete", name="delete_topic",
+     *          requirements={"topicId" = "\d+"})
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteTopicByUserAction(int $id,
-                                    int $topicId)
+    public function deleteTopicByUserAction(int $id, int $topicId)
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $this->denyAccessUnlessGranted('view', $platform);
-        $this->updateState($platform);
-
         // Searching for convo by topic and user - to make sure that user's authorized (no need for voter)
         $this->messageService->deleteTopicByUser($this->getUser()->getId(), $topicId);
         $this->addFlash('success', 'Message successfully deleted.');

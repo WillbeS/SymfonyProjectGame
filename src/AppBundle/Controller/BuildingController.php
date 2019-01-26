@@ -2,18 +2,19 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Building\Building;
-use AppBundle\Entity\Platform;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
-use AppBundle\Service\Message\MessageServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
-use AppBundle\Service\Utils\TimerServiceInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class BuildingController
+ * @package AppBundle\Controller
+ *
+ * @Route("/settlement/{id}", requirements={"id" = "\d+"})
+ */
 class BuildingController extends MainController
 {
     /**
@@ -23,84 +24,62 @@ class BuildingController extends MainController
 
     public function __construct(PlatformServiceInterface $platformService,
                                 GameStateServiceInterface $gameStateService,
-                                BuildingServiceInterface $buildingService,
-                                MessageServiceInterface $messageService,
-                                AppServiceInterface $appService)
+                                BuildingServiceInterface $buildingService)
     {
-        parent::__construct($appService, $gameStateService, $platformService, $messageService); //TODO clean up when safe
+        parent::__construct($gameStateService,
+                            $platformService);
+
         $this->buildingService = $buildingService;
     }
 
     /**
-     * @Route("/settlement/{id}/building/view/{buildingId}", name="show_building_info",
+     * @Route("/building/view/{buildingId}",
+     *     name="show_building_info",
      *     requirements={"platformId" = "\d+"}
      *     )
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showInfoAction(int $id, int $buildingId)
+    public function showInfoAction(int $buildingId)
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $building = $this->platformService->getPlatfomBuilding($buildingId, $platform);
-
-        $this->denyAccessUnlessGranted('view', $platform);
+        $building = $this->buildingService->getByIdJoined($buildingId);
         $this->denyAccessUnlessGranted('view', $building);
-        $this->updateState($platform);
 
         return $this->render('building/show.html.twig', [
-            'platform' => $platform,
             'building' => $building,
-            'appService' => $this->appService,
             'currentPage' => 'building'
         ]);
     }
 
     /**
-     * @Route("settlement/{id}/buildings/manage/", name="manage_buildings", requirements={"id" = "\d+"})
+     * @Route("/buildings/manage/", name="manage_buildings")
      */
-    public function manageAllAction(int $id)
+    public function manageAllAction()
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $this->denyAccessUnlessGranted('view', $platform);
-        $this->updateState($platform);
-
-        /**
-         * @var Building[] $buildings
-         */
-        $buildings = $platform->getBuildings();
-
         return $this->render('building/manage-all.html.twig', [
-            'platform' => $platform,
-            'buildings' => $buildings,
-            'appService' => $this->appService,
             'currentPage' => 'building'
         ]);
     }
 
     /**
-     * @Route("/settlement/{id}/building/upgrade/{buildingId}",
+     * @Route("/building/upgrade/{buildingId}",
      *     name="start_upgrade",
-     *     requirements={"platformId" = "\d+"}
+     *     requirements={"buildingId" = "\d+"}
      *     )
      */
-    public function startUpgradeAction(int $id, int $buildingId)
+    public function startUpgradeAction(int $id, int $buildingId, AppServiceInterface $appService)
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
         $building = $this->buildingService->getByIdJoined($buildingId);
-
-        $this->denyAccessUnlessGranted('view', $platform);
         $this->denyAccessUnlessGranted('view', $building);
-        $this->updateState($platform);
 
         try {
             $this->buildingService->startUpgrade($building,
-                                                 $platform,
                                                  $this->platformService,
-                                                 $this->appService);
+                                                 $appService);
         } catch (Exception $e) {
             var_dump($e->getMessage()); // TODO flush messaging
         }
 
-        return $this->redirectToRoute('manage_buildings', ['id' => $platform->getId()]);
+        return $this->redirectToRoute('manage_buildings', ['id' => $id]);
     }
 }

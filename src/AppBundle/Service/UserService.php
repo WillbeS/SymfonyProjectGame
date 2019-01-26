@@ -114,7 +114,7 @@ class UserService implements UserServiceInterface
 
         if (null !== $file) {
             $fileName = $fileService->upload($file);
-            if (null !== $user->getAvatar()) {
+            if (User::DEFAULT_AVATAR !== $user->getAvatar()) {
                 $fileService->delete( $user->getAvatar());
             }
 

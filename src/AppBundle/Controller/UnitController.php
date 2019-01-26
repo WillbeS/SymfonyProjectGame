@@ -2,23 +2,22 @@
 
 namespace AppBundle\Controller;
 
-
-use AppBundle\Entity\Platform;
-use AppBundle\Entity\Unit;
 use AppBundle\Form\UnitCountType;
-use AppBundle\Form\UnitType as UnitForm;
-use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
-use AppBundle\Service\Message\MessageServiceInterface;
+use AppBundle\Service\Platform\PlatformDataServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
-use AppBundle\Service\Unit\UnitTypeServiceInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class UnitController
+ * @package AppBundle\Controller
+ *
+ * @Route("/settlement/{id}", requirements={"id" = "\d+"})
+ */
 class UnitController extends MainController
 {
     /**
@@ -31,20 +30,14 @@ class UnitController extends MainController
      */
     private $buildingService;
 
-    /**
-     * UnitController constructor.
-     * @param UnitServiceInterface $unitService
-     * @param UnitTypeServiceInterface $unitTypeService
-     * @param BuildingServiceInterface $buildingService
-     */
+
     public function __construct(UnitServiceInterface $unitService,
                                 BuildingServiceInterface $buildingService,
-                                AppServiceInterface $appService,
                                 GameStateServiceInterface $gameStateService,
-                                PlatformServiceInterface $platformService,
-                                MessageServiceInterface $messageService)
+                                PlatformServiceInterface $platformService)
     {
-        parent::__construct($appService, $gameStateService, $platformService, $messageService);
+        parent::__construct($gameStateService,
+                            $platformService);
 
         $this->unitService = $unitService;
         $this->buildingService = $buildingService;
@@ -52,58 +45,51 @@ class UnitController extends MainController
 
 
     /**
-     * @Route("/settlement/{id}/units/all", name="manage_units", requirements={"id" = "\d+"})
+     * @Route("/units/all", name="manage_units")
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAllAction(int $id)
+    public function showAllAction()
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
-        $this->denyAccessUnlessGranted('view', $platform);
-        $this->updateState($platform);
-
         return $this->render('unit/all.html.twig', [
-            'platform' => $platform,
-            'appService' => $this->appService,
             'currentPage' => 'unit'
         ]);
     }
 
     /**
-     * @Route("/settlement/{id}/unit/info/{unitId}", name="view_unit_type",
-     *     requirements={"id" = "\d+"})
+     * @Route("/unit/info/{unitId}",
+     *          name="view_unit_type",
+     *          requirements={"unitId" = "\d+"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showInfoAction(int $id, int $unitId)
+    public function showInfoAction(int $unitId, PlatformDataServiceInterface $platformDataService)
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
+        //TODO - complare this way of retrieving unit with retreiving building from db and decide which is better
+        $platform = $platformDataService->getCurrentPlatform();
         $unit = $this->platformService->getPlatfomUnit($unitId, $platform);
-        $this->denyAccessUnlessGranted('view', $platform);
-        $this->updateState($platform);
 
         return $this->render('unit/show.html.twig', [
             'platform' => $platform,
-            'appService' => $this->appService,
             'unitType' => $unit->getUnitType(),
             'currentPage' => 'unit',
         ]);
     }
 
     /**
-     * @Route("/settlement/{id}/recruit/{unitId}", name="recruit",
-     *     requirements={"id" = "\d+"})
+     * @Route("/recruit/{unitId}",
+     *     name="recruit",
+     *     requirements={"unitId" = "\d+"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function recruit(int $id, int $unitId, Request $request)
+    public function recruit(int $id, int $unitId,
+                            Request $request,
+                            PlatformDataServiceInterface $platformDataService)
     {
-        $platform = $this->platformService->getOneJoinedAll($id);
+        $platform = $platformDataService->getCurrentPlatform();
         $unit = $this->platformService->getPlatfomUnit($unitId, $platform);
-
-        $this->denyAccessUnlessGranted('view', $platform);
         $this->denyAccessUnlessGranted('edit', $unit);
-        $this->updateState($platform);
 
         $form = $this->createForm(UnitCountType::class);
         $form->handleRequest($request);
@@ -117,15 +103,11 @@ class UnitController extends MainController
                 echo $exception->getMessage(); //todo flush messaging for both cases
             }
 
-            return $this->redirectToRoute('recruit', [
-                'id' => $platform->getId(),
-                'unitId' => $unit->getId()
-            ]);
+            return $this->redirectToRoute('recruit', ['id' => $id, 'unitId' => $unitId]);
         }
 
         return $this->render('unit/recruit.html.twig', [
             'platform' => $platform,
-            'appService' => $this->appService,
             'unit' => $unit,
             'form' => $form->createView(),
             'currentPage' => 'unit'
