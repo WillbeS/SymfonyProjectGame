@@ -18,6 +18,8 @@
                     <li {% if currentPage is defined and currentPage == 'unit' %} class="active" {% endif %}><a href="{{ path('manage_units', {'id': platform.id}) }}">Units</a></li>
                     <li {% if currentPage is defined and currentPage == 'map' %} class="active" {% endif %}><a href="{{ path('map_local', {'id': platform.id}) }}">Map</a></li>
                     <li {% if currentPage is defined and currentPage == 'player' %} class="active" {% endif %}><a href="{{ path('players_all', {'id': platform.id}) }}">Players</a></li>
+                    <li {% if currentPage is defined and currentPage == 'attacks' %} class="active" {% endif %}><a href="{{ path('show_attacks', {'id': platform.id}) }}">Attacks</a></li>
+                    <li {% if currentPage is defined and currentPage == 'reports' %} class="active" {% endif %}><a href="{{ path('show_reports', {'id': platform.id}) }}">Battle Reports ({{ common_data.newReportsCount }})</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>

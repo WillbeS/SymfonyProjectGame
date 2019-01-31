@@ -11,6 +11,7 @@ use AppBundle\Repository\UnitRepository;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UnitService implements UnitServiceInterface
 {
@@ -41,7 +42,10 @@ class UnitService implements UnitServiceInterface
 
     public function getById(int $id): Unit
     {
-        return $this->unitRepository->find($id);
+        $unit = $this->unitRepository->find($id);
+        $this->assertFound($unit);
+
+        return $unit;
     }
 
     /**
@@ -50,6 +54,8 @@ class UnitService implements UnitServiceInterface
      */
     public function getAllByPlatform(Platform $platform): array
     {
+        //TODO - decide
+        //No need for this unles I plan to do a join or some special collection (key => value)
         return $this->unitRepository->findBy(['platform' => $platform]);
     }
 
@@ -156,5 +162,13 @@ class UnitService implements UnitServiceInterface
             ->setStartBuild(new \DateTime('now'));
 
         $this->em->flush();
+    }
+
+    private function assertFound($entity)
+    {
+        if(!$entity) {
+
+            throw new NotFoundHttpException('Page Not Found');
+        }
     }
 }

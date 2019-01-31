@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' %}
+{% endblock %}
+
+{% block platformCommon %}
+    {% include 'partials/sidebar.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <h2>Enemy Attacks</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Attack</th>
+            <th>Remaining Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for attack in enemyAttacks %}
+            <tr>
+                <td>{{ attack.name }}</td>
+                <td>{{ getRemainingTime(attack.startDate, attack.duration)|formatTime }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2" class="text-center">You have no enemy attacks</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Own Attacks</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Attack</th>
+            <th>Remaining Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for attack in ownAttacks %}
+            <tr>
+                <td>{{ attack.name }}</td>
+                <td>{{ getRemainingTime(attack.startDate, attack.duration)|formatTime }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2" class="text-center">You have no own attacks</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

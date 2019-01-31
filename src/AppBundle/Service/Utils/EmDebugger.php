@@ -24,15 +24,4 @@ class EmDebugger implements EmDebuggerInterface
 
         return $result;
     }
-
-    public function getAllPersistedBackUp(EntityManagerInterface $em): array
-    {
-        $result = [];
-        $persistedEntities = $em->getUnitOfWork()->getScheduledEntityInsertions();
-        foreach ($persistedEntities as $pe) {
-            $result[get_class($pe)] = $pe;
-        }
-
-        return $result;
-    }
 }

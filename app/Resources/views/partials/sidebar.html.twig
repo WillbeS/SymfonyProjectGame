@@ -1,5 +1,8 @@
 {# @var platform \AppBundle\Entity\Platform #}
 {% set platform = platform_data.currentPlatform %}
+{% if common_data.getEnemyAttacksCount > 0 %}
+    <div style="color: red">Enemy Attacks ({{ common_data.getEnemyAttacksCount }})</div>
+{% endif %}
 <h2>{{ platform.name }}</h2>
 
 <h2>Resources</h2>
@@ -17,8 +20,8 @@
 <h2>Units</h2>
 <p>
     {% for unit in platform.units %}
-        {% if unit.total > 0 %}
-        <b>{{ unit.unitType.name }}:</b> {{ unit.total }} <br />
+        {% if unit.iddle > 0 %}
+        <b>{{ unit.unitType.name }}:</b> {{ unit.iddle }} <br />
         {% endif %}
     {% endfor %}
 </p>

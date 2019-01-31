@@ -28,6 +28,7 @@
                 <td>{{ player.currentPlatform.name }}</td>
                 <td>
                     <a href="{{ path('send_message', {'id': platform.id, 'recipientId': player.id}) }}">Send Message</a>
+                    | <a href="{{ path('send_attack', {'id': platform.id, 'playerId': player.id }) }}">Attack</a>
                 </td>
             </tr>
         {% endfor %}

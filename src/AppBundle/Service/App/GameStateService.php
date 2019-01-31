@@ -3,12 +3,16 @@
 namespace AppBundle\Service\App;
 
 
+use AppBundle\Entity\ArmyJourney;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
+use AppBundle\Service\Battle\BattleJourneyServiceInterface;
+use AppBundle\Service\Battle\JourneyServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformDataServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
+use AppBundle\Service\Utils\CountdownServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
 
 class GameStateService implements GameStateServiceInterface
@@ -46,13 +50,21 @@ class GameStateService implements GameStateServiceInterface
      */
     private $platformDataService;
 
+    /**
+     * @var TaskScheduleServiceInterface
+     */
+    private $taskScheduleService;
+
+
+
 
     public function __construct(BuildingServiceInterface $buildingService,
                                 UnitServiceInterface $unitService,
                                 AppServiceInterface $appService,
                                 TimerServiceInterface $timerService,
                                 PlatformDataServiceInterface $platformDataService,
-                                PlatformServiceInterface $platformService)
+                                PlatformServiceInterface $platformService,
+                                TaskScheduleServiceInterface $taskScheduleService)
     {
         $this->buildingService = $buildingService;
         $this->unitService = $unitService;
@@ -60,6 +72,7 @@ class GameStateService implements GameStateServiceInterface
         $this->timerService = $timerService;
         $this->platformDataService = $platformDataService;
         $this->platformService = $platformService;
+        $this->taskScheduleService = $taskScheduleService;
     }
 
     // TODO - may need to make this per user and do update to all user platforms
@@ -70,6 +83,7 @@ class GameStateService implements GameStateServiceInterface
         $this->updateBuildingsState($platform);
         $this->updatePlatformResourcesState($platform, $this->platformService);
         $this->updateUnitsInTrainingState($platform);
+        $this->taskScheduleService->processDueTasks(ArmyJourney::class);
 
         return true;
     }

@@ -5,6 +5,7 @@ use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Unit;
 use AppBundle\Service\App\AppServiceInterface;
+use AppBundle\Service\Utils\CountdownServiceInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -17,12 +18,19 @@ class AppExtension extends AbstractExtension
     private $appService;
 
     /**
+     * @var CountdownServiceInterface
+     */
+    private $countdownService;
+
+    /**
      * AppExtension constructor.
      * @param AppServiceInterface $appService
      */
-    public function __construct(AppServiceInterface $appService)
+    public function __construct(AppServiceInterface $appService,
+                                CountdownServiceInterface $countdownService)
     {
         $this->appService = $appService;
+        $this->countdownService = $countdownService;
     }
 
     public function getFilters()
@@ -41,6 +49,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('getBuildTime', [$this, 'getBuildTime']),
             new TwigFunction('getRemainingBuildTime', [$this, 'getRemainingBuildTime']),
             new TwigFunction('getRemainingTrainingTime', [$this, 'getRemainingTrainingTime']),
+            new TwigFunction('getRemainingTime', [$this, 'getRemainingTime']),
         ];
     }
 
@@ -74,6 +83,12 @@ class AppExtension extends AbstractExtension
         return $this->appService->getRemainingTrainingTime($unit->getStartBuild(),
                                                             $unit->getUnitType()->getBuildTime(),
                                                             $unit->getInTraining());
+    }
+
+    //TODO - refactor on all and make this the only way
+    public function getRemainingTime(\DateTime $startDate, int $duration)
+    {
+        return $this->countdownService->getRemainingTime($startDate, $duration);
     }
 
 

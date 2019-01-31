@@ -18,21 +18,6 @@ class UserTopicRepository extends ServiceEntityRepository
         parent::__construct($registry, UserTopic::class);
     }
 
-//    public function findOneById(int $id)
-//    {
-//        return $this->createQueryBuilder('convo')
-//            ->join('convo.topic', 't')
-//            ->join('t.messages', 'm') //todo - remove both joins when fix messages
-//            ->join('m.sender', 's') //todo - remove both joins when fix messages
-//            ->addSelect('t')
-//            ->addSelect('m')
-//            ->addSelect('s')
-//            ->where('convo.id = :id')
-//            ->setParameter('id', $id)
-//            ->getQuery()
-//            ->getOneOrNullResult();
-//    }
-
     public function findOneByUserAndTopic(int $userId, int $topicId)
     {
         return $this->createQueryBuilder('ut')

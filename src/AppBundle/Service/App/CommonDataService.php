@@ -3,6 +3,9 @@
 namespace AppBundle\Service\App;
 
 use AppBundle\Entity\User;
+use AppBundle\Repository\ArmyJourneyRepository;
+use AppBundle\Repository\BattleReportRepository;
+use AppBundle\Repository\UserReportRepository;
 use AppBundle\Service\Message\MessageServiceInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -16,19 +19,51 @@ class CommonDataService
      */
     private $messageService;
 
+    /**
+     * @var UserReportRepository
+     */
+    private $userReportRepository;
+
+    /**
+     * @var ArmyJourneyRepository
+     */
+    private $armyJourneyRepository;
+
+    /**
+     * @var User
+     */
+    private $currentUser;
+
 
     public function __construct(Security $security,
-                                MessageServiceInterface $messageService)
+                                MessageServiceInterface $messageService,
+                                UserReportRepository $userReportRepository,
+                                ArmyJourneyRepository $armyJourneyRepository)
     {
         $this->messageService = $messageService;
         $this->security = $security;
+        $this->userReportRepository = $userReportRepository;
+        $this->armyJourneyRepository = $armyJourneyRepository;
+
+        $this->currentUser = $this->security->getUser();
     }
 
 
     public function getNewMessagesCount(): int
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-        return $this->messageService->getNewTopicsCount($user->getId());
+        return $this->messageService->getNewTopicsCount($this->currentUser->getId());
+    }
+
+    public function getNewReportsCount(): int
+    {
+        return $this->userReportRepository->getNewReportsCount($this->currentUser->getId());
+    }
+
+    public function getEnemyAttacksCount(): int
+    {
+        return $this->armyJourneyRepository->getNewReportsCount($this->currentUser
+                                                                                ->getCurrentPlatform()
+                                                                                ->getGridCell()
+                                                                                ->getId());
     }
 }

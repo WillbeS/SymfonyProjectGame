@@ -50,6 +50,10 @@ class PlatformDataService implements PlatformDataServiceInterface
         return $this->currentPlatform;
     }
 
+    //TODO - decide:
+    // Maybe it's better to get platform from user (no need to be in the url) -
+    // unless I plan to have more than 1 which I don't
+    // so this here is unnecessary???
     private function setCurrentPlatform()
     {
         $platformId = $this->requestStack->getCurrentRequest()->attributes->getInt('id');
