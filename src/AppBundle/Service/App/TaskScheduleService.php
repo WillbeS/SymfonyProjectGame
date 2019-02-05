@@ -48,7 +48,7 @@ class TaskScheduleService implements TaskScheduleServiceInterface
         //TODO - use events if decide to refactor other entities
         switch ($entityType) {
             case ArmyJourney::class:
-                $this->battleService->processBattles($dueTasks);
+                $this->battleService->processBattleJourneys($dueTasks);
                 break;
         }
 

@@ -18,11 +18,12 @@ class ArmyJourneyRepository extends ServiceEntityRepository
         parent::__construct($registry, ArmyJourney::class);
     }
 
-    public function getNewReportsCount(int $cellId)
+    public function getNewAttacksCount(int $cellId)
     {
         return $this->createQueryBuilder('aj')
             ->select('count(aj.id)')
             ->where('aj.destination = :cellId')
+            ->andWhere('aj.purpose = ' . ArmyJourney::PURPOSE_BATTLE)
             ->setParameter('cellId', $cellId)
             ->getQuery()
             ->getSingleScalarResult();

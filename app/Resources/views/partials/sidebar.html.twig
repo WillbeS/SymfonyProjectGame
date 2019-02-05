@@ -1,7 +1,7 @@
 {# @var platform \AppBundle\Entity\Platform #}
 {% set platform = platform_data.currentPlatform %}
 {% if common_data.getEnemyAttacksCount > 0 %}
-    <div style="color: red">Enemy Attacks ({{ common_data.getEnemyAttacksCount }})</div>
+    <div ><a style="color: red" href="{{ path('show_attacks', {'id': platform.id}) }}">Enemy Attacks ({{ common_data.getEnemyAttacksCount }})</a></div>
 {% endif %}
 <h2>{{ platform.name }}</h2>
 

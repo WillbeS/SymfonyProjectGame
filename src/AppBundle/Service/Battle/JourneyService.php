@@ -83,7 +83,10 @@ class JourneyService implements JourneyServiceInterface
      */
     public function getAllEnemyJourneys(GridCell $destination): array
     {
-        return $this->armyJourneyRepository->findBy(['destination' => $destination]);
+        return $this->armyJourneyRepository->findBy([
+            'destination' => $destination,
+            'purpose' => ArmyJourney::PURPOSE_BATTLE
+        ]);
     }
 
     private function createJourney(GridCell $origin, User $target, string $troops)
@@ -128,7 +131,7 @@ class JourneyService implements JourneyServiceInterface
 
     private function parseRequestData(ParameterBag $requestData, Collection $platformUnits): string
     {
-        $attackerArmy = []; // todo - store keys by unitType name, not unitId
+        $attackerArmy = [];
         $slowestSpeed = 0;
 
         foreach ($requestData as $unitId => $count) {
@@ -150,9 +153,7 @@ class JourneyService implements JourneyServiceInterface
             }
 
             $this->updateUnitStatus($count, $unit);
-            //$attackerArmy[$unit->getUnitType()->getName()] = ['id' => $unitId, 'count' => $count];
-            $attackerArmy[$unit->getId()] = $count;
-            //$attackerArmy[$unit->getUnitType()->getName()] = $count;
+            $attackerArmy[$unit->getUnitType()->getName()] = (int)$count;
         }
 
         if (0 === $slowestSpeed) {

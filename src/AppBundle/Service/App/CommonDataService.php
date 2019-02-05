@@ -4,7 +4,6 @@ namespace AppBundle\Service\App;
 
 use AppBundle\Entity\User;
 use AppBundle\Repository\ArmyJourneyRepository;
-use AppBundle\Repository\BattleReportRepository;
 use AppBundle\Repository\UserReportRepository;
 use AppBundle\Service\Message\MessageServiceInterface;
 use Symfony\Component\Security\Core\Security;
@@ -61,7 +60,7 @@ class CommonDataService
 
     public function getEnemyAttacksCount(): int
     {
-        return $this->armyJourneyRepository->getNewReportsCount($this->currentUser
+        return $this->armyJourneyRepository->getNewAttacksCount($this->currentUser
                                                                                 ->getCurrentPlatform()
                                                                                 ->getGridCell()
                                                                                 ->getId());
