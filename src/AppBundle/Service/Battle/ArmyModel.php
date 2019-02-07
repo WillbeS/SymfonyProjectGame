@@ -9,8 +9,6 @@ use AppBundle\Entity\UnitType;
 
 class ArmyModel
 {
-    const BASE_ATTACK_COEFFICIENT = 8;
-
     private $totalHealth;
 
     private $totalAttack;
@@ -87,17 +85,27 @@ class ArmyModel
         $this->updateArmyStats($count, $unit->getUnitType());
     }
 
-    public function processAttack(int $attackPoints)
+    public function processAttack(float $losses)
     {
-        $lossesPercent = $attackPoints * self::BASE_ATTACK_COEFFICIENT / $this->totalHealth;
-        $this->resetArmyStats();
         foreach ($this->troopsCounts as $typeName => $unitCount) {
-            $newCount = $unitCount - round($unitCount * $lossesPercent);
+            $newCount = $unitCount - round($unitCount * $losses);
             $newCount = $newCount < 0 ? 0 : $newCount;
             $this->troopsCounts[$typeName] = $newCount;
             $this->updateArmyStats($newCount, $this->troopsUnits[$typeName]->getUnitType());
         }
     }
+
+//    public function processAttack(int $attackPoints)
+//    {
+//        $lossesPercent = $attackPoints * self::BASE_ATTACK_COEFFICIENT / $this->totalHealth;
+//        $this->resetArmyStats();
+//        foreach ($this->troopsCounts as $typeName => $unitCount) {
+//            $newCount = $unitCount - round($unitCount * $lossesPercent);
+//            $newCount = $newCount < 0 ? 0 : $newCount;
+//            $this->troopsCounts[$typeName] = $newCount;
+//            $this->updateArmyStats($newCount, $this->troopsUnits[$typeName]->getUnitType());
+//        }
+//    }
 
     private function updateArmyStats(int $count, UnitType $unitType)
     {

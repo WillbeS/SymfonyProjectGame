@@ -4,13 +4,19 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\ArmyJourney;
 use AppBundle\Entity\BattleReport;
+use AppBundle\Entity\Unit;
+use AppBundle\Entity\User;
 use AppBundle\Entity\UserReport;
+use AppBundle\Form\UnitTravelCountsType;
 use AppBundle\Service\App\GameStateServiceInterface;
+use AppBundle\Service\ArmyMovement\StartJourneyServiceInterface;
 use AppBundle\Service\Battle\BattleReportServiceInterface;
 use AppBundle\Service\Battle\JourneyServiceInterface;
 use AppBundle\Service\Platform\PlatformDataServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\UserServiceInterface;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -47,24 +53,65 @@ class BattleController extends MainController
     public function sendAttack(int $id,
                                int $playerId,
                                Request $request,
-                               UserServiceInterface $userService)
+                               UserServiceInterface $userService,
+                               StartJourneyServiceInterface $startJourneyService)
     {
-        $data = $request->request;
-        $defender = $userService->getById($playerId);
+        $currentUser = $this->getUser();
+        $target = $userService->getById($playerId);
+        $form = $this->getUnitsForm($currentUser);
+        $form->handleRequest($request);
 
-        if (count($data) > 0) {
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Invalid troops count.');
+        }
+
+        if ($form->isValid()) {
             try {
-                $this->armyJourneyService->startJourney($data, $this->getUser(), $defender);
-                //return $this->redirectToRoute('send_attack', ['id' => $id, 'playerId' => $playerId]);
-            } catch (\Exception $exception) {
-                dump($exception->getMessage()); //TODO - replace with some flush message
+                $startJourneyService->startJourney($form->getData(), $currentUser, $target);
+
+                return $this->redirectToRoute('send_attack', ['id' => $id, 'playerId' => $playerId]);
+            } catch (\Exception $e) {
+                //$this->addFlash('error', $e->getMessage());
+                $this->addFlash('error', 'Attack was not sent. Check your input and try again.');
             }
         }
 
-        return $this->render('battle/send-attack.html.twig', [
-            'defender' => $defender
+        return $this->render('battle/send-attack-new.html.twig', [
+            'defender' => $target,
+            'units_form' => $form->createView()
         ]);
     }
+
+
+    /**
+     * @Route("/attack/backup/player/{playerId}",
+     *     name="send_attack_backup",
+     *     requirements={"playerId" = "\d+"},
+     *     methods={"GET", "POST"})
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+//    public function sendAttackBackup(int $id,
+//                               int $playerId,
+//                               Request $request,
+//                               UserServiceInterface $userService)
+//    {
+//        $data = $request->request;
+//        $defender = $userService->getById($playerId);
+//
+//        if (count($data) > 0) {
+//            try {
+//                $this->armyJourneyService->startJourney($data, $this->getUser(), $defender);
+//                //return $this->redirectToRoute('send_attack', ['id' => $id, 'playerId' => $playerId]);
+//            } catch (\Exception $exception) {
+//                dump($exception->getMessage()); //TODO - replace with some flush message
+//            }
+//        }
+//
+//        return $this->render('battle/send-attack.html.twig', [
+//            'defender' => $defender
+//        ]);
+//    }
 
     /**
      * @Route("/attacks/all", name="show_attacks")
@@ -121,5 +168,20 @@ class BattleController extends MainController
         $battleReportService->deleteUserReport($this->getUser()->getId(), $reportId);
 
         return $this->redirectToRoute('show_reports', ['id' => $id]);
+    }
+
+    /**
+     * @param $currentUser
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function getUnitsForm(User $currentUser): \Symfony\Component\Form\FormInterface
+    {
+        $form = $this->createForm(
+            UnitTravelCountsType::class,
+            [],
+            ['units' => $currentUser->getCurrentPlatform()->getUnits()]
+        );
+
+        return $form;
     }
 }

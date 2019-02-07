@@ -13,6 +13,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class BattleService implements BattleServiceInterface
 {
+    const BASE_ATTACK_COEFFICIENT = 8;
+
     /**
      * @var bool
      */
@@ -87,7 +89,10 @@ class BattleService implements BattleServiceInterface
 
         while (true)
         {
-            if ($this->attackerModel->getTotalCount() <= 0 || $this->defenderModel->getTotalCount() <= 0) {
+            if ($this->attackerModel->getTotalCount() <= 0 ||
+                $this->defenderModel->getTotalCount() <= 0 ||
+                count($this->rounds) >= 10)
+            {
                 break;
             }
 
@@ -110,6 +115,36 @@ class BattleService implements BattleServiceInterface
         $this->defenderModel = $this->initArmyModels($defenderUnits);
         $this->attackersTurn = true;
         $this->rounds = [];
+    }
+
+    private function fight()
+    {
+        $attackerHitPoints = $this->attackerModel->getTotalAttack();
+
+        $defenderLosses =
+            $attackerHitPoints *
+            self::BASE_ATTACK_COEFFICIENT /
+            $this->defenderModel->getTotalHealth();
+
+        $defenderHitPoints = $this->defenderModel->getTotalAttack();
+
+        $attackerLosses =
+            $defenderHitPoints *
+            self::BASE_ATTACK_COEFFICIENT /
+            $this->attackerModel->getTotalHealth();
+
+        $this->attackerModel->processAttack($attackerLosses);
+        $this->defenderModel->processAttack($defenderLosses);
+
+
+        //old code
+//        if ($this->attackersTurn) {
+//            $this->defenderModel->processAttack($this->attackerModel->getTotalAttack());
+//        } else {
+//            $this->attackerModel->processAttack($this->defenderModel->getTotalAttack());
+//        }
+//
+//        $this->attackersTurn = !$this->attackersTurn;
     }
 
     private function processTroopsReturn(ArmyJourney $journey)
@@ -175,7 +210,10 @@ class BattleService implements BattleServiceInterface
     {
         $attacker = $journey->getOrigin()->getPlatform()->getUser();
         $defender = $journey->getDestination()->getPlatform()->getUser();
-        $winner = $this->attackerModel->getTotalHealth() > 0 ? $attacker : $defender;
+        $winner = $this
+            ->attackerModel->getTotalHealth() > $this->defenderModel->getTotalHealth() ?
+            $attacker :
+            $defender;
 
         $battleReport = new BattleReport();
         $battleReport
@@ -206,16 +244,7 @@ class BattleService implements BattleServiceInterface
         $this->em->persist($userReport);
     }
 
-    private function fight()
-    {
-        if ($this->attackersTurn) {
-            $this->defenderModel->processAttack($this->attackerModel->getTotalAttack());
-        } else {
-            $this->attackerModel->processAttack($this->defenderModel->getTotalAttack());
-        }
 
-        $this->attackersTurn = !$this->attackersTurn;
-    }
 
     private function initArmyModels(Collection $units, array $journeyTroops = null): ArmyModel
     {

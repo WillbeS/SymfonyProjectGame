@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 interface JourneyServiceInterface
 {
-    public function startJourney(ParameterBag $requestData, User $user, User $target): bool;
+    //public function startJourney(ParameterBag $requestData, User $user, User $target): bool;
 
     public function getAllOwnJourneys(GridCell $origin): array;
 
