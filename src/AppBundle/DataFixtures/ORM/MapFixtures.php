@@ -7,10 +7,9 @@ use AppBundle\Entity\GridCell;
 use AppBundle\Entity\Terrain;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class MapFixtures extends Fixture implements OrderedFixtureInterface
+class MapFixtures extends Fixture implements DependentFixtureInterface
 {
     const MAP_SIZE = 50;
 
@@ -61,12 +60,15 @@ class MapFixtures extends Fixture implements OrderedFixtureInterface
     }
 
     /**
-     * Get the order of this fixture
+     * This method must return an array of fixtures classes
+     * on which the implementing class depends on
      *
-     * @return integer
+     * @return array
      */
-    public function getOrder()
+    function getDependencies()
     {
-        return 200;
+        return [
+          TerrainFixtures::class
+        ];
     }
 }

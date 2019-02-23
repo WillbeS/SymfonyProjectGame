@@ -2,14 +2,12 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-use AppBundle\Entity\Building\GameBuilding;
 use AppBundle\Entity\ResourceType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class ResourceTypeFixtures extends Fixture implements OrderedFixtureInterface
+class ResourceTypeFixtures extends Fixture implements DependentFixtureInterface
 {
     const DEFAULT_RESOURCE_TYPES = [
         [
@@ -45,12 +43,15 @@ class ResourceTypeFixtures extends Fixture implements OrderedFixtureInterface
     }
 
     /**
-     * Get the order of this fixture
+     * This method must return an array of fixtures classes
+     * on which the implementing class depends on
      *
-     * @return integer
+     * @return array
      */
-    public function getOrder()
+    function getDependencies()
     {
-        return 400;
+        return [
+          GameBuildingFixtures::class
+        ];
     }
 }

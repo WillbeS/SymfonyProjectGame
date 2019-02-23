@@ -4,10 +4,9 @@ namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\Terrain;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class TerrainFixtures extends Fixture implements OrderedFixtureInterface
+class TerrainFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
@@ -21,15 +20,5 @@ class TerrainFixtures extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->flush();
-    }
-
-    /**
-     * Get the order of this fixture
-     *
-     * @return integer
-     */
-    public function getOrder()
-    {
-        return 100;
     }
 }

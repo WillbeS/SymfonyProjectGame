@@ -4,10 +4,9 @@ namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\Building\GameBuilding;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class GameBuildingFixtures extends Fixture implements OrderedFixtureInterface
+class GameBuildingFixtures extends Fixture
 {
     const DEFAULT_GAME_BUILDINGS = [
         [
@@ -65,15 +64,5 @@ class GameBuildingFixtures extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->flush();
-    }
-
-    /**
-     * Get the order of this fixture
-     *
-     * @return integer
-     */
-    public function getOrder()
-    {
-        return 300;
     }
 }
