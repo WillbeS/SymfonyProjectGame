@@ -95,18 +95,6 @@ class ArmyModel
         }
     }
 
-//    public function processAttack(int $attackPoints)
-//    {
-//        $lossesPercent = $attackPoints * self::BASE_ATTACK_COEFFICIENT / $this->totalHealth;
-//        $this->resetArmyStats();
-//        foreach ($this->troopsCounts as $typeName => $unitCount) {
-//            $newCount = $unitCount - round($unitCount * $lossesPercent);
-//            $newCount = $newCount < 0 ? 0 : $newCount;
-//            $this->troopsCounts[$typeName] = $newCount;
-//            $this->updateArmyStats($newCount, $this->troopsUnits[$typeName]->getUnitType());
-//        }
-//    }
-
     private function updateArmyStats(int $count, UnitType $unitType)
     {
         $this->totalCount += $count;

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Service\Battle;
+namespace AppBundle\Service\ArmyMovement;
 
 use AppBundle\Entity\ArmyJourney;
 use AppBundle\Entity\GridCell;
@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 interface JourneyServiceInterface
 {
-    //public function startJourney(ParameterBag $requestData, User $user, User $target): bool;
-
     public function getAllOwnJourneys(GridCell $origin): array;
 
     public function getAllEnemyJourneys(GridCell $destination): array;
+
+    public function processBattleJourneys(array $battleTasks): bool;
 }

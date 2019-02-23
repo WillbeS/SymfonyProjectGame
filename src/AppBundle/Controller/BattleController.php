@@ -3,20 +3,16 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ArmyJourney;
-use AppBundle\Entity\BattleReport;
-use AppBundle\Entity\Unit;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserReport;
 use AppBundle\Form\UnitTravelCountsType;
 use AppBundle\Service\App\GameStateServiceInterface;
+use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
 use AppBundle\Service\ArmyMovement\StartJourneyServiceInterface;
 use AppBundle\Service\Battle\BattleReportServiceInterface;
-use AppBundle\Service\Battle\JourneyServiceInterface;
 use AppBundle\Service\Platform\PlatformDataServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\UserServiceInterface;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -46,35 +42,24 @@ class BattleController extends MainController
      * @Route("/attack/player/{playerId}",
      *     name="send_attack",
      *     requirements={"playerId" = "\d+"},
-     *     methods={"GET", "POST"})
+     *     methods={"GET"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function sendAttack(int $id,
-                               int $playerId,
-                               Request $request,
-                               UserServiceInterface $userService,
-                               StartJourneyServiceInterface $startJourneyService)
+    public function sendAttackFormAction(int $id,
+                                         int $playerId,
+                                         UserServiceInterface $userService)
     {
         $currentUser = $this->getUser();
         $target = $userService->getById($playerId);
+
+        if ($currentUser === $target) {
+            $this->addFlash('error', 'Cannot attack yourself!');
+
+            return $this->redirectToRoute('players_all', ['id' => $id]);
+        }
+
         $form = $this->getUnitsForm($currentUser);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $this->addFlash('error', 'Invalid troops count.');
-        }
-
-        if ($form->isValid()) {
-            try {
-                $startJourneyService->startJourney($form->getData(), $currentUser, $target);
-
-                return $this->redirectToRoute('send_attack', ['id' => $id, 'playerId' => $playerId]);
-            } catch (\Exception $e) {
-                //$this->addFlash('error', $e->getMessage());
-                $this->addFlash('error', 'Attack was not sent. Check your input and try again.');
-            }
-        }
 
         return $this->render('battle/send-attack-new.html.twig', [
             'defender' => $target,
@@ -84,34 +69,42 @@ class BattleController extends MainController
 
 
     /**
-     * @Route("/attack/backup/player/{playerId}",
-     *     name="send_attack_backup",
+     * @Route("/attack/player/{playerId}",
+     *     name="send_attack_process",
      *     requirements={"playerId" = "\d+"},
-     *     methods={"GET", "POST"})
+     *     methods={"POST"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-//    public function sendAttackBackup(int $id,
-//                               int $playerId,
-//                               Request $request,
-//                               UserServiceInterface $userService)
-//    {
-//        $data = $request->request;
-//        $defender = $userService->getById($playerId);
-//
-//        if (count($data) > 0) {
-//            try {
-//                $this->armyJourneyService->startJourney($data, $this->getUser(), $defender);
-//                //return $this->redirectToRoute('send_attack', ['id' => $id, 'playerId' => $playerId]);
-//            } catch (\Exception $exception) {
-//                dump($exception->getMessage()); //TODO - replace with some flush message
-//            }
-//        }
-//
-//        return $this->render('battle/send-attack.html.twig', [
-//            'defender' => $defender
-//        ]);
-//    }
+    public function sendAttackProcessAction(int $id,
+                                            int $playerId,
+                                            Request $request,
+                                            UserServiceInterface $userService,
+                                            StartJourneyServiceInterface $startJourneyService)
+    {
+        $currentUser = $this->getUser();
+        $target = $userService->getById($playerId);
+
+        $form = $this->getUnitsForm($currentUser);
+        $form->handleRequest($request);
+
+        if (!$form->isValid()) {
+            $this->addFlash('error', 'Invalid troops count.');
+
+            return $this->render('battle/send-attack-new.html.twig', [
+                'defender' => $target,
+                'units_form' => $form->createView()
+            ]);
+        }
+
+        try {
+            $startJourneyService->startJourney($form->getData(), $currentUser, $target);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Invalid input. Attack was not sent.');
+        }
+
+        return $this->redirectToRoute('send_attack', ['id' => $id, 'playerId' => $playerId]);
+    }
 
     /**
      * @Route("/attacks/all", name="show_attacks")

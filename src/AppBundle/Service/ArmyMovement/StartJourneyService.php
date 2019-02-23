@@ -59,6 +59,17 @@ class StartJourneyService implements StartJourneyServiceInterface
         return true;
     }
 
+    public function startJourneyHome(string $troops, ArmyJourney $journey)
+    {
+        $dueDate = $this->countdownService->getEndDate($journey->getDueDate(), $journey->getDuration());
+        $journey
+            ->setPurpose(ArmyJourney::PURPOSE_RETURN)
+            ->setName('Return from ' . $journey->getDestination()->getPlatform()->getName())
+            ->setStartDate($journey->getDueDate())
+            ->setDueDate($dueDate)
+            ->setTroops($troops);
+    }
+
     private function parseJourneyData(array $requestData, Collection $platformUnits): string
     {
         $attackerArmy = [];

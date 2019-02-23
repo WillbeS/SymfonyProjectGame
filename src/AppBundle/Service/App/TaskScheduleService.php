@@ -3,6 +3,7 @@
 namespace AppBundle\Service\App;
 
 use AppBundle\Entity\ArmyJourney;
+use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
 use AppBundle\Service\Battle\BattleServiceInterface;
 use AppBundle\Service\Utils\CountdownServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,16 +26,23 @@ class TaskScheduleService implements TaskScheduleServiceInterface
     private $battleService;
 
     /**
+     * @var JourneyServiceInterface
+     */
+    private $journeyService;
+
+    /**
      * TaskScheduleService constructor.
      * @param CountdownServiceInterface $countdownService
      */
     public function __construct(CountdownServiceInterface $countdownService,
                                 EntityManagerInterface $em,
-                                BattleServiceInterface $battleService)
+                                BattleServiceInterface $battleService,
+                                JourneyServiceInterface $journeyService)
     {
         //$this->countdownService = $countdownService;
         $this->em = $em;
         $this->battleService = $battleService;
+        $this->journeyService = $journeyService;
     }
 
     public function processDueTasks(string $entityType): bool
@@ -48,7 +56,7 @@ class TaskScheduleService implements TaskScheduleServiceInterface
         //TODO - use events if decide to refactor other entities
         switch ($entityType) {
             case ArmyJourney::class:
-                $this->battleService->processBattleJourneys($dueTasks);
+                $this->journeyService->processBattleJourneys($dueTasks);
                 break;
         }
 

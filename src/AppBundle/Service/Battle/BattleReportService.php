@@ -3,6 +3,8 @@
 namespace AppBundle\Service\Battle;
 
 
+use AppBundle\Entity\ArmyJourney;
+use AppBundle\Entity\BattleReport;
 use AppBundle\Entity\UserReport;
 use AppBundle\Repository\BattleReportRepository;
 use AppBundle\Repository\UserReportRepository;
@@ -33,7 +35,6 @@ class BattleReportService implements BattleReportServiceInterface
         $this->em = $em;
     }
 
-
     public function getAllByUser(int $userId): array
     {
         return $this->userReportRepository->findAllByUser($userId);
@@ -59,6 +60,7 @@ class BattleReportService implements BattleReportServiceInterface
         $this->em->remove($userReport);
         $this->em->flush();
     }
+
 
     private function assertFound($entity)
     {

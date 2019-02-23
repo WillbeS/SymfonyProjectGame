@@ -4,36 +4,21 @@ namespace AppBundle\Service\Battle;
 
 use AppBundle\Entity\ArmyJourney;
 use AppBundle\Entity\BattleReport;
-use AppBundle\Entity\Unit;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserReport;
-use AppBundle\Service\Utils\CountdownServiceInterface;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BattleService implements BattleServiceInterface
 {
-    const BASE_ATTACK_COEFFICIENT = 8;
-
     /**
-     * @var bool
+     * @var ArmyModel
      */
-    private $attackersTurn;
+    private $attackerArmy;
 
     /**
      * @var ArmyModel
      */
-    private $attackerModel;
-
-    /**
-     * @var ArmyModel
-     */
-    private $defenderModel;
-
-    /**
-     * @var array
-     */
-    private $rounds = [];
+    private $defenderArmy;
 
     /**
      * @var EntityManagerInterface
@@ -41,68 +26,39 @@ class BattleService implements BattleServiceInterface
     private $em;
 
     /**
-     * @var CountdownServiceInterface
+     * @var ArmyServiceInterface
      */
-    private $countdownService;
+    private $armyService;
 
     /**
-     * BattleService constructor.
-     * @param EntityManagerInterface $em
+     * @var BattleProcessServiceInterface
      */
-    public function __construct(EntityManagerInterface $em, CountdownServiceInterface $countdownService)
+    private $battleProcessService;
+
+
+    public function __construct(EntityManagerInterface $em,
+                                ArmyServiceInterface $armyService,
+                                BattleProcessServiceInterface $battleProcessService)
     {
         $this->em = $em;
-        $this->countdownService = $countdownService;
+        $this->armyService = $armyService;
+        $this->battleProcessService = $battleProcessService;
     }
 
-    public function processBattleJourneys(array $journeys): bool
-    {
-        /** @var ArmyJourney $task */
-        foreach ($journeys as $journey) {
-            if (ArmyJourney::PURPOSE_RETURN === $journey->getPurpose()) {
-                $this->processTroopsReturn($journey);
-                continue;
-            }
 
-            $battleReport = $this->processBattle($journey);
-            $this->createUserReport($battleReport, $battleReport->getAttacker());
-            $this->createUserReport($battleReport, $battleReport->getDefender());
-
-            $this->updateUnitCounts($this->attackerModel);
-            $this->updateUnitCounts($this->defenderModel, true);
-
-            if ($this->attackerModel->getTotalCount() > 0) {
-                $this->setReturnJourney($journey, $battleReport);
-            } else {
-                $this->em->remove($journey);
-            }
-        }
-
-        $this->em->flush();
-        return true;
-    }
-
-    private function processBattle(ArmyJourney $journey): BattleReport
+    public function startBattle(ArmyJourney $journey): BattleReport
     {
         $this->initBattle($journey);
-        $this->addRound();
 
-        while (true)
-        {
-            if ($this->attackerModel->getTotalCount() <= 0 ||
-                $this->defenderModel->getTotalCount() <= 0 ||
-                count($this->rounds) >= 10)
-            {
-                break;
-            }
+        $rounds = $this->battleProcessService->processBattle(
+            $this->attackerArmy,
+            $this->defenderArmy
+        );
 
-            $this->fight();
-            $this->addRound();
-        }
+        $this->armyService->updateUnitCounts($this->attackerArmy);
+        $this->armyService->updateUnitCounts($this->defenderArmy, true);
 
-        $this->addRound();
-
-        return $this->createBattleReport($journey);
+        return $this->createBattleReport($journey, $rounds);
     }
 
     private function initBattle(ArmyJourney $journey)
@@ -111,107 +67,16 @@ class BattleService implements BattleServiceInterface
         $defenderUnits = $journey->getDestination()->getPlatform()->getUnits();
         $journeyTroops = json_decode($journey->getTroops(), true);
 
-        $this->attackerModel = $this->initArmyModels($attackerUnits, $journeyTroops);
-        $this->defenderModel = $this->initArmyModels($defenderUnits);
-        $this->attackersTurn = true;
-        $this->rounds = [];
+        $this->attackerArmy = $this->armyService->initArmyModel($attackerUnits, $journeyTroops);
+        $this->defenderArmy = $this->armyService->initArmyModel($defenderUnits);
     }
 
-    private function fight()
-    {
-        $attackerHitPoints = $this->attackerModel->getTotalAttack();
-
-        $defenderLosses =
-            $attackerHitPoints *
-            self::BASE_ATTACK_COEFFICIENT /
-            $this->defenderModel->getTotalHealth();
-
-        $defenderHitPoints = $this->defenderModel->getTotalAttack();
-
-        $attackerLosses =
-            $defenderHitPoints *
-            self::BASE_ATTACK_COEFFICIENT /
-            $this->attackerModel->getTotalHealth();
-
-        $this->attackerModel->processAttack($attackerLosses);
-        $this->defenderModel->processAttack($defenderLosses);
-
-
-        //old code
-//        if ($this->attackersTurn) {
-//            $this->defenderModel->processAttack($this->attackerModel->getTotalAttack());
-//        } else {
-//            $this->attackerModel->processAttack($this->defenderModel->getTotalAttack());
-//        }
-//
-//        $this->attackersTurn = !$this->attackersTurn;
-    }
-
-    private function processTroopsReturn(ArmyJourney $journey)
-    {
-        $troops = json_decode($journey->getTroops(), true);
-        $units = $journey->getOrigin()->getPlatform()->getUnits();
-        /** @var Unit $unit */
-        foreach ($units as $unit) {
-            $count = $troops[$unit->getUnitType()->getName()];
-            if (0 === $count) {
-                continue;
-            }
-
-            $unit->setInBattle($unit->getInBattle() - $count);
-            $unit->setIddle($unit->getIddle() + $count);
-        }
-
-        $this->em->remove($journey);
-        $this->em->flush();
-    }
-
-
-
-    private function setReturnJourney(ArmyJourney $journey, BattleReport $battleReport)
-    {
-        $dueDate = $this->countdownService->getEndDate($journey->getDueDate(), $journey->getDuration());
-        $journey
-            ->setPurpose(ArmyJourney::PURPOSE_RETURN)
-            ->setName('Return from ' . $battleReport->getDefender()->getUsername())
-            ->setStartDate($journey->getDueDate())
-            ->setDueDate($dueDate)
-            ->setTroops($this->attackerModel->getTroopsCountsJson());
-
-        return $journey;
-    }
-
-
-    private function updateUnitCounts(ArmyModel $army, $isDefender = false)
-    {
-        /** @var Unit[] $units */
-        $units = $army->getTroopsUnits();
-        foreach ($units as $typeName => $unit) {
-            $diff = $army->getOriginalTroopsCount()[$typeName] - $army->getTroopsCounts()[$typeName];
-
-            if (0 == $diff) { continue; }
-            if ($isDefender) {
-                $unit->setIddle($unit->getIddle() - $diff);
-            } else {
-                $unit->setInBattle($unit->getInBattle() - $diff);
-            }
-        }
-    }
-
-    private function addRound()
-    {
-        $this->rounds[] = [
-            'Attacker' => $this->attackerModel->getTroopsCounts(),
-            'Defender' => $this->defenderModel->getTroopsCounts(),
-        ];
-    }
-
-    private function createBattleReport(ArmyJourney $journey): BattleReport
+    private function createBattleReport(ArmyJourney $journey, array $rounds): BattleReport
     {
         $attacker = $journey->getOrigin()->getPlatform()->getUser();
         $defender = $journey->getDestination()->getPlatform()->getUser();
         $winner = $this
-            ->attackerModel->getTotalHealth() > $this->defenderModel->getTotalHealth() ?
+            ->attackerArmy->getTotalHealth() > $this->defenderArmy->getTotalHealth() ?
             $attacker :
             $defender;
 
@@ -221,15 +86,18 @@ class BattleService implements BattleServiceInterface
             ->setCreatedOn($journey->getDueDate())
             ->setAttacker($attacker)
             ->setDefender($defender)
-            ->setAttackerStartArmy(json_encode($this->attackerModel->getOriginalTroopsCount()))
-            ->setDefenderStartArmy(json_encode($this->defenderModel->getOriginalTroopsCount()))
-            ->setAttackerEndArmy($this->attackerModel->getTroopsCountsJson())
-            ->setDefenderEndArmy($this->defenderModel->getTroopsCountsJson())
+            ->setAttackerStartArmy(json_encode($this->attackerArmy->getOriginalTroopsCount()))
+            ->setDefenderStartArmy(json_encode($this->defenderArmy->getOriginalTroopsCount()))
+            ->setAttackerEndArmy($this->attackerArmy->getTroopsCountsJson())
+            ->setDefenderEndArmy($this->defenderArmy->getTroopsCountsJson())
             ->setWinner($winner)
-            ->setRounds(json_encode($this->rounds))
+            ->setRounds(json_encode($rounds))
         ;
 
         $this->em->persist($battleReport);
+        $this->createUserReport($battleReport, $battleReport->getAttacker());
+        $this->createUserReport($battleReport, $battleReport->getDefender());
+
         return $battleReport;
     }
 
@@ -242,25 +110,5 @@ class BattleService implements BattleServiceInterface
             ->setReport($battleReport);
 
         $this->em->persist($userReport);
-    }
-
-
-
-    private function initArmyModels(Collection $units, array $journeyTroops = null): ArmyModel
-    {
-        $army = new ArmyModel();
-
-        /** @var Unit $unit */
-        foreach ($units as $unit) {
-            if ($journeyTroops) {
-                $count = (int)$journeyTroops[$unit->getUnitType()->getName()];
-            } else {
-                $count = $unit->getIddle();
-            }
-
-            $army->addTroops($count, $unit);
-        }
-
-        return $army;
     }
 }
