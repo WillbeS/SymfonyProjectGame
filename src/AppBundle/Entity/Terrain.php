@@ -12,6 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Terrain
 {
+    const TERRAIN_TYPES = [
+        'grass' => 20,
+        'water' => 1,
+        'forest' => 2,
+        'rocks' => 1,
+    ];
+
+
     /**
      * @var int
      *

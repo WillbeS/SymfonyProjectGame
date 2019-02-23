@@ -10,7 +10,7 @@ class MapService implements MapServiceInterface
 {
     const NEW_SETTLEMENT_DISTRICT = 1;
     const DISTRICT_SIZE = 10;
-    const MAP_SIZE = 100;
+    const MAP_SIZE = 50;
 
     /**
      * @var GridRepository
