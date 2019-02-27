@@ -19,9 +19,10 @@
         </thead>
         <tbody>
         {% for attack in enemyAttacks %}
+            {% set remainingTime = getRemainingTime(attack.startDate, attack.duration) %}
             <tr>
                 <td>{{ attack.name }}</td>
-                <td>{{ getRemainingTime(attack.startDate, attack.duration)|formatTime }}</td>
+                <td class="timer" data-seconds="{{ remainingTime }}">{{ remainingTime|formatTime }}</td>
             </tr>
         {% else %}
             <tr>
@@ -41,9 +42,10 @@
         </thead>
         <tbody>
         {% for attack in ownAttacks %}
+            {% set remainingTime = getRemainingTime(attack.startDate, attack.duration) %}
             <tr>
                 <td>{{ attack.name }}</td>
-                <td>{{ getRemainingTime(attack.startDate, attack.duration)|formatTime }}</td>
+                <td class="timer" data-seconds="{{ remainingTime }}">{{ remainingTime|formatTime }}</td>
             </tr>
         {% else %}
             <tr>
@@ -52,4 +54,15 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/timer.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            setTimers('.timer');
+        });
+    </script>
 {% endblock %}

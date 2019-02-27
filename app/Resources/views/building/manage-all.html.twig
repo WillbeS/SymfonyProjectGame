@@ -36,7 +36,7 @@
                 <td>{{ getBuildTime(building)|formatTime }}</td>
                 <td>
                     {% if building.pending %}
-                        <span>{{ getRemainingBuildTime(building)|formatTime }}</span>
+                        <span class="timer" data-seconds="{{ getRemainingBuildTime(building) }}">{{ getRemainingBuildTime(building)|formatTime }}</span>
                     {% else %}
                         <a href="{{ path('start_upgrade', {'id': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
                     {% endif %}
@@ -45,7 +45,15 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
 
-
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/timer.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            setTimers('.timer');
+        });
+    </script>
 {% endblock %}
 

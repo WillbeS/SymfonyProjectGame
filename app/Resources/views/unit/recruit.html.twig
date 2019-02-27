@@ -32,7 +32,7 @@
                 <td>{{ unit.total }}</td>
                 <td>{{ unit.inTraining }}</td>
                 {% if unit.haveInTraining %}
-                    <td>{{ getRemainingTrainingTime(unit)|formatTime }}</td>
+                    <td class="timer" data-seconds="{{ getRemainingTrainingTime(unit) }}">{{ getRemainingTrainingTime(unit)|formatTime }}</td>
                 {% endif %}
                 <td class="unit-count">
                     {% include 'unit/recruit-form.html.twig' %}
@@ -42,4 +42,14 @@
     </table>
 
     <a href="{{ path('manage_units', {'id': platform.id}) }}">Back to all units</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/timer.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            setTimers('.timer');
+        });
+    </script>
 {% endblock %}
