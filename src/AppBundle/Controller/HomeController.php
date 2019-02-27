@@ -14,12 +14,8 @@ class HomeController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function homeAction(MapGeneratorServiceInterface $mapGeneratorService)
+    public function homeAction()
     {
-        $mapGeneratorService->generateMap(50);
-
-        exit;
-
         /** @var User $currentUser */
         $currentUser = $this->getUser();
         return $this->redirectToRoute('platform_show', [

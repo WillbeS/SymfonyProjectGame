@@ -45,6 +45,15 @@ class GameBuildingFixtures extends Fixture
             'description' => 'Your settlement has to be protected from all the dangers this world has to offer. Also, someone needs to go out there to look for more supplies. Use the training camp to prepare your settlers for battle.',
             'referenceName' => 'trainingCamp',
         ],
+        [
+            'name' => 'Wall',
+            'woodCost' => 10,
+            'foodCost' => 5,
+            'suppliesCost' => 5,
+            'buildTime' => 40,
+            'description' => 'Without walls you\'re doomed cause they keep the zombies out. The stronger the walls, the happier and safer your settlers will feel.',
+            'referenceName' => 'wall',
+        ],
     ];
 
     public function load(ObjectManager $manager)
