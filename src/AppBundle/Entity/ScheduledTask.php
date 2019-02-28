@@ -4,7 +4,6 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-//TODO - Delete if not in use
 /**
  * ScheduledTask
  *
@@ -29,23 +28,37 @@ class ScheduledTask
     /**
      * @var int
      *
-     * @ORM\Column(name="entity_id", type="integer")
+     * @ORM\Column(name="owner_id", type="integer")
      */
-    private $entityId;
+    private $ownerId;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="taskType", type="integer")
+     * @ORM\Column(name="task_type", type="integer")
      */
     private $taskType;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dueDate", type="datetime")
+     * @ORM\Column(name="due_date", type="datetime")
      */
     private $dueDate;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="duration", type="integer")
+     */
+    private $duration;
+
+    /**
+     * @var Platform
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Platform")
+     */
+    private $platform;
 
 
     /**
@@ -59,28 +72,26 @@ class ScheduledTask
     }
 
     /**
-     * Set entityId
-     *
-     * @param integer $entityId
+     * @return int
+     */
+    public function getOwnerId(): int
+    {
+        return $this->ownerId;
+    }
+
+    /**
+     * @param int $ownerId
      *
      * @return ScheduledTask
      */
-    public function setEntityId($entityId)
+    public function setOwnerId(int $ownerId)
     {
-        $this->entityId = $entityId;
+        $this->ownerId = $ownerId;
 
         return $this;
     }
 
-    /**
-     * Get entityId
-     *
-     * @return int
-     */
-    public function getEntityId()
-    {
-        return $this->entityId;
-    }
+
 
     /**
      * Set taskType
@@ -128,6 +139,46 @@ class ScheduledTask
     public function getDueDate()
     {
         return $this->dueDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDuration(): int
+    {
+        return $this->duration;
+    }
+
+    /**
+     * @param int $duration
+     *
+     * @return ScheduledTask
+     */
+    public function setDuration(int $duration)
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    /**
+     * @return Platform
+     */
+    public function getPlatform(): Platform
+    {
+        return $this->platform;
+    }
+
+    /**
+     * @param Platform $platform
+     *
+     * @return ScheduledTask
+     */
+    public function setPlatform(Platform $platform)
+    {
+        $this->platform = $platform;
+
+        return $this;
     }
 }
 

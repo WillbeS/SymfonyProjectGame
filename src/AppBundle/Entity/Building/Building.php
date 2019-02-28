@@ -3,7 +3,10 @@
 namespace AppBundle\Entity\Building;
 
 use AppBundle\Entity\Platform;
+use AppBundle\Entity\PlatformUnitInterface;
+use AppBundle\Entity\ScheduledTaskInterface;
 use AppBundle\Service\App\AppServiceInterface;
+use AppBundle\Service\App\TaskScheduleServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,9 +18,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="buildings")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BuildingRepository")
  */
-class Building
+class Building implements PlatformUnitInterface
 {
-    const COST_FACTOR = 1.15; //TODO - add as property to gameBuilding
+    const COST_FACTOR = 1.15;
+    const BUILD_TIME_FACTOR = 1.33;
 
     /**
      * @var int
@@ -61,7 +65,7 @@ class Building
      *
      * @return int
      */
-    public function getId()
+    public function getId():?int
     {
         return $this->id;
     }

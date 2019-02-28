@@ -6,10 +6,13 @@ namespace AppBundle\Service\Building;
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Building\GameBuilding;
 use AppBundle\Entity\Platform;
+use AppBundle\Entity\ScheduledTask;
 use AppBundle\Repository\BuildingRepository;
 use AppBundle\Repository\GameBuildingRepository;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
+use AppBundle\Service\ScheduledTask\ScheduledTaskService;
+use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use AppBundle\Service\Utils\TimerServiceInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -109,20 +112,38 @@ class BuildingService implements BuildingServiceInterface
         return $building;
     }
 
-
     public function startUpgrade(Building $building,
                                  PlatformServiceInterface $platformService,
-                                 AppServiceInterface $appService)
+                                 AppServiceInterface $appService,
+                                 ScheduledTaskServiceInterface $taskService)
     {
-        //TODO - add maxLevel
-        if ($building->isPending()) {
-            return;
-        }
-
         $platformService->payPrice($building->getPlatform(), $building->getPrice($appService));
-        $building->setStartBuild(new \DateTime('now'));
+
+        $taskService->createTask(
+            ScheduledTask::BUILDING_UPGRADE,
+            0,
+            $building
+        );
+
         $this->em->flush();
     }
+
+
+
+//    public function startUpgradeOld(Building $building,
+//                                 PlatformServiceInterface $platformService,
+//                                 AppServiceInterface $appService,
+//                                 ScheduledTaskServiceInterface $taskService)
+//    {
+//        //TODO - add maxLevel
+//        if ($building->isPending()) {
+//            return;
+//        }
+//
+//        $platformService->payPrice($building->getPlatform(), $building->getPrice($appService));
+//        $building->setStartBuild(new \DateTime('now'));
+//        $this->em->flush();
+//    }
 
     public function finishBuilding(Building $building)
     {

@@ -5,7 +5,9 @@ namespace AppBundle\Controller;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
+use AppBundle\Service\Building\BuildingUpgradeServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
+use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -67,15 +69,20 @@ class BuildingController extends MainController
      *     requirements={"buildingId" = "\d+"}
      *     )
      */
-    public function startUpgradeAction(int $id, int $buildingId, AppServiceInterface $appService)
+    public function startUpgradeAction(int $id,
+                                       int $buildingId,
+                                       BuildingUpgradeServiceInterface $buildingUpgradeService,
+                                       ScheduledTaskServiceInterface $scheduledTaskService)
     {
         $building = $this->buildingService->getByIdJoined($buildingId);
         $this->denyAccessUnlessGranted('view', $building);
 
         try {
-            $this->buildingService->startUpgrade($building,
-                                                 $this->platformService,
-                                                 $appService);
+            $buildingUpgradeService->startUpgrade(
+                $building,
+                $this->platformService,
+                $scheduledTaskService
+            );
         } catch (Exception $e) {
             var_dump($e->getMessage()); // TODO flush messaging
         }

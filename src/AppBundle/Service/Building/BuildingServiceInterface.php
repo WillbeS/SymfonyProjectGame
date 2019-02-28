@@ -8,6 +8,7 @@ use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Platform;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
+use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -37,7 +38,8 @@ interface BuildingServiceInterface
     ////////////////// For Level upgrade/////////////////////////////////////////////
     public function startUpgrade(Building $building,
                                  PlatformServiceInterface $platformService,
-                                 AppServiceInterface $appService); //flushes
+                                 AppServiceInterface $appService,
+                                 ScheduledTaskServiceInterface $taskService); //flushes
 
     //TODO - rename to finishUpgrade
     public function finishBuilding(Building $building); //flushes

@@ -7,6 +7,7 @@ use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
 use AppBundle\Entity\User;
+use AppBundle\Models\ResourcesPrice;
 use AppBundle\Repository\PlatformRepository;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
@@ -125,6 +126,7 @@ class PlatformService implements PlatformServiceInterface
         return $platform;
     }
 
+    //TODO delete when finished with all
     public function payPrice(Platform $platform, array $price)
     {
         foreach ($price as $resourceName => $value) {
