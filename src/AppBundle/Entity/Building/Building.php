@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Building;
 
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\PlatformUnitInterface;
-use AppBundle\Entity\ScheduledTaskInterface;
+use AppBundle\Entity\ScheduledTask;
 use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\App\TaskScheduleServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
@@ -59,6 +59,13 @@ class Building implements PlatformUnitInterface
      * @ORM\Column(name="start_build", type="datetime", nullable=true)
      */
     private $startBuild;
+
+    /**
+     * @var ScheduledTask
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ScheduledTask")
+     */
+    private $upgradeTask;
 
     /**
      * Get id
@@ -133,6 +140,28 @@ class Building implements PlatformUnitInterface
 
         return $this;
     }
+
+    /**
+     * @return ScheduledTask
+     */
+    public function getUpgradeTask(): ?ScheduledTask
+    {
+        return $this->upgradeTask;
+    }
+
+    /**
+     * @param ScheduledTask|null $upgradeTask
+     *
+     */
+    public function setUpgradeTask(ScheduledTask $upgradeTask = null)
+    {
+        $this->upgradeTask = $upgradeTask;
+
+        return $this;
+    }
+
+
+
 
     /**
      * @return \DateTime

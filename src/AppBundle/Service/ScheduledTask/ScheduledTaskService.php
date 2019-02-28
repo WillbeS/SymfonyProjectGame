@@ -37,6 +37,7 @@ class ScheduledTaskService implements ScheduledTaskServiceInterface
             ->setOwnerId($platformUnit->getId())
             ->setPlatform($platformUnit->getPlatform())
             ->setDuration($duration)
+            ->setStartDate(new \DateTime('now'))
             ->setDueDate($dueDate)
         ;
 

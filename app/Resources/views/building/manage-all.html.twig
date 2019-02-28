@@ -27,6 +27,10 @@
         </thead>
         <tbody>
         {% for building in platform.buildings %}
+            {% if building.upgradeTask %}
+                <div>Temp: {{ building.upgradeTask.duration }}</div>
+            {% endif %}
+
             <tr>
                 <td>{{ building.name }}</td>
                 <td>{{ building.level }}</td>
@@ -35,8 +39,9 @@
                 <td>{{ getCostPerLevel(building.gameBuilding.suppliesCost, building.level) }}</td>
                 <td>{{ getBuildTime(building)|formatTime }}</td>
                 <td>
-                    {% if building.pending %}
-                        <span class="timer" data-seconds="{{ getRemainingBuildTime(building) }}">{{ getRemainingBuildTime(building)|formatTime }}</span>
+                    {% if building.upgradeTask %}
+                        <span class="timer" data-seconds="{{ getTimeUntilDue(building.upgradeTask.dueDate) }}"></span>
+                        {#<span class="timer" data-seconds="{{ getRemainingBuildTime(building) }}">{{ getRemainingBuildTime(building)|formatTime }}</span>#}
                     {% else %}
                         <a href="{{ path('start_upgrade', {'id': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
                     {% endif %}

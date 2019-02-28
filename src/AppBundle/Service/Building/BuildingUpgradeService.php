@@ -3,15 +3,20 @@
 namespace AppBundle\Service\Building;
 
 use AppBundle\Entity\Building\Building;
+use AppBundle\Entity\Platform;
 use AppBundle\Entity\ScheduledTask;
+use AppBundle\Repository\BuildingRepository;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use AppBundle\Service\ScheduledTask\TimeCalculatorServiceInterface;
 use AppBundle\Service\Utils\PriceCalculatorServiceInterface;
+use AppBundle\Traits\Findable;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BuildingUpgradeService implements BuildingUpgradeServiceInterface
 {
+    use Findable;
+
     /**
      * @var EntityManagerInterface
      */
@@ -28,16 +33,23 @@ class BuildingUpgradeService implements BuildingUpgradeServiceInterface
     private $timeCalculatorService;
 
     /**
+     * @var BuildingRepository
+     */
+    private $buildingRepository;
+
+    /**
      * BuildingUpgradeService constructor.
      * @param PriceCalculatorServiceInterface $priceCalculatorService
      */
     public function __construct(EntityManagerInterface $em,
                                 PriceCalculatorServiceInterface $priceCalculatorService,
-                                TimeCalculatorServiceInterface $timeCalculatorService)
+                                TimeCalculatorServiceInterface $timeCalculatorService,
+                                BuildingRepository $buildingRepository)
     {
         $this->em = $em;
         $this->priceCalculatorService = $priceCalculatorService;
         $this->timeCalculatorService = $timeCalculatorService;
+        $this->buildingRepository = $buildingRepository;
     }
 
 
@@ -54,7 +66,26 @@ class BuildingUpgradeService implements BuildingUpgradeServiceInterface
             $building
         );
 
+        $building->setUpgradeTask($upgradeTask);
+
         $this->em->persist($upgradeTask);
+        $this->em->flush();
+    }
+
+    public function finishUpgrade(ScheduledTask $upgradeTask)
+    {
+        /**
+         * @var Building $building
+         */
+        $building = $this->buildingRepository->find($upgradeTask->getOwnerId());
+        $this->assertFound($building);
+
+        $building
+            ->setUpgradeTask(null)
+            ->setLevel($building->getLevel() + 1) //todo upgradeLevel method in the entity
+        ;
+
+        $this->em->remove($upgradeTask);
         $this->em->flush();
     }
 
@@ -66,6 +97,7 @@ class BuildingUpgradeService implements BuildingUpgradeServiceInterface
         );
     }
 
+    //TODO - put this in its own service
     private function getTotalPrice( Building $building): array
     {
         return [

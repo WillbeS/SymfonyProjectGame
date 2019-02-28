@@ -6,6 +6,7 @@ namespace AppBundle\Service\App;
 use AppBundle\Entity\ArmyJourney;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
+use AppBundle\Repository\ScheduledTaskRepository;
 use AppBundle\Service\Battle\BattleJourneyServiceInterface;
 use AppBundle\Service\Battle\JourneyServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
@@ -55,6 +56,11 @@ class GameStateService implements GameStateServiceInterface
      */
     private $taskScheduleService;
 
+    /**
+     * @var ScheduledTaskRepository
+     */
+    private $scheduledTaskRepository;
+
 
 
 
@@ -64,7 +70,8 @@ class GameStateService implements GameStateServiceInterface
                                 TimerServiceInterface $timerService,
                                 PlatformDataServiceInterface $platformDataService,
                                 PlatformServiceInterface $platformService,
-                                TaskScheduleServiceInterface $taskScheduleService)
+                                TaskScheduleServiceInterface $taskScheduleService,
+                                ScheduledTaskRepository $scheduledTaskRepository)
     {
         $this->buildingService = $buildingService;
         $this->unitService = $unitService;
@@ -73,6 +80,7 @@ class GameStateService implements GameStateServiceInterface
         $this->platformDataService = $platformDataService;
         $this->platformService = $platformService;
         $this->taskScheduleService = $taskScheduleService;
+        $this->scheduledTaskRepository = $scheduledTaskRepository;
     }
 
     // TODO - may need to make this per user and do update to all user platforms
@@ -80,10 +88,12 @@ class GameStateService implements GameStateServiceInterface
     public function updatePlatformState(): bool
     {
         $platform = $this->platformDataService->getCurrentPlatform();
-        $this->updateBuildingsState($platform);
+        //$this->updateBuildingsState($platform);
         $this->updatePlatformResourcesState($platform, $this->platformService);
         $this->updateUnitsInTrainingState($platform);
         $this->taskScheduleService->processDueTasks(ArmyJourney::class);
+
+        $this->taskScheduleService->processDueTasksByPlatform($platform->getId());
 
         return true;
     }

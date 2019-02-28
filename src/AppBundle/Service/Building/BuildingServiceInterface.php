@@ -31,18 +31,18 @@ interface BuildingServiceInterface
      * @param Platform|null $platform
      * @return Building[]
      */
-    public function getPending(Platform $platform = null): Collection;
+    //public function getPending(Platform $platform = null): Collection;
     ////////////////////////////////////////////////////////////////////////////
 
 
     ////////////////// For Level upgrade/////////////////////////////////////////////
-    public function startUpgrade(Building $building,
-                                 PlatformServiceInterface $platformService,
-                                 AppServiceInterface $appService,
-                                 ScheduledTaskServiceInterface $taskService); //flushes
+    //public function startUpgrade(Building $building,
+//                                 PlatformServiceInterface $platformService,
+//                                 AppServiceInterface $appService,
+//                                 ScheduledTaskServiceInterface $taskService); //flushes
 
     //TODO - rename to finishUpgrade
-    public function finishBuilding(Building $building); //flushes
+    //public function finishBuilding(Building $building); //flushes
     //////////////////////////////////////////////////////////////////////////////////
 
     ///////////////////////// New Registration Methods ////////////////////////////////

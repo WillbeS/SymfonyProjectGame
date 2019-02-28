@@ -42,6 +42,13 @@ class ScheduledTask
     /**
      * @var \DateTime
      *
+     * @ORM\Column(name="start_date", type="datetime")
+     */
+    private $startDate;
+
+    /**
+     * @var \DateTime
+     *
      * @ORM\Column(name="due_date", type="datetime")
      */
     private $dueDate;
@@ -115,6 +122,26 @@ class ScheduledTask
     public function getTaskType()
     {
         return $this->taskType;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getStartDate(): \DateTime
+    {
+        return $this->startDate;
+    }
+
+    /**
+     * @param \DateTime $startDate
+     *
+     * @return ScheduledTask
+     */
+    public function setStartDate(\DateTime $startDate)
+    {
+        $this->startDate = $startDate;
+
+        return $this;
     }
 
     /**

@@ -12,4 +12,10 @@ class TimeCalculatorService implements TimeCalculatorServiceInterface
     {
         return floor($baseDuration + ($baseDuration * $level * Building::BUILD_TIME_FACTOR));
     }
+
+    public function getTimeUntilDueDate(\DateTime $dueDate):int
+    {
+        $now = new \DateTime('now');
+        return $dueDate->getTimestamp() - $now->getTimestamp();
+    }
 }

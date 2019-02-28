@@ -3,11 +3,16 @@
 namespace AppBundle\Service\App;
 
 use AppBundle\Entity\ArmyJourney;
+use AppBundle\Entity\Platform;
+use AppBundle\Entity\ScheduledTask;
+use AppBundle\Repository\ScheduledTaskRepository;
 use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
 use AppBundle\Service\Battle\BattleServiceInterface;
+use AppBundle\Service\Building\BuildingUpgradeServiceInterface;
 use AppBundle\Service\Utils\CountdownServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+//TODO - rename and move in ScheduledTask dir
 class TaskScheduleService implements TaskScheduleServiceInterface
 {
     /**
@@ -16,9 +21,9 @@ class TaskScheduleService implements TaskScheduleServiceInterface
     private $em;
 
     /**
-     * @var CountdownServiceInterface
+     * @var ScheduledTaskRepository
      */
-    private $countdownService;
+    private $scheduleTaskRepository;
 
     /**
      * @var BattleServiceInterface
@@ -31,19 +36,50 @@ class TaskScheduleService implements TaskScheduleServiceInterface
     private $journeyService;
 
     /**
+     * @var BuildingUpgradeServiceInterface
+     */
+    private $buildingUpgradeService;
+
+    /**
      * TaskScheduleService constructor.
      * @param CountdownServiceInterface $countdownService
      */
-    public function __construct(CountdownServiceInterface $countdownService,
+    public function __construct(ScheduledTaskRepository $scheduledTaskRepository,
                                 EntityManagerInterface $em,
                                 BattleServiceInterface $battleService,
-                                JourneyServiceInterface $journeyService)
+                                JourneyServiceInterface $journeyService,
+                                BuildingUpgradeServiceInterface $buildingUpgradeService)
     {
-        //$this->countdownService = $countdownService;
         $this->em = $em;
+        $this->scheduleTaskRepository = $scheduledTaskRepository;
+
         $this->battleService = $battleService;
         $this->journeyService = $journeyService;
+        $this->buildingUpgradeService = $buildingUpgradeService;
     }
+
+    public function processDueTasksByPlatform(int $platformId)
+    {
+        $dueTasks = $this->scheduleTaskRepository->findDueTasksByPlatform($platformId);
+
+        if (0 === count($dueTasks)) {
+            return;
+        }
+
+        foreach ($dueTasks as $dueTask) {
+            /**
+             * @var ScheduledTask $dueTask
+             */
+            switch ($dueTask->getTaskType()) {
+                case ScheduledTask::BUILDING_UPGRADE:
+                    $this->buildingUpgradeService->finishUpgrade($dueTask);
+                    break;
+            }
+        }
+    }
+
+
+    // Old code
 
     public function processDueTasks(string $entityType): bool
     {

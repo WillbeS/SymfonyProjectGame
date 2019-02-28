@@ -5,6 +5,7 @@ use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Unit;
 use AppBundle\Service\App\AppServiceInterface;
+use AppBundle\Service\ScheduledTask\TimeCalculatorServiceInterface;
 use AppBundle\Service\Utils\CountdownServiceInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -23,14 +24,21 @@ class AppExtension extends AbstractExtension
     private $countdownService;
 
     /**
+     * @var TimeCalculatorServiceInterface
+     */
+    private $timeCalculationService;
+
+    /**
      * AppExtension constructor.
      * @param AppServiceInterface $appService
      */
     public function __construct(AppServiceInterface $appService,
-                                CountdownServiceInterface $countdownService)
+                                CountdownServiceInterface $countdownService,
+                                TimeCalculatorServiceInterface $timeCalculatorService)
     {
         $this->appService = $appService;
         $this->countdownService = $countdownService;
+        $this->timeCalculationService = $timeCalculatorService;
     }
 
     public function getFilters()
@@ -50,6 +58,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('getRemainingBuildTime', [$this, 'getRemainingBuildTime']),
             new TwigFunction('getRemainingTrainingTime', [$this, 'getRemainingTrainingTime']),
             new TwigFunction('getRemainingTime', [$this, 'getRemainingTime']),
+            new TwigFunction('getTimeUntilDue', [$this, 'getTimeUntilDue']),
         ];
     }
 
@@ -85,11 +94,17 @@ class AppExtension extends AbstractExtension
                                                             $unit->getInTraining());
     }
 
-    //TODO - refactor on all and make this the only way
-    public function getRemainingTime(\DateTime $startDate, int $duration)
+    public function getRemainingTime(\DateTime $startDate, int $duration = null)
     {
         return $this->countdownService->getRemainingTime($startDate, $duration);
     }
+
+    //TODO - refactor on all and make this the only way
+    public function getTimeUntilDue(\DateTime $dueDate)
+    {
+        return $this->timeCalculationService->getTimeUntilDueDate($dueDate);
+    }
+
 
 
     // Filters
