@@ -90,7 +90,7 @@ class GameStateService implements GameStateServiceInterface
         $platform = $this->platformDataService->getCurrentPlatform();
         //$this->updateBuildingsState($platform);
         $this->updatePlatformResourcesState($platform, $this->platformService);
-        $this->updateUnitsInTrainingState($platform);
+        //$this->updateUnitsInTrainingState($platform);
         $this->taskScheduleService->processDueTasks(ArmyJourney::class);
 
         $this->taskScheduleService->processDueTasksByPlatform($platform->getId());

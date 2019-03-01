@@ -88,16 +88,16 @@ class BuildingService implements BuildingServiceInterface
      * @param Platform|null $platform
      * @return Building[]|Collection
      */
-    public function getPending(Platform $platform = null): Collection
-    {
-        if (!$platform) {
-            return $this->buildingRepo->findPending($platform);
-        }
-
-        return $platform->getBuildings()->filter(function (Building $building) {
-            return $building->getStartBuild() !== null;
-        });
-    }
+//    public function getPending(Platform $platform = null): Collection
+//    {
+//        if (!$platform) {
+//            return $this->buildingRepo->findPending($platform);
+//        }
+//
+//        return $platform->getBuildings()->filter(function (Building $building) {
+//            return $building->getStartBuild() !== null;
+//        });
+//    }
 
     public function getByGameBuilding(GameBuilding $gameBuilding, Platform $platform): Building
     {
@@ -112,21 +112,21 @@ class BuildingService implements BuildingServiceInterface
         return $building;
     }
 
-    public function startUpgrade(Building $building,
-                                 PlatformServiceInterface $platformService,
-                                 AppServiceInterface $appService,
-                                 ScheduledTaskServiceInterface $taskService)
-    {
-        $platformService->payPrice($building->getPlatform(), $building->getPrice($appService));
-
-        $taskService->createTask(
-            ScheduledTask::BUILDING_UPGRADE,
-            0,
-            $building
-        );
-
-        $this->em->flush();
-    }
+//    public function startUpgrade(Building $building,
+//                                 PlatformServiceInterface $platformService,
+//                                 AppServiceInterface $appService,
+//                                 ScheduledTaskServiceInterface $taskService)
+//    {
+//        $platformService->payPrice($building->getPlatform(), $building->getPrice($appService));
+//
+//        $taskService->createTask(
+//            ScheduledTask::BUILDING_UPGRADE,
+//            0,
+//            $building
+//        );
+//
+//        $this->em->flush();
+//    }
 
 
 
@@ -145,14 +145,14 @@ class BuildingService implements BuildingServiceInterface
 //        $this->em->flush();
 //    }
 
-    public function finishBuilding(Building $building)
-    {
-        $building
-            ->setStartBuild(null)
-            ->setLevel($building->getLevel() + 1);
-
-        $this->em->flush();
-    }
+//    public function finishBuilding(Building $building)
+//    {
+//        $building
+//            ->setStartBuild(null)
+//            ->setLevel($building->getLevel() + 1);
+//
+//        $this->em->flush();
+//    }
 
     /////////////////////////// For Registration ///////////////////////////////
     public function createAllPlatformBuildings(Platform $platform)

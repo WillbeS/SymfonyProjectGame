@@ -9,6 +9,8 @@ use AppBundle\Repository\ScheduledTaskRepository;
 use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
 use AppBundle\Service\Battle\BattleServiceInterface;
 use AppBundle\Service\Building\BuildingUpgradeServiceInterface;
+use AppBundle\Service\Unit\UnitServiceInterface;
+use AppBundle\Service\Unit\UnitTrainingServiceInterface;
 use AppBundle\Service\Utils\CountdownServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -41,6 +43,16 @@ class TaskScheduleService implements TaskScheduleServiceInterface
     private $buildingUpgradeService;
 
     /**
+     * @var UnitServiceInterface
+     */
+    private $unitService;
+
+    /**
+     * @var UnitTrainingServiceInterface
+     */
+    private $unitTrainingService;
+
+    /**
      * TaskScheduleService constructor.
      * @param CountdownServiceInterface $countdownService
      */
@@ -48,7 +60,9 @@ class TaskScheduleService implements TaskScheduleServiceInterface
                                 EntityManagerInterface $em,
                                 BattleServiceInterface $battleService,
                                 JourneyServiceInterface $journeyService,
-                                BuildingUpgradeServiceInterface $buildingUpgradeService)
+                                BuildingUpgradeServiceInterface $buildingUpgradeService,
+                                UnitServiceInterface $unitService,
+                                UnitTrainingServiceInterface $unitTrainingService)
     {
         $this->em = $em;
         $this->scheduleTaskRepository = $scheduledTaskRepository;
@@ -56,8 +70,11 @@ class TaskScheduleService implements TaskScheduleServiceInterface
         $this->battleService = $battleService;
         $this->journeyService = $journeyService;
         $this->buildingUpgradeService = $buildingUpgradeService;
+        $this->unitService = $unitService;
+        $this->unitTrainingService = $unitTrainingService;
     }
 
+    //TODO - really try and use events if there's time!!!
     public function processDueTasksByPlatform(int $platformId)
     {
         $dueTasks = $this->scheduleTaskRepository->findDueTasksByPlatform($platformId);
@@ -73,14 +90,19 @@ class TaskScheduleService implements TaskScheduleServiceInterface
             switch ($dueTask->getTaskType()) {
                 case ScheduledTask::BUILDING_UPGRADE:
                     $this->buildingUpgradeService->finishUpgrade($dueTask);
+                    $this->unitService->updateUnitStatus($dueTask->getPlatform());
+                    break;
+                case ScheduledTask::UNIT_TRAINING:
+                    $this->unitTrainingService->finishTraining($dueTask);
                     break;
             }
         }
+
+        //todo - decide if put the flush here for all or keep it inside
     }
 
 
     // Old code
-
     public function processDueTasks(string $entityType): bool
     {
         $dueTasks = $this->getDueTasks($entityType);

@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="units")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UnitRepository")
  */
-class Unit
+class Unit implements PlatformUnitInterface
 {
     /**
      * @var int
@@ -93,11 +93,18 @@ class Unit
     private $platform;
 
     /**
+     * @var ScheduledTask
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ScheduledTask")
+     */
+    private $trainingTask;
+
+    /**
      * Get id
      *
      * @return int
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -253,6 +260,27 @@ class Unit
 
         return $this;
     }
+
+    /**
+     * @return ScheduledTask
+     */
+    public function getTrainingTask(): ?ScheduledTask
+    {
+        return $this->trainingTask;
+    }
+
+    /**
+     * @param ScheduledTask|null $trainingTask
+     */
+    public function setTrainingTask(ScheduledTask $trainingTask = null)
+    {
+        $this->trainingTask = $trainingTask;
+
+        return $this;
+    }
+
+
+
 
     public function getStatus()
     {

@@ -18,10 +18,11 @@
             <th>Outside</th>
             <th>Total</th>
             <th>In Training</th>
-            {% if unit.haveInTraining %}
+            {% if unit.trainingTask %}
                 <th>Ready in</th>
+            {% else %}
+                <th>Recruit</th>
             {% endif %}
-            <th>Recruit</th>
         </tr>
         </thead>
         <tbody>
@@ -31,12 +32,13 @@
                 <td>{{ unit.inBattle }}</td>
                 <td>{{ unit.total }}</td>
                 <td>{{ unit.inTraining }}</td>
-                {% if unit.haveInTraining %}
-                    <td class="timer" data-seconds="{{ getRemainingTrainingTime(unit) }}">{{ getRemainingTrainingTime(unit)|formatTime }}</td>
+                {% if unit.trainingTask %}
+                    <td class="timer" data-seconds="{{ getTimeUntilDue(unit.trainingTask.dueDate) }}"></td>
+                {% else %}
+                    <td class="unit-count">
+                        {% include 'unit/recruit-form.html.twig' %}
+                    </td>
                 {% endif %}
-                <td class="unit-count">
-                    {% include 'unit/recruit-form.html.twig' %}
-                </td>
             </tr>
         </tbody>
     </table>

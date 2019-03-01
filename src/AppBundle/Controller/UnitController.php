@@ -7,7 +7,9 @@ use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformDataServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
+use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
+use AppBundle\Service\Unit\UnitTrainingServiceInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -85,7 +87,9 @@ class UnitController extends MainController
      */
     public function recruit(int $id, int $unitId,
                             Request $request,
-                            PlatformDataServiceInterface $platformDataService)
+                            PlatformDataServiceInterface $platformDataService,
+                            UnitTrainingServiceInterface $unitTrainingService,
+                            ScheduledTaskServiceInterface $scheduledTaskService)
     {
         $platform = $platformDataService->getCurrentPlatform();
         $unit = $this->platformService->getPlatfomUnit($unitId, $platform);
@@ -95,12 +99,16 @@ class UnitController extends MainController
         $form->handleRequest($request);
 
         if($form->isSubmitted()) {
-            try {
-                $this->unitService->startRecruiting($form->getData()['count'],
-                                                    $unit,
-                                                    $this->platformService);
-            } catch (Exception $exception) {
-                echo $exception->getMessage(); //todo flush messaging for both cases
+            $success = $unitTrainingService->startTraining(
+                $form->getData()['count'],
+                $unit,
+                $this->platformService,
+                $scheduledTaskService
+            );
+
+            if (!$success) {
+                dump('Invalid count'); // todo flush
+                exit;
             }
 
             return $this->redirectToRoute('recruit', ['id' => $id, 'unitId' => $unitId]);

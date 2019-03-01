@@ -27,10 +27,6 @@
         </thead>
         <tbody>
         {% for building in platform.buildings %}
-            {% if building.upgradeTask %}
-                <div>Temp: {{ building.upgradeTask.duration }}</div>
-            {% endif %}
-
             <tr>
                 <td>{{ building.name }}</td>
                 <td>{{ building.level }}</td>

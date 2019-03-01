@@ -9,6 +9,7 @@ use AppBundle\Entity\UnitType;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 
+//TODO - clean up after scheduled tasks
 interface UnitServiceInterface
 {
     public function getById(int $id): Unit;
@@ -19,7 +20,7 @@ interface UnitServiceInterface
 
     public function updateUnitStatus(Platform $platform); // flushes
 
-    public function updateUnitInTraining(int $elapsed, Unit $unit); //flushes
+    //public function updateUnitInTraining(int $elapsed, Unit $unit); //flushes
 
     /**
      * @param Building $building
@@ -27,9 +28,9 @@ interface UnitServiceInterface
      */
     public function getAllByBuilding(Building $building): array;
 
-    public function startRecruiting($count,
-                                    Unit $unit,
-                                    PlatformServiceInterface $platformService); //flushes
+//    public function startRecruiting($count,
+//                                    Unit $unit,
+//                                    PlatformServiceInterface $platformService); //flushes
 
     public function generateUnit(UnitType $unitType,
                                Platform $platform,
