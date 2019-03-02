@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -10,11 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="scheduled_tasks")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ScheduledTaskRepository")
  */
-class ScheduledTask
+class ScheduledTask implements ScheduledTaskInterface
 {
     const BUILDING_UPGRADE = 1;
     const UNIT_TRAINING = 2;
-    const UNIT_TRAVELLING = 3;
+    const ATTACK_JOURNEY = 3;
+    const RETURN_JOURNEY = 4;
 
     /**
      * @var int
@@ -30,7 +32,7 @@ class ScheduledTask
      *
      * @ORM\Column(name="owner_id", type="integer")
      */
-    private $ownerId;
+    private $ownerId; //todo - when finished with all tasks check if this is needed
 
     /**
      * @var int
@@ -58,7 +60,7 @@ class ScheduledTask
      *
      * @ORM\Column(name="duration", type="integer")
      */
-    private $duration;
+    private $duration; //todo - when finished with all tasks check if this is needed
 
     /**
      * @var Platform
@@ -71,15 +73,15 @@ class ScheduledTask
     /**
      * Get id
      *
-     * @return int
+     * @return int|null
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getOwnerId(): int
     {
@@ -119,7 +121,7 @@ class ScheduledTask
      *
      * @return int
      */
-    public function getTaskType()
+    public function getTaskType(): int
     {
         return $this->taskType;
     }
@@ -151,7 +153,7 @@ class ScheduledTask
      *
      * @return ScheduledTask
      */
-    public function setDueDate($dueDate)
+    public function setDueDate(\DateTime $dueDate)
     {
         $this->dueDate = $dueDate;
 
@@ -163,7 +165,7 @@ class ScheduledTask
      *
      * @return \DateTime
      */
-    public function getDueDate()
+    public function getDueDate(): \DateTime
     {
         return $this->dueDate;
     }

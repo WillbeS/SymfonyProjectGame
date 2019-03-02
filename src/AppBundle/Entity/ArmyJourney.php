@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="army_journeys")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ArmyJourneyRepository")
  */
-class ArmyJourney implements ScheduledTaskInterface
+class ArmyJourney
 {
     const PURPOSE_BATTLE = 1;
 

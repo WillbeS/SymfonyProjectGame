@@ -8,6 +8,35 @@ use Doctrine\Common\Collections\Collection;
 
 class ArmyService implements ArmyServiceInterface
 {
+    /**
+     * @var int
+     */
+    private $slowestSpeed;
+
+    public function getArmyFromRequestData(array $requestData, Collection $platformUnits): string
+    {
+        $this->slowestSpeed = 0;
+        $attackerArmy = [];
+
+        /** @var Unit $unit */
+        foreach ($platformUnits as $unit) {
+            if (!array_key_exists($unit->getId(), $requestData)) {
+                continue;
+            }
+
+            $count = $requestData[$unit->getId()];
+            $this->setSlowestSpeed($count, $unit->getUnitType()->getSpeed());
+            $this->setUnitsInBattle($count, $unit);
+            $attackerArmy[$unit->getUnitType()->getName()] = (int)$count;
+        }
+
+        if (0 === $this->slowestSpeed) {
+            throw new \Exception('You must choose at least 1 unit');
+        }
+
+        return json_encode($attackerArmy);
+    }
+
     public function initArmyModel(Collection $units, array $journeyTroops = null): ArmyModel
     {
         $army = new ArmyModel();
@@ -44,5 +73,29 @@ class ArmyService implements ArmyServiceInterface
                 $unit->setInBattle($unit->getInBattle() - $diff);
             }
         }
+    }
+
+    public function getArmySpeed(): int
+    {
+        return $this->slowestSpeed;
+    }
+
+    private function setUnitsInBattle(int $count, Unit $unit)
+    {
+        if (0 == $count) {
+            return;
+        }
+
+        $unit->setInBattle($unit->getInBattle() + $count);
+        $unit->setIddle($unit->getIddle() - $count);
+    }
+
+    private function setSlowestSpeed(int $count, int $speed)
+    {
+        if (0 == $count || $speed < $this->slowestSpeed) {
+            return;
+        }
+
+        $this->slowestSpeed = $speed;
     }
 }

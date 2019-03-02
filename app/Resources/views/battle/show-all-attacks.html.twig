@@ -10,50 +10,10 @@
 
 {% block body %}
     <h2>Enemy Attacks</h2>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Attack</th>
-            <th>Remaining Time</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for attack in enemyAttacks %}
-            {% set remainingTime = getRemainingTime(attack.startDate, attack.duration) %}
-            <tr>
-                <td>{{ attack.name }}</td>
-                <td class="timer" data-seconds="{{ remainingTime }}">{{ remainingTime|formatTime }}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="2" class="text-center">You have no enemy attacks</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% include 'battle/attacks-table.html.twig' with {'attacks': enemyAttacks} %}
 
     <h2>Own Attacks</h2>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Attack</th>
-            <th>Remaining Time</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for attack in ownAttacks %}
-            {% set remainingTime = getRemainingTime(attack.startDate, attack.duration) %}
-            <tr>
-                <td>{{ attack.name }}</td>
-                <td class="timer" data-seconds="{{ remainingTime }}">{{ remainingTime|formatTime }}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="2" class="text-center">You have no own attacks</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% include 'battle/attacks-table.html.twig' with {'attacks': ownAttacks} %}
 {% endblock %}
 
 

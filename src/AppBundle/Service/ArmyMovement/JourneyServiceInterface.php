@@ -10,9 +10,13 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 interface JourneyServiceInterface
 {
-    public function getAllOwnJourneys(GridCell $origin): array;
+    public function getAllOwnAttacks(Platform $platform): array;
 
-    public function getAllEnemyJourneys(GridCell $destination): array;
+    public function getAllEnemyAttacks(Platform $platform): array;
+
+    public function getAllOwnJourneys(GridCell $origin): array; //old
+
+    public function getAllEnemyJourneys(GridCell $destination): array; //old
 
     public function processBattleJourneys(array $battleTasks): bool;
 }

@@ -5,6 +5,7 @@ namespace AppBundle\Service\Building;
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\ScheduledTask;
+use AppBundle\Entity\ScheduledTaskInterface;
 use AppBundle\Repository\BuildingRepository;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
@@ -60,7 +61,7 @@ class BuildingUpgradeService implements BuildingUpgradeServiceInterface
         $price = $this->getTotalPrice($building);
         $platformService->payPrice($building->getPlatform(), $price);
 
-        $upgradeTask = $taskService->createTask(
+        $upgradeTask = $taskService->createPlatformUnitTask(
             ScheduledTask::BUILDING_UPGRADE,
             $this->getUpgradeTimeDuration($building),
             $building
@@ -72,12 +73,12 @@ class BuildingUpgradeService implements BuildingUpgradeServiceInterface
         $this->em->flush();
     }
 
-    public function finishUpgrade(ScheduledTask $upgradeTask)
+    public function finishUpgrade(ScheduledTaskInterface $upgradeTask)
     {
         /**
          * @var Building $building
          */
-        $building = $this->buildingRepository->find($upgradeTask->getOwnerId());
+        $building = $this->buildingRepository->findOneBy(['upgradeTask' => $upgradeTask]);
         $this->assertFound($building);
 
         $building

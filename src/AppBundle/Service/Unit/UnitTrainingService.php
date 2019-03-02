@@ -4,6 +4,7 @@ namespace AppBundle\Service\Unit;
 
 
 use AppBundle\Entity\ScheduledTask;
+use AppBundle\Entity\ScheduledTaskInterface;
 use AppBundle\Entity\Unit;
 use AppBundle\Repository\UnitRepository;
 use AppBundle\Service\Platform\PlatformServiceInterface;
@@ -48,7 +49,7 @@ class UnitTrainingService implements UnitTrainingServiceInterface
 
         $platformService->payPrice($unit->getPlatform(), $unit->getPrice($count));
 
-        $trainingTask = $scheduledTaskService->createTask(
+        $trainingTask = $scheduledTaskService->createPlatformUnitTask(
             ScheduledTask::UNIT_TRAINING,
             $unit->getUnitType()->getBuildTime() * $count,
             $unit
@@ -65,12 +66,12 @@ class UnitTrainingService implements UnitTrainingServiceInterface
         return true;
     }
 
-    public function finishTraining(ScheduledTask $trainingTask)
+    public function finishTraining(ScheduledTaskInterface $trainingTask)
     {
         /**
          * @var Unit $unit
          */
-        $unit = $this->unitRepository->find($trainingTask->getOwnerId());
+        $unit = $this->unitRepository->findOneBy(['trainingTask' => $trainingTask]);
         $this->assertFound($unit);
 
         $unit

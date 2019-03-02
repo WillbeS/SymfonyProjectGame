@@ -3,10 +3,14 @@
 namespace AppBundle\Service\App;
 
 use AppBundle\Entity\ArmyJourney;
+use AppBundle\Entity\MilitaryCampaign;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\ScheduledTask;
+use AppBundle\Entity\ScheduledTaskInterface;
+use AppBundle\Repository\MilitaryCampaignRepository;
 use AppBundle\Repository\ScheduledTaskRepository;
 use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
+use AppBundle\Service\ArmyMovement\MilitaryCampaignServiceInterface;
 use AppBundle\Service\Battle\BattleServiceInterface;
 use AppBundle\Service\Building\BuildingUpgradeServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
@@ -53,6 +57,16 @@ class TaskScheduleService implements TaskScheduleServiceInterface
     private $unitTrainingService;
 
     /**
+     * @var MilitaryCampaignServiceInterface
+     */
+    private $militaryCampaignService;
+
+    /**
+     * @var MilitaryCampaignRepository
+     */
+    private $militaryCampaignRepository;
+
+    /**
      * TaskScheduleService constructor.
      * @param CountdownServiceInterface $countdownService
      */
@@ -62,7 +76,9 @@ class TaskScheduleService implements TaskScheduleServiceInterface
                                 JourneyServiceInterface $journeyService,
                                 BuildingUpgradeServiceInterface $buildingUpgradeService,
                                 UnitServiceInterface $unitService,
-                                UnitTrainingServiceInterface $unitTrainingService)
+                                UnitTrainingServiceInterface $unitTrainingService,
+                                MilitaryCampaignServiceInterface $militaryCampaignService,
+                                MilitaryCampaignRepository $militaryCampaignRepository)
     {
         $this->em = $em;
         $this->scheduleTaskRepository = $scheduledTaskRepository;
@@ -72,20 +88,20 @@ class TaskScheduleService implements TaskScheduleServiceInterface
         $this->buildingUpgradeService = $buildingUpgradeService;
         $this->unitService = $unitService;
         $this->unitTrainingService = $unitTrainingService;
+        $this->militaryCampaignService = $militaryCampaignService;
+        $this->militaryCampaignRepository = $militaryCampaignRepository;
     }
 
     //TODO - really try and use events if there's time!!!
-    public function processDueTasksByPlatform(int $platformId)
+    public function processDueTasks(array $dueTasks)
     {
-        $dueTasks = $this->scheduleTaskRepository->findDueTasksByPlatform($platformId);
-
         if (0 === count($dueTasks)) {
             return;
         }
 
         foreach ($dueTasks as $dueTask) {
             /**
-             * @var ScheduledTask $dueTask
+             * @var ScheduledTaskInterface $dueTask
              */
             switch ($dueTask->getTaskType()) {
                 case ScheduledTask::BUILDING_UPGRADE:
@@ -95,41 +111,29 @@ class TaskScheduleService implements TaskScheduleServiceInterface
                 case ScheduledTask::UNIT_TRAINING:
                     $this->unitTrainingService->finishTraining($dueTask);
                     break;
+                case ScheduledTask::ATTACK_JOURNEY:
+                    /** @var MilitaryCampaign $dueTask */
+                    $this->militaryCampaignService->processCampaign($dueTask);
+                    break;
+                case ScheduledTask::RETURN_JOURNEY:
+                    /** @var MilitaryCampaign $dueTask */
+                    $this->militaryCampaignService->processReturnCampaign($dueTask);
+                    break;
             }
         }
 
         //todo - decide if put the flush here for all or keep it inside
     }
 
-
-    // Old code
-    public function processDueTasks(string $entityType): bool
+    public function processDueTasksByPlatform(int $platformId)
     {
-        $dueTasks = $this->getDueTasks($entityType);
-
-        if (0 == count($dueTasks)) {
-            return true;
-        }
-
-        //TODO - use events if decide to refactor other entities
-        switch ($entityType) {
-            case ArmyJourney::class:
-                $this->journeyService->processBattleJourneys($dueTasks);
-                break;
-        }
-
-        return true;
+        $tasks = $this->scheduleTaskRepository->findDueTasksByPlatform($platformId);
+        $this->processDueTasks($tasks);
     }
 
-
-    private function getDueTasks(string $entityType):array
+    public function processDueCampaignTasksByPlatform(int $platformId)
     {
-        $qb = $this->em->createQueryBuilder();
-        return $qb->select('t')
-            ->from($entityType, 't')
-            ->where('t.dueDate <= :now')
-            ->setParameter('now', new \DateTime('now'), \Doctrine\DBAL\Types\Type::DATETIME)
-            ->getQuery()
-            ->getResult();
+        $tasks = $this->militaryCampaignRepository->findDueCampaignsByPlatform($platformId);
+        $this->processDueTasks($tasks);
     }
 }

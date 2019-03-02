@@ -4,6 +4,7 @@ namespace AppBundle\Service\Unit;
 
 
 use AppBundle\Entity\ScheduledTask;
+use AppBundle\Entity\ScheduledTaskInterface;
 use AppBundle\Entity\Unit;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
@@ -15,5 +16,5 @@ interface UnitTrainingServiceInterface
                                   PlatformServiceInterface $platformService,
                                   ScheduledTaskServiceInterface $scheduledTaskService): bool;
 
-    public function finishTraining(ScheduledTask $trainingTask);
+    public function finishTraining(ScheduledTaskInterface $trainingTask);
 }

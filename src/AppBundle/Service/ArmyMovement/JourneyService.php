@@ -4,8 +4,12 @@ namespace AppBundle\Service\ArmyMovement;
 
 use AppBundle\Entity\ArmyJourney;
 use AppBundle\Entity\GridCell;
+use AppBundle\Entity\Platform;
+use AppBundle\Entity\ScheduledTask;
 use AppBundle\Entity\Unit;
 use AppBundle\Repository\ArmyJourneyRepository;
+use AppBundle\Repository\MilitaryCampaignRepository;
+use AppBundle\Repository\ScheduledTaskRepository;
 use AppBundle\Service\Battle\BattleServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,19 +38,38 @@ class JourneyService implements JourneyServiceInterface
     private $startJourneyService;
 
     /**
+     * @var MilitaryCampaignRepository
+     */
+    private $militaryCampaigns;
+
+    /**
      * BattleService constructor.
      * @param UnitServiceInterface $unitService
      */
     public function __construct(EntityManagerInterface $em,
                                 ArmyJourneyRepository $armyJourneyRepository,
                                 BattleServiceInterface $battleService,
-                                StartJourneyServiceInterface $startJourneyService)
+                                StartJourneyServiceInterface $startJourneyService,
+                                MilitaryCampaignRepository $militaryCampaignRepository)
     {
         $this->em = $em;
         $this->armyJourneyRepository = $armyJourneyRepository;
         $this->battleService = $battleService;
         $this->startJourneyService = $startJourneyService;
+        $this->militaryCampaigns = $militaryCampaignRepository;
     }
+
+    public function getAllOwnAttacks(Platform $origin): array
+    {
+        return $this->militaryCampaigns->findBy(['origin' => $origin]);
+    }
+
+
+    public function getAllEnemyAttacks(Platform $destination): array
+    {
+        return $this->militaryCampaigns->findBy(['destination' => $destination, 'taskType' => ScheduledTask::ATTACK_JOURNEY]);
+    }
+
 
     /**
      * @param GridCell $origin

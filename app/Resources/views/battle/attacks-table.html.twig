@@ -1,0 +1,22 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Attack</th>
+        <th>Remaining Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for attack in attacks %}
+        {# @var attack \AppBundle\Entity\MilitaryCampaign #}
+        {% set remainingTime = getTimeUntilDue(attack.dueDate) %}
+        <tr>
+            <td>{{ attack.name }}</td>
+            <td class="timer" data-seconds="{{ remainingTime }}"></td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="2" class="text-center">You have no attacks</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

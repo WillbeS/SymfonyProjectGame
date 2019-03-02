@@ -3,15 +3,19 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ArmyJourney;
+use AppBundle\Entity\MilitaryCampaign;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserReport;
 use AppBundle\Form\UnitTravelCountsType;
 use AppBundle\Service\App\GameStateServiceInterface;
+use AppBundle\Service\App\TaskScheduleServiceInterface;
 use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
+use AppBundle\Service\ArmyMovement\MilitaryCampaignServiceInterface;
 use AppBundle\Service\ArmyMovement\StartJourneyServiceInterface;
 use AppBundle\Service\Battle\BattleReportServiceInterface;
 use AppBundle\Service\Platform\PlatformDataServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
+use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -80,8 +84,10 @@ class BattleController extends MainController
                                             int $playerId,
                                             Request $request,
                                             UserServiceInterface $userService,
-                                            StartJourneyServiceInterface $startJourneyService)
+                                            StartJourneyServiceInterface $startJourneyService,
+                                            MilitaryCampaignServiceInterface $militaryCampaignService)
     {
+        /** @var User $currentUser */
         $currentUser = $this->getUser();
         $target = $userService->getById($playerId);
 
@@ -98,9 +104,15 @@ class BattleController extends MainController
         }
 
         try {
-            $startJourneyService->startJourney($form->getData(), $currentUser, $target);
+            //$startJourneyService->startJourney($form->getData(), $currentUser, $target);
+            $militaryCampaignService->startCampaign(
+                $form->getData(),
+                $currentUser->getCurrentPlatform(),
+                $target->getCurrentPlatform()
+            );
         } catch (\Exception $e) {
             $this->addFlash('error', 'Invalid input. Attack was not sent.');
+            //$this->addFlash('error', $e->getMessage());;
         }
 
         return $this->redirectToRoute('send_attack', ['id' => $id, 'playerId' => $playerId]);
@@ -112,11 +124,11 @@ class BattleController extends MainController
     public function showAllAttacks(PlatformDataServiceInterface $platformDataService)
     {
         $platform = $platformDataService->getCurrentPlatform();
-        /** @var ArmyJourney[] $ownAttacks */
-        $ownAttacks = $this->armyJourneyService->getAllOwnJourneys($platform->getGridCell());
+        /** @var MilitaryCampaign[] $ownAttacks */
+        $ownAttacks = $this->armyJourneyService->getAllOwnAttacks($platform);
 
-        /** @var ArmyJourney[] $ownAttacks */
-        $enemyAttacks = $this->armyJourneyService->getAllEnemyJourneys($platform->getGridCell());
+        /** @var MilitaryCampaign[] $ownAttacks */
+        $enemyAttacks = $this->armyJourneyService->getAllEnemyAttacks($platform);
 
         return $this->render('battle/show-all-attacks.html.twig', [
             'ownAttacks' => $ownAttacks,

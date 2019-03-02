@@ -2,8 +2,10 @@
 
 namespace AppBundle\Service\App;
 
+use AppBundle\Entity\MilitaryCampaign;
 use AppBundle\Entity\User;
 use AppBundle\Repository\ArmyJourneyRepository;
+use AppBundle\Repository\MilitaryCampaignRepository;
 use AppBundle\Repository\UserReportRepository;
 use AppBundle\Service\Message\MessageServiceInterface;
 use Symfony\Component\Security\Core\Security;
@@ -29,6 +31,11 @@ class CommonDataService
     private $armyJourneyRepository;
 
     /**
+     * @var MilitaryCampaignRepository
+     */
+    private $militaryCampaignRepository;
+
+    /**
      * @var User
      */
     private $currentUser;
@@ -37,12 +44,14 @@ class CommonDataService
     public function __construct(Security $security,
                                 MessageServiceInterface $messageService,
                                 UserReportRepository $userReportRepository,
-                                ArmyJourneyRepository $armyJourneyRepository)
+                                ArmyJourneyRepository $armyJourneyRepository,
+                                MilitaryCampaignRepository $militaryCampaignRepository)
     {
         $this->messageService = $messageService;
         $this->security = $security;
         $this->userReportRepository = $userReportRepository;
         $this->armyJourneyRepository = $armyJourneyRepository;
+        $this->militaryCampaignRepository = $militaryCampaignRepository;
 
         $this->currentUser = $this->security->getUser();
     }
@@ -60,9 +69,8 @@ class CommonDataService
 
     public function getEnemyAttacksCount(): int
     {
-        return $this->armyJourneyRepository->getNewAttacksCount($this->currentUser
-                                                                                ->getCurrentPlatform()
-                                                                                ->getGridCell()
-                                                                                ->getId());
+        return $this->militaryCampaignRepository->getEnemyAttacksCount(
+            $this->currentUser->getCurrentPlatform()->getId()
+        );
     }
 }

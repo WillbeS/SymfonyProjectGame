@@ -4,12 +4,11 @@ namespace AppBundle\Service\Battle;
 
 use AppBundle\Entity\ArmyJourney;
 use AppBundle\Entity\BattleReport;
-use AppBundle\Entity\MilitaryCampaign;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserReport;
 use Doctrine\ORM\EntityManagerInterface;
 
-class BattleService implements BattleServiceInterface
+class BattleService2 implements BattleServiceInterface2
 {
     /**
      * @var ArmyModel
@@ -47,9 +46,9 @@ class BattleService implements BattleServiceInterface
     }
 
 
-    public function startBattle(MilitaryCampaign $campaign): BattleReport
+    public function startBattle(ArmyJourney $journey): BattleReport
     {
-        $this->initBattle($campaign);
+        $this->initBattle($journey);
 
         $rounds = $this->battleProcessService->processBattle(
             $this->attackerArmy,
@@ -59,23 +58,23 @@ class BattleService implements BattleServiceInterface
         $this->armyService->updateUnitCounts($this->attackerArmy);
         $this->armyService->updateUnitCounts($this->defenderArmy, true);
 
-        return $this->createBattleReport($campaign, $rounds);
+        return $this->createBattleReport($journey, $rounds);
     }
 
-    private function initBattle(MilitaryCampaign $campaign)
+    private function initBattle(ArmyJourney $journey)
     {
-        $attackerUnits = $campaign->getOrigin()->getUnits();
-        $defenderUnits = $campaign->getDestination()->getUnits();
-        $journeyTroops = json_decode($campaign->getArmy(), true);
+        $attackerUnits = $journey->getOrigin()->getPlatform()->getUnits();
+        $defenderUnits = $journey->getDestination()->getPlatform()->getUnits();
+        $journeyTroops = json_decode($journey->getTroops(), true);
 
         $this->attackerArmy = $this->armyService->initArmyModel($attackerUnits, $journeyTroops);
         $this->defenderArmy = $this->armyService->initArmyModel($defenderUnits);
     }
 
-    private function createBattleReport(MilitaryCampaign $campaign, array $rounds): BattleReport
+    private function createBattleReport(ArmyJourney $journey, array $rounds): BattleReport
     {
-        $attacker = $campaign->getOrigin()->getUser();
-        $defender = $campaign->getDestination()->getUser();
+        $attacker = $journey->getOrigin()->getPlatform()->getUser();
+        $defender = $journey->getDestination()->getPlatform()->getUser();
         $winner = $this
             ->attackerArmy->getTotalHealth() > $this->defenderArmy->getTotalHealth() ?
             $attacker :
@@ -84,7 +83,7 @@ class BattleService implements BattleServiceInterface
         $battleReport = new BattleReport();
         $battleReport
             ->setName("Battle Report - {$attacker->getUsername()} attacked {$defender->getUsername()}")
-            ->setCreatedOn($campaign->getDueDate())
+            ->setCreatedOn($journey->getDueDate())
             ->setAttacker($attacker)
             ->setDefender($defender)
             ->setAttackerStartArmy(json_encode($this->attackerArmy->getOriginalTroopsCount()))
