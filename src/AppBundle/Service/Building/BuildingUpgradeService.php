@@ -97,8 +97,7 @@ class BuildingUpgradeService implements BuildingUpgradeServiceInterface
             $building->getLevel()
         );
     }
-
-    //TODO - put this in its own service
+    
     private function getTotalPrice( Building $building): array
     {
         return [

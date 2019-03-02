@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service\App;
 
-use AppBundle\Entity\MilitaryCampaign;
 use AppBundle\Entity\User;
 use AppBundle\Repository\ArmyJourneyRepository;
 use AppBundle\Repository\MilitaryCampaignRepository;

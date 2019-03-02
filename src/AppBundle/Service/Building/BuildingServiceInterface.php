@@ -27,24 +27,6 @@ interface BuildingServiceInterface
 
     public function getByGameBuilding(GameBuilding $gameBuilding, Platform $platform): Building;
 
-    /**
-     * @param Platform|null $platform
-     * @return Building[]
-     */
-    //public function getPending(Platform $platform = null): Collection;
-    ////////////////////////////////////////////////////////////////////////////
-
-
-    ////////////////// For Level upgrade/////////////////////////////////////////////
-    //public function startUpgrade(Building $building,
-//                                 PlatformServiceInterface $platformService,
-//                                 AppServiceInterface $appService,
-//                                 ScheduledTaskServiceInterface $taskService); //flushes
-
-    //TODO - rename to finishUpgrade
-    //public function finishBuilding(Building $building); //flushes
-    //////////////////////////////////////////////////////////////////////////////////
-
     ///////////////////////// New Registration Methods ////////////////////////////////
     public function createAllPlatformBuildings(Platform $platform);
 
