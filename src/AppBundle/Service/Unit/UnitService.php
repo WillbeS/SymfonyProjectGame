@@ -9,12 +9,13 @@ use AppBundle\Entity\Unit;
 use AppBundle\Entity\UnitType;
 use AppBundle\Repository\UnitRepository;
 use AppBundle\Service\Building\BuildingServiceInterface;
-use AppBundle\Service\Platform\PlatformServiceInterface;
+use AppBundle\Traits\Findable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UnitService implements UnitServiceInterface
 {
+    use Findable;
+
     /**
      * @var EntityManagerInterface
      */
@@ -118,57 +119,10 @@ class UnitService implements UnitServiceInterface
             $isAvailable = $this->unitTypeService->isAvailable($unit->getUnitType(), $platform);
 
             if($unit->isAvailable() !== $isAvailable) {
-                var_dump('Will flush');
                 $unit->setIsAvailable($isAvailable);
-                $this->em->flush(); //TODO -  check how it works outside the loop
             }
         }
-    }
-
-    public function updateUnitInTraining(int $elapsed, Unit $unit)
-    {
-        $ready = floor($elapsed/$unit->getUnitType()->getBuildTime());
-
-        if ($ready == 0) {
-            return;
-        }
-
-        $ready = $ready <= $unit->getInTraining() ? $ready : $unit->getInTraining();
-        $unit->addForTraining($ready * -1);
-
-        $unit->setIddle($unit->getIddle() + $ready);
-
-        if ($unit->getInTraining() > 0) {
-            $unit->setStartBuild(new \DateTime('now'));
-        } else {
-            $unit->setStartBuild(null);
-        }
 
         $this->em->flush();
-    }
-
-
-    public function startRecruiting($count,
-                                    Unit $unit,
-                                    PlatformServiceInterface $platformService)
-    {
-        if(null === $count || !is_numeric($count) || $count <= 0 || $count > PHP_INT_MAX) {
-            return;
-        }
-
-        $platformService->payPrice($unit->getPlatform(), $unit->getPrice($count));
-
-        $unit->addForTraining($count)
-            ->setStartBuild(new \DateTime('now'));
-
-        $this->em->flush();
-    }
-
-    private function assertFound($entity)
-    {
-        if(!$entity) {
-
-            throw new NotFoundHttpException('Page Not Found');
-        }
     }
 }
