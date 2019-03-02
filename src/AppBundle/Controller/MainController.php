@@ -9,22 +9,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class MainController extends Controller
 {
     /**
-     * @var GameStateServiceInterface
-     */
-    protected $gameStateService;
-
-    /**
      * @var PlatformServiceInterface
      */
-    protected $platformService;
+    protected $platformService; //todo - delete this
 
 
     public function __construct(GameStateServiceInterface $gameStateService,
                                 PlatformServiceInterface $platformService)
     {
         $this->platformService = $platformService;
-        $this->gameStateService = $gameStateService;
 
-        $this->gameStateService->updatePlatformState();
+        $gameStateService->updatePlatformState();
     }
 }

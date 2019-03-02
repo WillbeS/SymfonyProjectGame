@@ -12,13 +12,11 @@ interface GameStateServiceInterface
 {
     public function updatePlatformState(): bool;
 
-    public function updateBuildingsState(Platform $platform = null);
+    //public function updateBuildingsState(Platform $platform = null);
 
-    public function updateUnitsInTrainingState(Platform $platform = null);
+    //public function updateUnitsInTrainingState(Platform $platform = null);
 
     public function updatePlatformResourcesState(Platform $platform,
                                                  PlatformServiceInterface $platformService);
 
-    // TODO **For future commands use**
-    public function updateResourceForAllPlatforms();
 }

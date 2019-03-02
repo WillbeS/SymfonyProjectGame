@@ -2,9 +2,8 @@
 
 namespace AppBundle\Service\App;
 
-use AppBundle\Entity\ArmyJourney;
+
 use AppBundle\Entity\MilitaryCampaign;
-use AppBundle\Entity\Platform;
 use AppBundle\Entity\ScheduledTask;
 use AppBundle\Entity\ScheduledTaskInterface;
 use AppBundle\Repository\MilitaryCampaignRepository;
@@ -18,28 +17,13 @@ use AppBundle\Service\Unit\UnitTrainingServiceInterface;
 use AppBundle\Service\Utils\CountdownServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-//TODO - rename and move in ScheduledTask dir
-class TaskScheduleService implements TaskScheduleServiceInterface
-{
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
 
+class ProcessDueTasksService implements ProcessDueTasksServiceInterface
+{
     /**
      * @var ScheduledTaskRepository
      */
     private $scheduleTaskRepository;
-
-    /**
-     * @var BattleServiceInterface
-     */
-    private $battleService;
-
-    /**
-     * @var JourneyServiceInterface
-     */
-    private $journeyService;
 
     /**
      * @var BuildingUpgradeServiceInterface
@@ -71,20 +55,13 @@ class TaskScheduleService implements TaskScheduleServiceInterface
      * @param CountdownServiceInterface $countdownService
      */
     public function __construct(ScheduledTaskRepository $scheduledTaskRepository,
-                                EntityManagerInterface $em,
-                                BattleServiceInterface $battleService,
-                                JourneyServiceInterface $journeyService,
                                 BuildingUpgradeServiceInterface $buildingUpgradeService,
                                 UnitServiceInterface $unitService,
                                 UnitTrainingServiceInterface $unitTrainingService,
                                 MilitaryCampaignServiceInterface $militaryCampaignService,
                                 MilitaryCampaignRepository $militaryCampaignRepository)
     {
-        $this->em = $em;
         $this->scheduleTaskRepository = $scheduledTaskRepository;
-
-        $this->battleService = $battleService;
-        $this->journeyService = $journeyService;
         $this->buildingUpgradeService = $buildingUpgradeService;
         $this->unitService = $unitService;
         $this->unitTrainingService = $unitTrainingService;

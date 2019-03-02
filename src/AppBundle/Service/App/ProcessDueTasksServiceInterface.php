@@ -3,9 +3,7 @@
 namespace AppBundle\Service\App;
 
 
-use AppBundle\Entity\ScheduledTaskInterface;
-
-interface TaskScheduleServiceInterface
+interface ProcessDueTasksServiceInterface
 {
     public function processDueTasksByPlatform(int $platformId);
 
