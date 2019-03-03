@@ -13,10 +13,4 @@ interface JourneyServiceInterface
     public function getAllOwnAttacks(Platform $platform): array;
 
     public function getAllEnemyAttacks(Platform $platform): array;
-
-    public function getAllOwnJourneys(GridCell $origin): array; //old
-
-    public function getAllEnemyJourneys(GridCell $destination): array; //old
-
-    public function processBattleJourneys(array $battleTasks): bool;
 }

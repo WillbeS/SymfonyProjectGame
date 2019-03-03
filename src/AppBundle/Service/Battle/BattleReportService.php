@@ -3,16 +3,15 @@
 namespace AppBundle\Service\Battle;
 
 
-use AppBundle\Entity\ArmyJourney;
-use AppBundle\Entity\BattleReport;
 use AppBundle\Entity\UserReport;
 use AppBundle\Repository\BattleReportRepository;
 use AppBundle\Repository\UserReportRepository;
+use AppBundle\Traits\Findable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BattleReportService implements BattleReportServiceInterface
 {
+    use Findable;
     /**
      * @var UserReportRepository
      */
@@ -59,14 +58,5 @@ class BattleReportService implements BattleReportServiceInterface
 
         $this->em->remove($userReport);
         $this->em->flush();
-    }
-
-
-    private function assertFound($entity)
-    {
-        if(!$entity) {
-
-            throw new NotFoundHttpException('Page Not Found');
-        }
     }
 }

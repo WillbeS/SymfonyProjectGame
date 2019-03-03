@@ -2,20 +2,16 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\ArmyJourney;
 use AppBundle\Entity\MilitaryCampaign;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserReport;
 use AppBundle\Form\UnitTravelCountsType;
 use AppBundle\Service\App\GameStateServiceInterface;
-use AppBundle\Service\App\TaskScheduleServiceInterface;
 use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
 use AppBundle\Service\ArmyMovement\MilitaryCampaignServiceInterface;
-use AppBundle\Service\ArmyMovement\StartJourneyServiceInterface;
 use AppBundle\Service\Battle\BattleReportServiceInterface;
 use AppBundle\Service\Platform\PlatformDataServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
-use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,18 +23,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BattleController extends MainController
 {
-    /**
-     * @var JourneyServiceInterface
-     */
-    private $armyJourneyService;
-
     public function __construct(GameStateServiceInterface $gameStateService,
-                                PlatformServiceInterface $platformService,
-                                JourneyServiceInterface $journeyService)
+                                PlatformServiceInterface $platformService)
     {
         parent::__construct($gameStateService, $platformService);
-
-        $this->armyJourneyService = $journeyService;
     }
 
 
@@ -84,7 +72,6 @@ class BattleController extends MainController
                                             int $playerId,
                                             Request $request,
                                             UserServiceInterface $userService,
-                                            StartJourneyServiceInterface $startJourneyService,
                                             MilitaryCampaignServiceInterface $militaryCampaignService)
     {
         /** @var User $currentUser */
@@ -104,7 +91,6 @@ class BattleController extends MainController
         }
 
         try {
-            //$startJourneyService->startJourney($form->getData(), $currentUser, $target);
             $militaryCampaignService->startCampaign(
                 $form->getData(),
                 $currentUser->getCurrentPlatform(),
@@ -121,14 +107,15 @@ class BattleController extends MainController
     /**
      * @Route("/attacks/all", name="show_attacks")
      */
-    public function showAllAttacks(PlatformDataServiceInterface $platformDataService)
+    public function showAllAttacks(PlatformDataServiceInterface $platformDataService,
+                                   JourneyServiceInterface $journeyService)
     {
         $platform = $platformDataService->getCurrentPlatform();
         /** @var MilitaryCampaign[] $ownAttacks */
-        $ownAttacks = $this->armyJourneyService->getAllOwnAttacks($platform);
+        $ownAttacks = $journeyService->getAllOwnAttacks($platform);
 
-        /** @var MilitaryCampaign[] $ownAttacks */
-        $enemyAttacks = $this->armyJourneyService->getAllEnemyAttacks($platform);
+        /** @var MilitaryCampaign[] $enemyAttacks */
+        $enemyAttacks = $journeyService->getAllEnemyAttacks($platform);
 
         return $this->render('battle/show-all-attacks.html.twig', [
             'ownAttacks' => $ownAttacks,
@@ -157,7 +144,6 @@ class BattleController extends MainController
                                   BattleReportServiceInterface $battleReportService)
     {
         $userReport = $battleReportService->getUserReport($this->getUser()->getId(), $reportId);
-        dump($userReport);
         return $this->render('battle/report-show.html.twig', [
             'userReport' => $userReport
         ]);
