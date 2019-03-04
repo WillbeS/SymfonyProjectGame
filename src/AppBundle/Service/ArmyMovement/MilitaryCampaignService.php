@@ -10,7 +10,6 @@ use AppBundle\Repository\MilitaryCampaignRepository;
 use AppBundle\Service\Battle\ArmyServiceInterface;
 use AppBundle\Service\Battle\BattleServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
-use AppBundle\Service\Utils\CountdownServiceInterface;
 use AppBundle\Service\Utils\GeometryServiceInterface;
 use AppBundle\Traits\Findable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,30 +48,23 @@ class MilitaryCampaignService implements MilitaryCampaignServiceInterface
     /**
      * @var ScheduledTaskServiceInterface
      */
-    //private $scheduledTaskService; //do i use this???
+    private $scheduledTaskService;
 
-    /**
-     * @var CountdownServiceInterface
-     */
-    private $countdownService;
 
-    /**
-     * MilitaryCampaignService constructor.
-     * @param ArmyServiceInterface $armyService
-     */
+
     public function __construct(ArmyServiceInterface $armyService,
                                 EntityManagerInterface $em,
                                 GeometryServiceInterface $geometryService,
                                 MilitaryCampaignRepository $militaryCampaignRepository,
                                 BattleServiceInterface $battleService,
-                                CountdownServiceInterface $countdownService)
+                                ScheduledTaskServiceInterface $scheduledTaskService)
     {
         $this->armyService = $armyService;
         $this->em = $em;
         $this->geometryService = $geometryService;
         $this->campaignRepository = $militaryCampaignRepository;
         $this->battleService = $battleService;
-        $this->countdownService = $countdownService;
+        $this->scheduledTaskService = $scheduledTaskService;
     }
 
 
@@ -86,7 +78,7 @@ class MilitaryCampaignService implements MilitaryCampaignServiceInterface
 
         $campaign = $this->createCampaign($name, $army, $origin, $destination);
 
-        $this->setScheduledTask(
+        $this->scheduledTaskService->setScheduledTask(
             $duration,
             ScheduledTask::ATTACK_JOURNEY,
             $campaign
@@ -143,7 +135,7 @@ class MilitaryCampaignService implements MilitaryCampaignServiceInterface
             $campaign->getOrigin()
         );
 
-        $this->setScheduledTask(
+        $this->scheduledTaskService->setScheduledTask(
             $campaign->getDuration(),
             ScheduledTask::RETURN_JOURNEY,
             $returnCampaign
@@ -169,24 +161,6 @@ class MilitaryCampaignService implements MilitaryCampaignServiceInterface
         ;
 
         return $campaign;
-    }
-
-    private function setScheduledTask(int $duration,
-                                     int $taskType,
-                                     MilitaryCampaign $campaign)
-    {
-        $dueDate = $this->countdownService->getEndDate(
-            new \DateTime('now'),
-            $duration
-        );
-
-        $campaign
-            ->setStartDate(new \DateTime('now'))
-            ->setDuration($duration)
-            ->setDueDate($dueDate)
-            ->setTaskType($taskType)
-        ;
-
     }
 
     private function getJourneyDuration(Platform $origin, Platform $destination): int

@@ -2,11 +2,7 @@
 
 namespace AppBundle\Service\ArmyMovement;
 
-use AppBundle\Entity\ArmyJourney;
-use AppBundle\Entity\GridCell;
 use AppBundle\Entity\Platform;
-use AppBundle\Entity\User;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 interface JourneyServiceInterface
 {

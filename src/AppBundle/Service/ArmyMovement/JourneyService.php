@@ -2,12 +2,10 @@
 
 namespace AppBundle\Service\ArmyMovement;
 
-
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\ScheduledTask;
 use AppBundle\Repository\MilitaryCampaignRepository;
 
-//TODO - rename or move methods to another service
 class JourneyService implements JourneyServiceInterface
 {
     /**

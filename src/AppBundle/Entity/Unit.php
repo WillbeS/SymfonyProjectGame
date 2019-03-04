@@ -303,19 +303,19 @@ class Unit implements PlatformUnitInterface
         return $this;
     }
 
-    public function getRemainingTrainingTime(AppServiceInterface $appService): int
-    {
-        return $appService->getRemainingTrainingTime($this->getStartBuild(),
-                                                $this->unitType->getBuildTime(),
-                                                $this->inTraining);
-    }
+//    public function getRemainingTrainingTime(AppServiceInterface $appService): int
+//    {
+//        return $appService->getRemainingTrainingTime($this->getStartBuild(),
+//                                                $this->unitType->getBuildTime(),
+//                                                $this->inTraining);
+//    }
 
-    public function getRemainingTimeFormated(AppServiceInterface $appService): string
-    {
-        $remaining = $this->getRemainingTrainingTime($appService);
-
-        return $appService->formatTime($remaining);
-    }
+//    public function getRemainingTimeFormated(AppServiceInterface $appService): string
+//    {
+//        $remaining = $this->getRemainingTrainingTime($appService);
+//
+//        return $appService->formatTime($remaining);
+//    }
 
     public function haveInTraining()
     {

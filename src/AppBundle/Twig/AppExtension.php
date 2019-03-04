@@ -3,9 +3,9 @@ namespace AppBundle\Twig;
 
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\GameResource;
-use AppBundle\Service\App\AppServiceInterface;
+use AppBundle\Service\Resource\ResourceIncomeServiceInterface;
 use AppBundle\Service\ScheduledTask\TimeCalculatorServiceInterface;
-use AppBundle\Service\Utils\CountdownServiceInterface;
+use AppBundle\Service\Utils\PriceCalculatorServiceInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -13,31 +13,28 @@ use Twig\TwigFunction;
 class AppExtension extends AbstractExtension
 {
     /**
-     * @var AppServiceInterface
-     */
-    private $appService;
-
-    /**
-     * @var CountdownServiceInterface
-     */
-    private $countdownService;
-
-    /**
      * @var TimeCalculatorServiceInterface
      */
-    private $timeCalculationService;
+    private $timeCalculatorService;
 
     /**
-     * AppExtension constructor.
-     * @param AppServiceInterface $appService
+     * @var ResourceIncomeServiceInterface
      */
-    public function __construct(AppServiceInterface $appService,
-                                CountdownServiceInterface $countdownService,
-                                TimeCalculatorServiceInterface $timeCalculatorService)
+    private $resourceIncomeService;
+
+    /**
+     * @var PriceCalculatorServiceInterface
+     */
+    private $priceCalculatorService;
+
+
+    public function __construct(TimeCalculatorServiceInterface $timeCalculatorService,
+                                PriceCalculatorServiceInterface $priceCalculatorService,
+                                ResourceIncomeServiceInterface $resourceIncomeService)
     {
-        $this->appService = $appService;
-        $this->countdownService = $countdownService;
-        $this->timeCalculationService = $timeCalculatorService;
+        $this->timeCalculatorService = $timeCalculatorService;
+        $this->priceCalculatorService = $priceCalculatorService;
+        $this->resourceIncomeService = $resourceIncomeService;
     }
 
     public function getFilters()
@@ -61,30 +58,35 @@ class AppExtension extends AbstractExtension
     // Functions
     public function getIncomePerHour(GameResource $resource)
     {
-        return $this->appService->getIncomePerHour($resource);
+        return $this->resourceIncomeService->getIncomePerHour($resource);
     }
 
-    public function getCostPerLevel(int $baseResourceCost, int $buildingLevel)
+    public function getCostPerLevel(int $basePrice, int $buildingLevel)
     {
-        return $this->appService
-            ->getCostPerLevel($baseResourceCost, $buildingLevel);
+        return $this->priceCalculatorService->calculatePriceByLevel(
+            $basePrice,
+            $buildingLevel,
+            Building::COST_FACTOR
+        );
     }
 
     public function getBuildTime(Building $building): string
     {
-        $baseTime = $building->getGameBuilding()->getBuildTime();
-        return $this->appService->getBuildTime($baseTime, $building->getLevel());
+        return $this->timeCalculatorService->calculateUpgradeTimeByBuildingLevel(
+            $building->getGameBuilding()->getBuildTime(),
+            $building->getLevel()
+        );
     }
 
     public function getTimeUntilDue(\DateTime $dueDate)
     {
-        return $this->timeCalculationService->getTimeUntilDueDate($dueDate);
+        return $this->timeCalculatorService->getTimeUntilDueDate($dueDate);
     }
 
 
     // Filters
     public function formatTime(int $seconds)
     {
-        return $this->appService->formatTime($seconds);
+        return $this->timeCalculatorService->formatTime($seconds);
     }
 }

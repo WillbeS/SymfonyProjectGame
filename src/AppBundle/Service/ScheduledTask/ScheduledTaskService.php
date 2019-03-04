@@ -2,26 +2,21 @@
 
 namespace AppBundle\Service\ScheduledTask;
 
-use AppBundle\Entity\Platform;
 use AppBundle\Entity\PlatformUnitInterface;
 use AppBundle\Entity\ScheduledTask;
 use AppBundle\Entity\ScheduledTaskInterface;
-use AppBundle\Service\Utils\CountdownServiceInterface;
 
 class ScheduledTaskService implements ScheduledTaskServiceInterface
 {
     /**
-     * @var CountdownServiceInterface
+     * @var TimeCalculatorServiceInterface
      */
-    private $countdownService;
+    private $timeCalculatorService;
 
-    /**
-     * ScheduledTaskService constructor.
-     * @param CountdownServiceInterface $countdownService
-     */
-    public function __construct(CountdownServiceInterface $countdownService)
+
+    public function __construct(TimeCalculatorServiceInterface $timeCalculatorService)
     {
-        $this->countdownService = $countdownService;
+        $this->timeCalculatorService = $timeCalculatorService;
     }
 
 
@@ -29,50 +24,33 @@ class ScheduledTaskService implements ScheduledTaskServiceInterface
                                int $duration,
                                PlatformUnitInterface $platformUnit):ScheduledTask
     {
-        $scheduledTask = $this->createScheduledTask(
-            $taskType,
-            $duration,
-            $platformUnit->getPlatform()
-        );
 
-        $scheduledTask->setOwnerId($platformUnit->getId());
+        $scheduledTask = new ScheduledTask();
+        $this->setScheduledTask($duration, $taskType, $scheduledTask);
 
-        return $scheduledTask;
-    }
-
-    //todo - delete
-    public function createJourneyTask(int $taskType,
-                                      int $duration,
-                                      Platform $platform): ScheduledTask
-    {
-        $scheduledTask = $this->createScheduledTask(
-            $taskType,
-            $duration,
-            $platform
-        );
-
-        $scheduledTask->setOwnerId($platform->getId());
+        $scheduledTask
+            ->setOwnerId($platformUnit->getId())
+            ->setPlatform($platformUnit->getPlatform())
+        ;
 
         return $scheduledTask;
     }
 
-    private function createScheduledTask(int $taskType,
-                                         int $duration,
-                                         Platform $platform): ScheduledTask
+    public function setScheduledTask(int $duration,
+                                      int $taskType,
+                                      ScheduledTaskInterface $scheduledTask)
     {
-        $dueDate = $this->countdownService->getEndDate(
+        $dueDate = $this->timeCalculatorService->getDueDate(
             new \DateTime('now'),
             $duration
         );
 
-        $scheduledTask = (new ScheduledTask())
-            ->setTaskType($taskType)
-            ->setPlatform($platform)
-            ->setDuration($duration)
+        $scheduledTask
             ->setStartDate(new \DateTime('now'))
+            ->setDuration($duration)
             ->setDueDate($dueDate)
+            ->setTaskType($taskType)
         ;
 
-        return $scheduledTask;
     }
 }

@@ -2,13 +2,11 @@
 
 namespace AppBundle\Service\Building;
 
-
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Building\GameBuilding;
 use AppBundle\Entity\Platform;
 use AppBundle\Repository\BuildingRepository;
 use AppBundle\Repository\GameBuildingRepository;
-use AppBundle\Service\Utils\TimerServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -31,21 +29,15 @@ class BuildingService implements BuildingServiceInterface
      */
     private $buildingRepo;
 
-    /**
-     * @var TimerServiceInterface
-     */
-    private $timerService;
 
 
     public function __construct(GameBuildingRepository $gameBuildingRepo,
                                 BuildingRepository $buildingRepository,
-                                EntityManagerInterface $em,
-                                TimerServiceInterface $timerService)
+                                EntityManagerInterface $em)
     {
         $this->gameBuildingRepo = $gameBuildingRepo;
         $this->buildingRepo = $buildingRepository;
         $this->em = $em;
-        $this->timerService = $timerService;
     }
 
     // TODO - remove this if not used

@@ -6,7 +6,7 @@ namespace AppBundle\Service\Utils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 
-class EmDebugger implements EmDebuggerInterface
+class PersistedEntitiesService implements PersistedEntitiesServiceInterface
 {
     public function getAllPersisted(EntityManagerInterface $em): ArrayCollection
     {

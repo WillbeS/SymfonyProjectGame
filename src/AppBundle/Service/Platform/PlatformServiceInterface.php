@@ -6,7 +6,6 @@ use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
 use AppBundle\Entity\User;
-use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
 
@@ -30,6 +29,5 @@ interface PlatformServiceInterface
 
 
     public function updateTotalResources(int $elapsed,
-                                         Platform $platform,
-                                         AppServiceInterface $appService);
+                                         Platform $platform);
 }

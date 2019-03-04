@@ -109,7 +109,7 @@ class ScheduledTask implements ScheduledTaskInterface
      *
      * @return ScheduledTask
      */
-    public function setTaskType($taskType)
+    public function setTaskType(int $taskType)
     {
         $this->taskType = $taskType;
 

@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 
-use AppBundle\Entity\Message;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Repository\MessageRepository;
@@ -12,10 +11,8 @@ use AppBundle\Repository\UserRepository;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
-use AppBundle\Service\Utils\EmDebuggerInterface;
 use AppBundle\Service\Utils\FileServiceInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use AppBundle\Service\Utils\PersistedEntitiesServiceInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -39,30 +36,27 @@ class UserService implements UserServiceInterface
     private $roleRepository;
 
     /**
-     * @var EmDebuggerInterface
+     * @var PersistedEntitiesServiceInterface
      */
-    private $emDebugger;
+    private $persistedEntitiesService;
 
     /**
      * @var MessageRepository
      */
     private $messageRepository;
 
-    /**
-     * UserService constructor.
-     * @param EntityManager $entityManager
-     */
+
     public function __construct(EntityManagerInterface $entityManager,
                                 UserRepository $userRepository,
                                 RoleRepository $roleRepository,
                                 MessageRepository $messageRepository,
-                                EmDebuggerInterface $emDebugger)
+                                PersistedEntitiesServiceInterface $persistedEntitiesService)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
         $this->messageRepository = $messageRepository;
-        $this->emDebugger = $emDebugger;
+        $this->persistedEntitiesService = $persistedEntitiesService;
     }
 
 
@@ -84,9 +78,6 @@ class UserService implements UserServiceInterface
 
         $this->entityManager->persist($user);
         $this->entityManager->persist($platform);
-//
-//       dump($this->emDebugger->getAllPersisted($this->entityManager));
-//        exit;
 
         $this->entityManager->flush();
         return $user;

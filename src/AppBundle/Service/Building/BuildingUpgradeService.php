@@ -3,7 +3,6 @@
 namespace AppBundle\Service\Building;
 
 use AppBundle\Entity\Building\Building;
-use AppBundle\Entity\Platform;
 use AppBundle\Entity\ScheduledTask;
 use AppBundle\Entity\ScheduledTaskInterface;
 use AppBundle\Repository\BuildingRepository;
@@ -38,10 +37,7 @@ class BuildingUpgradeService implements BuildingUpgradeServiceInterface
      */
     private $buildingRepository;
 
-    /**
-     * BuildingUpgradeService constructor.
-     * @param PriceCalculatorServiceInterface $priceCalculatorService
-     */
+
     public function __construct(EntityManagerInterface $em,
                                 PriceCalculatorServiceInterface $priceCalculatorService,
                                 TimeCalculatorServiceInterface $timeCalculatorService,
@@ -92,7 +88,7 @@ class BuildingUpgradeService implements BuildingUpgradeServiceInterface
 
     private function getUpgradeTimeDuration(Building $building)
     {
-        return $this->timeCalculatorService->calculateDurationByBuildingLevel(
+        return $this->timeCalculatorService->calculateUpgradeTimeByBuildingLevel(
             $building->getGameBuilding()->getBuildTime(),
             $building->getLevel()
         );

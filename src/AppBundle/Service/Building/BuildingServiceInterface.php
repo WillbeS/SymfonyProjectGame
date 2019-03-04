@@ -4,13 +4,7 @@ namespace AppBundle\Service\Building;
 
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Building\GameBuilding;
-use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Platform;
-use AppBundle\Service\App\AppServiceInterface;
-use AppBundle\Service\Platform\PlatformServiceInterface;
-use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 interface BuildingServiceInterface
 {

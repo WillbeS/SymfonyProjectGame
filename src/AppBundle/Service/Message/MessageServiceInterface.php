@@ -6,25 +6,16 @@ use AppBundle\Entity\Message;
 use AppBundle\Entity\MessageTopic;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserTopic;
-use Doctrine\Common\Collections\Collection;
+
 
 interface MessageServiceInterface
 {
-    /**
-     * @param int $topicStarterId
-     * @return Collection|MessageTopic[]
-     */
-   // public function getAllTopics(int $currentUserId): array; //TODO - delete if not in use
-
     /**
      * @param int $userId
      * @return UserTopic[]
      */
     public function getTopicsByUser(int $userId): array;
 
-    //public function getOneTopic(int $userId, int $topicId): MessageTopic; //TODO - delete if not used
-
-//    public function getConvoById(int $convoId): UserTopic;
 
     public function getOneUserTopic(int $userId,
                                     int $topicId,

@@ -7,23 +7,18 @@ use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
 use AppBundle\Entity\User;
-use AppBundle\Models\ResourcesPrice;
 use AppBundle\Repository\PlatformRepository;
-use AppBundle\Service\App\AppServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Map\MapServiceInterface;
+use AppBundle\Service\Resource\ResourceIncomeServiceInterface;
 use AppBundle\Service\Resource\ResourceServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlatformService implements PlatformServiceInterface
 {
-    const INCOME_FACTOR = .34;
-    //const UDATE_INTERVAL = 60; //seconds
-
     /**
      * @var EntityManagerInterface
      */
@@ -44,18 +39,25 @@ class PlatformService implements PlatformServiceInterface
      */
     private $resourceService;
 
+    /**
+     * @var ResourceIncomeServiceInterface
+     */
+    private $resourceIncomeService;
+
 
 
 
     public function __construct(EntityManagerInterface $entityManager,
                                 PlatformRepository $platformRepository,
                                 MapServiceInterface $mapService,
-                                ResourceServiceInterface $resourceService)
+                                ResourceServiceInterface $resourceService,
+                                ResourceIncomeServiceInterface $resourceIncomeService)
     {
         $this->entityManager = $entityManager;
         $this->platformRepossitory = $platformRepository;
         $this->mapService = $mapService;
         $this->resourceService = $resourceService;
+        $this->resourceIncomeService = $resourceIncomeService;
     }
 
     public function getById(int $id): Platform //TODO - delete if not in use
@@ -126,7 +128,6 @@ class PlatformService implements PlatformServiceInterface
         return $platform;
     }
 
-    //TODO delete when finished with all
     public function payPrice(Platform $platform, array $price)
     {
         foreach ($price as $resourceName => $value) {
@@ -138,11 +139,10 @@ class PlatformService implements PlatformServiceInterface
     }
 
     public function updateTotalResources(int $elapsed,
-                                         Platform $platform,
-                                         AppServiceInterface $appService)
+                                         Platform $platform)
     {
         foreach ($platform->getResources() as $resource) {
-            $this->updateResource($elapsed, $resource, $appService);
+            $this->updateResource($elapsed, $resource);
         }
 
         $platform->setResourceUpdateTime(new \DateTime('now'));
@@ -161,10 +161,9 @@ class PlatformService implements PlatformServiceInterface
     }
 
     private function updateResource(int $elapsed,
-                                    GameResource $resource,
-                                    AppServiceInterface $appService)
+                                    GameResource $resource)
     {
-        $income = $appService->getIncomePerHour($resource);
+        $income = $this->resourceIncomeService->getIncomePerHour($resource);
         $amount = $this->getAmountForTime($income, $elapsed);
         $this->resourceService->updateTotal($resource, $amount);
     }

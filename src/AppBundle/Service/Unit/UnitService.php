@@ -69,16 +69,6 @@ class UnitService implements UnitServiceInterface
         return $this->unitRepository->findBy(['building' => $building]);
     }
 
-    public function getWithUnitsInTraining(Platform $platform = null)
-    {
-        if (!$platform) {
-            return $this->unitRepository->findInTraining($platform);
-        }
-
-        return $platform->getUnits()->filter(function (Unit $unit) {
-            return $unit->getStartBuild() !== null;
-        });
-    }
 
     public function createAllPlatformUnits(Platform $platform,
                                    BuildingServiceInterface $buildingService)

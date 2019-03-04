@@ -8,14 +8,10 @@ use AppBundle\Entity\ScheduledTask;
 use AppBundle\Entity\ScheduledTaskInterface;
 use AppBundle\Repository\MilitaryCampaignRepository;
 use AppBundle\Repository\ScheduledTaskRepository;
-use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
 use AppBundle\Service\ArmyMovement\MilitaryCampaignServiceInterface;
-use AppBundle\Service\Battle\BattleServiceInterface;
 use AppBundle\Service\Building\BuildingUpgradeServiceInterface;
 use AppBundle\Service\Unit\UnitServiceInterface;
 use AppBundle\Service\Unit\UnitTrainingServiceInterface;
-use AppBundle\Service\Utils\CountdownServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
 
 
 class ProcessDueTasksService implements ProcessDueTasksServiceInterface
@@ -50,10 +46,7 @@ class ProcessDueTasksService implements ProcessDueTasksServiceInterface
      */
     private $militaryCampaignRepository;
 
-    /**
-     * TaskScheduleService constructor.
-     * @param CountdownServiceInterface $countdownService
-     */
+
     public function __construct(ScheduledTaskRepository $scheduledTaskRepository,
                                 BuildingUpgradeServiceInterface $buildingUpgradeService,
                                 UnitServiceInterface $unitService,

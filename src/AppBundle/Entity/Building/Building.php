@@ -196,69 +196,69 @@ class Building implements PlatformUnitInterface
     /**
      * @return int
      */
-    public function getWoodCost(AppServiceInterface $appService): int
-    {
-        return $appService
-            ->getCostPerLevel($this->gameBuilding->getWoodCost(), $this->level);
-    }
+//    public function getWoodCost(AppServiceInterface $appService): int
+//    {
+//        return $appService
+//            ->getCostPerLevel($this->gameBuilding->getWoodCost(), $this->level);
+//    }
 
     /**
      * @return int
      */
-    public function getFoodCost(AppServiceInterface $appService): int
-    {
-        return $appService
-            ->getCostPerLevel($this->gameBuilding->getFoodCost(), $this->level);
-    }
+//    public function getFoodCost(AppServiceInterface $appService): int
+//    {
+//        return $appService
+//            ->getCostPerLevel($this->gameBuilding->getFoodCost(), $this->level);
+//    }
 
     /**
      * @return int
      */
-    public function getSuppliesCost(AppServiceInterface $appService): int
-    {
-        return $appService
-            ->getCostPerLevel($this->gameBuilding->getSuppliesCost(), $this->level);
-    }
+//    public function getSuppliesCost(AppServiceInterface $appService): int
+//    {
+//        return $appService
+//            ->getCostPerLevel($this->gameBuilding->getSuppliesCost(), $this->level);
+//    }
 
-    public function getPrice(AppServiceInterface $appService)
-    {
-        return [
-            'Wood' => $this->getWoodCost($appService),
-            'Food' => $this->getFoodCost($appService),
-            'Supplies' => $this->getSuppliesCost($appService)
-        ];
-    }
+//    public function getPrice(AppServiceInterface $appService)
+//    {
+//        return [
+//            'Wood' => $this->getWoodCost($appService),
+//            'Food' => $this->getFoodCost($appService),
+//            'Supplies' => $this->getSuppliesCost($appService)
+//        ];
+//    }
 
     /**
      * @return int
      */
-    public function getBuildTime(AppServiceInterface $appService): int
-    {
-        return $appService
-            ->getBuildTime($this->gameBuilding->getBuildTime(), $this->level);
-    }
+//    public function getBuildTime(AppServiceInterface $appService): int
+//    {
+//        return $appService
+//            ->getBuildTime($this->gameBuilding->getBuildTime(), $this->level);
+//    }
 
     /**
      * @return string
      */
-    public function getFormatedBuildTime(AppServiceInterface $appService): string
-    {
-        return $appService->getBuildTimeFormated($this->gameBuilding->getBuildTime(), $this->level);
-    }
+//    public function getFormatedBuildTime(AppServiceInterface $appService): string
+//    {
+//        return $appService->getBuildTimeFormated($this->gameBuilding->getBuildTime(), $this->level);
+//    }
 
-    public function getRemainingTime(AppServiceInterface $appService): int
-    {
-        return $appService->getRemainingTime($this->getStartBuild(),
-                                            $this->gameBuilding->getBuildTime(),
-                                            $this->level);
-    }
+//    public function getRemainingTime(AppServiceInterface $appService): int
+//    {
+//        return $appService->getRemainingTime($this->getStartBuild(),
+//                                            $this->gameBuilding->getBuildTime(),
+//                                            $this->level);
+//    }
 
-    public function getRemainingTimeFormated(AppServiceInterface $appService): string
-    {
-        $remaining = $this->getRemainingTime($appService);
-
-        return $appService->formatTime($remaining);
-    }
+//    public function getRemainingTimeFormated(AppServiceInterface $appService): string
+//    {
+//        $remaining = $this->getRemainingTime($appService);
+//
+//        return $appService->formatTime($remaining);
+//    }
 
     public function getSlug()
     {

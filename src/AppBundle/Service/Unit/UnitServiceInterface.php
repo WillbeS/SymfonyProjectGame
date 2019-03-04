@@ -8,14 +8,11 @@ use AppBundle\Entity\Unit;
 use AppBundle\Entity\UnitType;
 use AppBundle\Service\Building\BuildingServiceInterface;
 
-//TODO - clean up after scheduled tasks
 interface UnitServiceInterface
 {
     public function getById(int $id): Unit;
 
     public function getAllByPlatform(Platform $platform): array;
-
-    //public function getWithUnitsInTraining(Platform $platform = null); // todo delete in a day (03.03)
 
     public function updateUnitStatus(Platform $platform); // flushes
 
