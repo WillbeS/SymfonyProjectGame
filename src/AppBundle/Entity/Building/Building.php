@@ -5,11 +5,6 @@ namespace AppBundle\Entity\Building;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\PlatformUnitInterface;
 use AppBundle\Entity\ScheduledTask;
-use AppBundle\Service\App\AppServiceInterface;
-use AppBundle\Service\App\TaskScheduleServiceInterface;
-use AppBundle\Service\Building\BuildingServiceInterface;
-use AppBundle\Service\Utils\TimerServiceInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -52,13 +47,6 @@ class Building implements PlatformUnitInterface
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Platform", inversedBy="buildings")
      */
     private $platform;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="start_build", type="datetime", nullable=true)
-     */
-    private $startBuild;
 
     /**
      * @var ScheduledTask
@@ -160,107 +148,13 @@ class Building implements PlatformUnitInterface
         return $this;
     }
 
-
-
-
-    /**
-     * @return \DateTime
-     */
-    public function getStartBuild(): ?\DateTime
-    {
-        return $this->startBuild;
-    }
-
-    /**
-     * @param \DateTime $startBuild
-     *
-     * @return Building
-     */
-    public function setStartBuild(?\DateTime $startBuild)
-    {
-        $this->startBuild = $startBuild;
-
-        return $this;
-    }
-
     public function getName(): string
     {
         return $this->gameBuilding->getName();
     }
 
-    public function isPending()
-    {
-        return null !== $this->startBuild;
-    }
 
-    /**
-     * @return int
-     */
-//    public function getWoodCost(AppServiceInterface $appService): int
-//    {
-//        return $appService
-//            ->getCostPerLevel($this->gameBuilding->getWoodCost(), $this->level);
-//    }
-
-    /**
-     * @return int
-     */
-//    public function getFoodCost(AppServiceInterface $appService): int
-//    {
-//        return $appService
-//            ->getCostPerLevel($this->gameBuilding->getFoodCost(), $this->level);
-//    }
-
-    /**
-     * @return int
-     */
-//    public function getSuppliesCost(AppServiceInterface $appService): int
-//    {
-//        return $appService
-//            ->getCostPerLevel($this->gameBuilding->getSuppliesCost(), $this->level);
-//    }
-
-//    public function getPrice(AppServiceInterface $appService)
-//    {
-//        return [
-//            'Wood' => $this->getWoodCost($appService),
-//            'Food' => $this->getFoodCost($appService),
-//            'Supplies' => $this->getSuppliesCost($appService)
-//        ];
-//    }
-
-    /**
-     * @return int
-     */
-//    public function getBuildTime(AppServiceInterface $appService): int
-//    {
-//        return $appService
-//            ->getBuildTime($this->gameBuilding->getBuildTime(), $this->level);
-//    }
-
-    /**
-     * @return string
-     */
-//    public function getFormatedBuildTime(AppServiceInterface $appService): string
-//    {
-//        return $appService->getBuildTimeFormated($this->gameBuilding->getBuildTime(), $this->level);
-//    }
-
-//    public function getRemainingTime(AppServiceInterface $appService): int
-//    {
-//        return $appService->getRemainingTime($this->getStartBuild(),
-//                                            $this->gameBuilding->getBuildTime(),
-//                                            $this->level);
-//    }
-
-//    public function getRemainingTimeFormated(AppServiceInterface $appService): string
-//    {
-//        $remaining = $this->getRemainingTime($appService);
-//
-//        return $appService->formatTime($remaining);
-//    }
-
-    public function getSlug()
+    public function getImageName()
     {
         return preg_replace(
             '/\s+/',

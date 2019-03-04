@@ -75,7 +75,7 @@ class MilitaryCampaign implements ScheduledTaskInterface
      *
      * @ORM\Column(name="duration", type="integer")
      */
-    private $duration; //todo - when finished with all tasks check if this is needed
+    private $duration;
 
 
     /**

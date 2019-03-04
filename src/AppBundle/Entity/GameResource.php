@@ -44,13 +44,6 @@ class GameResource
     private $building;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="update_time", type="datetime")
-     */
-    private $updateTime; //todo - delete this when safe
-
-    /**
      * @var Platform
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Platform", inversedBy="resources")
@@ -120,26 +113,6 @@ class GameResource
     public function setBuilding(Building $building =  null)
     {
         $this->building = $building;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdateTime(): \DateTime
-    {
-        return $this->updateTime;
-    }
-
-    /**
-     * @param \DateTime $updateTime
-     *
-     * @return GameResource
-     */
-    public function setUpdateTime(\DateTime $updateTime)
-    {
-        $this->updateTime = $updateTime;
 
         return $this;
     }

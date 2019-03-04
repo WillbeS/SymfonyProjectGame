@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity\Building;
 
-use AppBundle\Entity\Platform;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

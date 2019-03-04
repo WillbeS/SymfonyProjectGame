@@ -59,7 +59,7 @@ class ResourceService implements ResourceServiceInterface
 
         $resource
             ->setTotal($newTotal)
-            ->setUpdateTime(new \DateTime('now'));
+        ;
     }
 
     public function createAllPlatformResources(Platform $platform,

@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -60,7 +59,7 @@ class ScheduledTask implements ScheduledTaskInterface
      *
      * @ORM\Column(name="duration", type="integer")
      */
-    private $duration; //todo - when finished with all tasks check if this is needed
+    private $duration;
 
     /**
      * @var Platform

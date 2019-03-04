@@ -25,11 +25,6 @@ class CommonDataService
     private $userReportRepository;
 
     /**
-     * @var ArmyJourneyRepository
-     */
-    private $armyJourneyRepository;
-
-    /**
      * @var MilitaryCampaignRepository
      */
     private $militaryCampaignRepository;
@@ -43,13 +38,11 @@ class CommonDataService
     public function __construct(Security $security,
                                 MessageServiceInterface $messageService,
                                 UserReportRepository $userReportRepository,
-                                ArmyJourneyRepository $armyJourneyRepository,
                                 MilitaryCampaignRepository $militaryCampaignRepository)
     {
         $this->messageService = $messageService;
         $this->security = $security;
         $this->userReportRepository = $userReportRepository;
-        $this->armyJourneyRepository = $armyJourneyRepository;
         $this->militaryCampaignRepository = $militaryCampaignRepository;
 
         $this->currentUser = $this->security->getUser();

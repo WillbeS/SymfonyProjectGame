@@ -19,12 +19,11 @@ class TimeCalculatorService implements TimeCalculatorServiceInterface
         return $dueDate->getTimestamp() - $now->getTimestamp();
     }
 
-    public function formatTime(int $seconds): string
+    public function formatTime(int $allSeconds): string
     {
-        $seconds = $this->padZeroes($seconds % 60);
-        $minutes = $this->padZeroes(floor($seconds / 60) % 60);
-        $hours = $this->padZeroes(floor($seconds / 3600));
-
+        $seconds = $this->padZeroes($allSeconds % 60);
+        $minutes = $this->padZeroes(floor($allSeconds / 60) % 60);
+        $hours = $this->padZeroes(floor($allSeconds / 3600));
 
         return "$hours:$minutes:$seconds";
     }

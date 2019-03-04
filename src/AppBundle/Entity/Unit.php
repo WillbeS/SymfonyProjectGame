@@ -3,7 +3,6 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Building\Building;
-use AppBundle\Service\App\AppServiceInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -58,13 +57,6 @@ class Unit implements PlatformUnitInterface
     private $inBattle;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="start_build", type="datetime", nullable=true)
-     */
-    private $startBuild;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="is_available", type="boolean")
@@ -107,30 +99,6 @@ class Unit implements PlatformUnitInterface
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * Set startBuild
-     *
-     * @param \DateTime $startBuild
-     *
-     * @return Unit
-     */
-    public function setStartBuild($startBuild)
-    {
-        $this->startBuild = $startBuild;
-
-        return $this;
-    }
-
-    /**
-     * Get startBuild
-     *
-     * @return \DateTime
-     */
-    public function getStartBuild()
-    {
-        return $this->startBuild;
     }
 
     /**
@@ -301,25 +269,6 @@ class Unit implements PlatformUnitInterface
         $this->inTraining = $this->inTraining + $newCount;
 
         return $this;
-    }
-
-//    public function getRemainingTrainingTime(AppServiceInterface $appService): int
-//    {
-//        return $appService->getRemainingTrainingTime($this->getStartBuild(),
-//                                                $this->unitType->getBuildTime(),
-//                                                $this->inTraining);
-//    }
-
-//    public function getRemainingTimeFormated(AppServiceInterface $appService): string
-//    {
-//        $remaining = $this->getRemainingTrainingTime($appService);
-//
-//        return $appService->formatTime($remaining);
-//    }
-
-    public function haveInTraining()
-    {
-        return null !== $this->startBuild;
     }
 
     public function isPrivate()

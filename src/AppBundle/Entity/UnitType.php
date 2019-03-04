@@ -380,7 +380,7 @@ class UnitType
         return $this;
     }
 
-    public function getSlug()
+    public function getImageName()
     {
         return preg_replace(
             '/\s+/',

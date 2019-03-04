@@ -37,7 +37,6 @@
                 <td>
                     {% if building.upgradeTask %}
                         <span class="timer" data-seconds="{{ getTimeUntilDue(building.upgradeTask.dueDate) }}"></span>
-                        {#<span class="timer" data-seconds="{{ getRemainingBuildTime(building) }}">{{ getRemainingBuildTime(building)|formatTime }}</span>#}
                     {% else %}
                         <a href="{{ path('start_upgrade', {'id': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
                     {% endif %}

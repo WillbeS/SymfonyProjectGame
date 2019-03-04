@@ -3,7 +3,6 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Building\Building;
-use AppBundle\Service\App\AppServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -30,27 +29,6 @@ class Platform
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
-
-    /**
-     * @var GameResource
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
-     */
-    private $food; //TODO - delete when safe
-
-    /**
-     * @var GameResource
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
-     */
-    private $wood; //TODO - delete when safe
-
-    /**
-     * @var GameResource
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GameResource", cascade={"persist"})
-     */
-    private $supplies; //TODO - delete when safe
 
     /**
      * @var GridCell
@@ -221,21 +199,6 @@ class Platform
 
         return $this;
     }
-
-    /**
-     * @param AppServiceInterface $appService
-     * @return ArrayCollection
-     */
-//    public function getIncome(AppServiceInterface $appService): ArrayCollection
-//    {
-//        $income = new ArrayCollection();
-//
-//        foreach ($this->resources as $resource) {
-//            $income[$resource->getResourceType()->getName()] = $appService->getIncomePerHour($resource);
-//        }
-//
-//        return $income;
-//    }
 
     /**
      * @return Unit[]|ArrayCollection

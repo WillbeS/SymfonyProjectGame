@@ -2,9 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Building\GameBuilding;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
