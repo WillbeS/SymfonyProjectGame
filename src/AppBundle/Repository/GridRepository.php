@@ -1,10 +1,10 @@
 <?php
 
 namespace AppBundle\Repository;
+
 use AppBundle\Entity\GridCell;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-
 
 class GridRepository extends ServiceEntityRepository
 {

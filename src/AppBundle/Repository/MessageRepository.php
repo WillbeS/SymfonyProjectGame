@@ -13,20 +13,6 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
-//    public function findTopicsByUser(int $userId)
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->join('m.sender', 's')
-//            ->join('m.recipient', 'r')
-//            ->addSelect('s')
-//            ->addSelect('r')
-//            ->where('m.recipient = :userId OR m.sender = :userId')
-//            ->andWhere('m.topicStarter = m.id')
-//            ->setParameter('userId', $userId)
-//            ->getQuery()
-//            ->getResult();
-//    }
-
     public function findAllTopicMessages(int $topicId, $limit = null)
     {
         $qb = $this->createQueryBuilder('m')
