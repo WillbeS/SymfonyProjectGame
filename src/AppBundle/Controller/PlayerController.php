@@ -4,16 +4,12 @@ namespace AppBundle\Controller;
 
 use AppBundle\Form\ProfileType;
 use AppBundle\Service\App\GameStateServiceInterface;
-use AppBundle\Service\Message\MessageServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;;
 use AppBundle\Service\UserServiceInterface;
 use AppBundle\Service\Utils\FileServiceInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
-
 
 class PlayerController extends MainController
 {
