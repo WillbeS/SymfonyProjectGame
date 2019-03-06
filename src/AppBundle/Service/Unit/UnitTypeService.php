@@ -56,8 +56,8 @@ class UnitTypeService implements UnitTypeServiceInterface
             if($building->getLevel() < $requirement->getLevel()) {
                 return false;
             }
-
-            return true;
         }
+
+        return true;
     }
 }

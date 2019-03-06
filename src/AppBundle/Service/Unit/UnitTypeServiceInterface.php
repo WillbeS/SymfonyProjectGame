@@ -2,9 +2,7 @@
 
 namespace AppBundle\Service\Unit;
 
-
 use AppBundle\Entity\Platform;
-use AppBundle\Entity\Unit;
 use AppBundle\Entity\UnitType;
 
 interface UnitTypeServiceInterface
