@@ -31,13 +31,13 @@ class BuildingService implements BuildingServiceInterface
 
 
 
-    public function __construct(GameBuildingRepository $gameBuildingRepo,
-                                BuildingRepository $buildingRepository,
-                                EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em,
+                                GameBuildingRepository $gameBuildingRepo,
+                                BuildingRepository $buildingRepository)
     {
+        $this->em = $em;
         $this->gameBuildingRepo = $gameBuildingRepo;
         $this->buildingRepo = $buildingRepository;
-        $this->em = $em;
     }
 
     // TODO - remove this if not used
@@ -81,33 +81,5 @@ class BuildingService implements BuildingServiceInterface
         ]);
 
         return $building;
-    }
-
-    /////////////////////////// For Registration ///////////////////////////////
-    public function createAllPlatformBuildings(Platform $platform)
-    {
-        $gameBuildings = $this->gameBuildingRepo->findAll();
-
-        foreach ($gameBuildings as $gameBuilding) {
-            $building = new Building();
-            $building
-                ->setLevel(0)
-                ->setGameBuilding($gameBuilding);
-
-            $platform->addBuilding($building);
-            $this->em->persist($building);
-        }
-    }
-
-    public function getFromPlatformBuildingsByType($buildings, GameBuilding $buildingType)
-    {
-        foreach ($buildings as $building) {
-            /** @var $building Building */
-            if ($building->getGameBuilding()->getId() == $buildingType->getId()) {
-                return $building;
-            }
-        }
-
-        return null; //todo throw something (should always find one)
     }
 }

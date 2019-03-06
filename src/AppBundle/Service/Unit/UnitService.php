@@ -6,15 +6,13 @@ namespace AppBundle\Service\Unit;
 use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
-use AppBundle\Entity\UnitType;
 use AppBundle\Repository\UnitRepository;
-use AppBundle\Service\Building\BuildingServiceInterface;
-use AppBundle\Traits\Findable;
+use AppBundle\Traits\AssertFound;
 use Doctrine\ORM\EntityManagerInterface;
 
 class UnitService implements UnitServiceInterface
 {
-    use Findable;
+    use AssertFound;
 
     /**
      * @var EntityManagerInterface
@@ -56,7 +54,7 @@ class UnitService implements UnitServiceInterface
     public function getAllByPlatform(Platform $platform): array
     {
         //TODO - decide
-        //No need for this unles I plan to do a join or some special collection (key => value)
+        //No need for this unless I plan to do a join or some special collection (key => value)
         return $this->unitRepository->findBy(['platform' => $platform]);
     }
 
@@ -67,37 +65,6 @@ class UnitService implements UnitServiceInterface
     public function getAllByBuilding(Building $building): array
     {
         return $this->unitRepository->findBy(['building' => $building]);
-    }
-
-
-    public function createAllPlatformUnits(Platform $platform,
-                                   BuildingServiceInterface $buildingService)
-    {
-        $types = $this->unitTypeService->findAll();
-
-        foreach ($types as $type) {
-            $unit = $this->generateUnit($type, $platform, $buildingService);
-            $platform->addUnit($unit);
-            $this->em->persist($unit);
-        }
-    }
-
-    public function generateUnit(UnitType $unitType,
-                                 Platform $platform,
-                                 BuildingServiceInterface $buildingService): Unit
-    {
-        $building = $buildingService->getFromPlatformBuildingsByType($platform->getBuildings(), $unitType->getGameBuilding());
-        $unit = new Unit();
-
-        $unit
-            ->setUnitType($unitType)
-            ->setBuilding($building)
-            ->addForTraining(0)
-            ->setIddle(0)
-            ->setInBattle(0)
-            ->setIsAvailable(false);
-
-        return $unit;
     }
 
 

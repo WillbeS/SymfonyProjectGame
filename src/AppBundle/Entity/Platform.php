@@ -48,9 +48,23 @@ class Platform
     /**
      * @var ArrayCollection|Building[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building\Building", mappedBy="platform")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building\Building", mappedBy="platform", cascade={"persist", "remove"})
      */
     private $buildings;
+
+    /**
+     * @var ArrayCollection|Unit[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Unit", mappedBy="platform", cascade={"persist", "remove"})
+     */
+    private $units;
+
+    /**
+     * @var ArrayCollection|GameResource[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GameResource", mappedBy="platform", cascade={"persist", "remove"})
+     */
+    private $resources;
 
     /**
      * @var \DateTime
@@ -58,20 +72,6 @@ class Platform
      * @ORM\Column(name="res_update_time", type="datetime")
      */
     private $resourceUpdateTime;
-
-    /**
-     * @var ArrayCollection|Unit[]
-     *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Unit", mappedBy="platform")
-     */
-    private $units;
-
-    /**
-     * @var ArrayCollection|GameResource[]
-     *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GameResource", mappedBy="platform")
-     */
-    private $resources;
 
 
 

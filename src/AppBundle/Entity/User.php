@@ -146,7 +146,7 @@ class User implements UserInterface, \Serializable
     /**
      * @var int
      */
-    private $newMessagesCount;
+    private $newMessagesCount; // todo delete (should get this with the global methods)
 
 
 

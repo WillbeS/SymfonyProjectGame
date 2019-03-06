@@ -8,9 +8,16 @@ use AppBundle\Entity\Platform;
 
 interface BuildingServiceInterface
 {
-    ///////////////// GET FROM DATABASE////////////////////////////////////////////////////
+    /**
+     * @param int $id
+     * @return Building
+     */
     public function findById(int $id):Building;
 
+    /**
+     * @param $id
+     * @return Building
+     */
     public function getByIdJoined($id):Building;
 
     /**
@@ -19,12 +26,11 @@ interface BuildingServiceInterface
      */
     public function getAllByPlatform(int $platformId): array;
 
-    public function getByGameBuilding(GameBuilding $gameBuilding, Platform $platform): Building;
-
-    ///////////////////////// New Registration Methods ////////////////////////////////
-    public function createAllPlatformBuildings(Platform $platform);
-
-    public function getFromPlatformBuildingsByType($buildings, GameBuilding $buildingType);
-    /////////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * @param GameBuilding $gameBuilding
+     * @param Platform $platform
+     * @return Building
+     */
+    public function getByGameBuilding(GameBuilding $gameBuilding,
+                                      Platform $platform): Building;
 }
