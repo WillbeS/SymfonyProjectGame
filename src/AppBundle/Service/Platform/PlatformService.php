@@ -6,19 +6,18 @@ use AppBundle\Entity\Building\Building;
 use AppBundle\Entity\GameResource;
 use AppBundle\Entity\Platform;
 use AppBundle\Entity\Unit;
-use AppBundle\Entity\User;
 use AppBundle\Repository\PlatformRepository;
-use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Map\MapServiceInterface;
 use AppBundle\Service\Resource\ResourceIncomeServiceInterface;
 use AppBundle\Service\Resource\ResourceServiceInterface;
-use AppBundle\Service\Unit\UnitServiceInterface;
+use AppBundle\Traits\AssertFound;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlatformService implements PlatformServiceInterface
 {
+    use AssertFound;
+
     /**
      * @var EntityManagerInterface
      */
@@ -109,29 +108,11 @@ class PlatformService implements PlatformServiceInterface
         return $building;
     }
 
-    public function getNewPlatform(BuildingServiceInterface $buildingService,
-                                   UnitServiceInterface $unitService,
-                                   User $user = null): ?Platform
-    {
-        $platform = new Platform();
-        $buildingService->createAllPlatformBuildings($platform);
-        $this->resourceService->createAllPlatformResources($platform, $buildingService);
-        $unitService->createAllPlatformUnits($platform, $buildingService);
-        $platformName = null !== $user ? 'Settlement of ' . $user->getUsername() : 'Old ruins';
-
-        $platform
-            ->setUser($user)
-            ->setName($platformName)
-            ->setGridCell($this->mapService->findAvailableGridCell())
-            ->setResourceUpdateTime(new \DateTime('now'));
-
-        return $platform;
-    }
-
     public function payPrice(Platform $platform, array $price)
     {
         foreach ($price as $resourceName => $value) {
             $resource = $this->findResourceByTypeName($resourceName, $platform->getResources());
+
             $this->resourceService->updateTotal($resource, $value * -1);
         }
 
@@ -174,13 +155,5 @@ class PlatformService implements PlatformServiceInterface
         $amount = $incomePerSecond * $seconds;
 
         return $amount;
-    }
-
-    private function assertFound($entity)
-    {
-        if(!$entity) {
-
-            throw new NotFoundHttpException('Page Not Found');
-        }
     }
 }

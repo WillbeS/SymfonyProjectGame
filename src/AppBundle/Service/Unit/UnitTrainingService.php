@@ -7,6 +7,7 @@ use AppBundle\Entity\ScheduledTask;
 use AppBundle\Entity\ScheduledTaskInterface;
 use AppBundle\Entity\Unit;
 use AppBundle\Repository\UnitRepository;
+use AppBundle\Service\App\GameNotificationException;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use AppBundle\Traits\Findable;
@@ -41,11 +42,9 @@ class UnitTrainingService implements UnitTrainingServiceInterface
     public function startTraining(int $count,
                                   Unit $unit,
                                   PlatformServiceInterface $platformService,
-                                  ScheduledTaskServiceInterface $scheduledTaskService): bool
+                                  ScheduledTaskServiceInterface $scheduledTaskService)
     {
-        if($count <= 0 || $count > PHP_INT_MAX) {
-            return false;
-        }
+
 
         $platformService->payPrice($unit->getPlatform(), $unit->getPrice($count));
 
@@ -62,8 +61,6 @@ class UnitTrainingService implements UnitTrainingServiceInterface
 
         $this->em->persist($trainingTask);
         $this->em->flush();
-
-        return true;
     }
 
     public function finishTraining(ScheduledTaskInterface $trainingTask)

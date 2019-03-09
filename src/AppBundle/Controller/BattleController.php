@@ -6,6 +6,7 @@ use AppBundle\Entity\MilitaryCampaign;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserReport;
 use AppBundle\Form\UnitTravelCountsType;
+use AppBundle\Service\App\GameNotificationException;
 use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\ArmyMovement\JourneyServiceInterface;
 use AppBundle\Service\ArmyMovement\MilitaryCampaignServiceInterface;
@@ -46,7 +47,7 @@ class BattleController extends MainController
         $target = $userService->getById($playerId);
 
         if ($currentUser === $target) {
-            $this->addFlash('error', 'Cannot attack yourself!');
+            $this->addFlash('danger', 'Cannot attack yourself!');
 
             return $this->redirectToRoute('players_all', ['id' => $id]);
         }
@@ -82,7 +83,7 @@ class BattleController extends MainController
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
-            $this->addFlash('error', 'Invalid troops count.');
+            $this->addFlash('danger', 'Invalid troops count.');
 
             return $this->render('battle/send-attack-new.html.twig', [
                 'defender' => $target,
@@ -96,9 +97,9 @@ class BattleController extends MainController
                 $currentUser->getCurrentPlatform(),
                 $target->getCurrentPlatform()
             );
-        } catch (\Exception $e) {
-            $this->addFlash('error', 'Invalid input. Attack was not sent.');
-            //$this->addFlash('error', $e->getMessage());;
+            $this->addFlash('success', 'Attack was successfully sent.');
+        } catch (GameNotificationException $e) {
+            $this->addFlash('danger', $e->getMessage());
         }
 
         return $this->redirectToRoute('send_attack', ['id' => $id, 'playerId' => $playerId]);

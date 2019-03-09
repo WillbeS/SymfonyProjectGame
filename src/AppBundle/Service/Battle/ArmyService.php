@@ -4,18 +4,36 @@ namespace AppBundle\Service\Battle;
 
 
 use AppBundle\Entity\Unit;
+use AppBundle\Service\App\GameNotificationException;
+use AppBundle\Service\Utils\FlashMessageServiceInterface;
 use Doctrine\Common\Collections\Collection;
 
 class ArmyService implements ArmyServiceInterface
 {
     /**
+     * @var FlashMessageServiceInterface
+     */
+    private $flashMessageService;
+
+
+
+    /**
      * @var int
      */
     private $slowestSpeed;
 
+    /**
+     * ArmyService constructor.
+     * @param FlashMessageServiceInterface $flashMessageService
+     */
+    public function __construct(FlashMessageServiceInterface $flashMessageService)
+    {
+        $this->flashMessageService = $flashMessageService;
+        $this->slowestSpeed = 0;
+    }
+
     public function getArmyFromRequestData(array $requestData, Collection $platformUnits): string
     {
-        $this->slowestSpeed = 0;
         $attackerArmy = [];
 
         /** @var Unit $unit */
@@ -31,7 +49,7 @@ class ArmyService implements ArmyServiceInterface
         }
 
         if (0 === $this->slowestSpeed) {
-            throw new \Exception('You must choose at least 1 unit');
+            throw new GameNotificationException('You must choose at least 1 unit');
         }
 
         return json_encode($attackerArmy);

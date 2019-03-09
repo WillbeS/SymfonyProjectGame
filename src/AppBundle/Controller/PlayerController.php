@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Form\ProfileType;
 use AppBundle\Service\App\GameStateServiceInterface;
-use AppBundle\Service\Platform\PlatformServiceInterface;;
+use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use AppBundle\Service\Utils\FileServiceInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -59,13 +59,14 @@ class PlayerController extends MainController
         $form = $this->createForm(ProfileType::class, $user);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
-            try {
-                $this->userService->editProfile($user, $fileService);
-                return $this->redirectToRoute('view_public_profile', ['id' => $id, 'userId' => $user->getId()]);
-            } catch (Exception $e) {
-                var_dump('Error! ');
-            }
+        if($form->isValid()) {
+            $this->userService->editProfile($user, $fileService);
+            $this->addFlash('success', 'Profile was updated successfully.');
+
+            return $this->redirectToRoute(
+                'view_public_profile',
+                ['id' => $id, 'userId' => $user->getId()]
+            );
         }
 
         return $this->render('user/edit-profile.html.twig', [

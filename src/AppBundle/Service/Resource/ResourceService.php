@@ -5,6 +5,7 @@ namespace AppBundle\Service\Resource;
 use AppBundle\Entity\GameResource;
 use AppBundle\Entity\ResourceType;
 use AppBundle\Repository\ResourceTypeRepository;
+use AppBundle\Service\App\GameNotificationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
@@ -41,9 +42,8 @@ class ResourceService implements ResourceServiceInterface
     {
         $newTotal = $resource->getTotal() + $amount;
 
-        //TODO - make this flush message and just return (no throw)
         if($newTotal < 0) {
-            throw new Exception('Insufficient ' . $resource->getResourceType()->getName());
+            throw new GameNotificationException('Insufficient ' . $resource->getResourceType()->getName());
         }
 
         $resource

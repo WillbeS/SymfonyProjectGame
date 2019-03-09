@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Form\UnitCountType;
+use AppBundle\Service\App\GameNotificationException;
 use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Platform\PlatformDataServiceInterface;
@@ -84,7 +85,8 @@ class UnitController extends MainController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function recruit(int $id, int $unitId,
+    public function recruit(int $id,
+                            int $unitId,
                             Request $request,
                             PlatformDataServiceInterface $platformDataService,
                             UnitTrainingServiceInterface $unitTrainingService,
@@ -97,17 +99,18 @@ class UnitController extends MainController
         $form = $this->createForm(UnitCountType::class);
         $form->handleRequest($request);
 
-        if($form->isSubmitted()) {
-            $success = $unitTrainingService->startTraining(
-                $form->getData()['count'],
-                $unit,
-                $this->platformService,
-                $scheduledTaskService
-            );
-
-            if (!$success) {
-                dump('Invalid count'); // todo flush
-                exit;
+        if($form->isValid()) {
+            $count = $form->getData()['count'];
+            try {
+                $this->validateCount($count);
+                $unitTrainingService->startTraining(
+                    $form->getData()['count'],
+                    $unit,
+                    $this->platformService,
+                    $scheduledTaskService
+                );
+            } catch (GameNotificationException $e) {
+                $this->addFlash('danger', $e->getMessage());
             }
 
             return $this->redirectToRoute('recruit', ['id' => $id, 'unitId' => $unitId]);
@@ -119,5 +122,16 @@ class UnitController extends MainController
             'form' => $form->createView(),
             'currentPage' => 'unit'
         ]);
+    }
+
+    private function validateCount($count)
+    {
+        if (null == $count ||
+            $count <= 0 ||
+            $count > PHP_INT_MAX)
+        {
+            throw new GameNotificationException('Count must be 1 or more.');
+        }
+
     }
 }

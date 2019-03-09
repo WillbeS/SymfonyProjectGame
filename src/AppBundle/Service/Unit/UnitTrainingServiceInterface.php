@@ -14,7 +14,7 @@ interface UnitTrainingServiceInterface
     public function startTraining(int $count,
                                   Unit $unit,
                                   PlatformServiceInterface $platformService,
-                                  ScheduledTaskServiceInterface $scheduledTaskService): bool;
+                                  ScheduledTaskServiceInterface $scheduledTaskService);
 
     public function finishTraining(ScheduledTaskInterface $trainingTask);
 }

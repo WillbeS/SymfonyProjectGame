@@ -58,4 +58,5 @@ class RegistrationService implements RegistrationServiceInterface
 
         $this->em->flush();
     }
+
 }

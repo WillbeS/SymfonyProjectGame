@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -12,6 +13,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
+ *
+ * @UniqueEntity("username")
+ * @UniqueEntity("email")
+ *
  */
 class User implements UserInterface, \Serializable
 {
@@ -138,7 +143,7 @@ class User implements UserInterface, \Serializable
      *     minHeight = 10,
      *     maxHeight = 600,
      *     detectCorrupted = true,
-     *     corruptedMessage = "Product photo is corrupted. Upload it again."
+     *     corruptedMessage = "This image is corrupted. Please try to upload it again."
      * )
      */
     private $file;

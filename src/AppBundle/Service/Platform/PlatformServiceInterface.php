@@ -21,9 +21,9 @@ interface PlatformServiceInterface
 
     public function getOneJoinedWithUnitsResources(int $id): Platform;
 
-    public function getNewPlatform(BuildingServiceInterface $buildingService,
-                                   UnitServiceInterface $unitService,
-                                   User $user = null): ?Platform;
+//    public function getNewPlatform(BuildingServiceInterface $buildingService,
+//                                   UnitServiceInterface $unitService,
+//                                   User $user = null): ?Platform;
 
     public function payPrice(Platform $platform, array $price);
 

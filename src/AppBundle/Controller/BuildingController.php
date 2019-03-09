@@ -3,12 +3,12 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Service\App\GameNotificationException;
 use AppBundle\Service\App\GameStateServiceInterface;
 use AppBundle\Service\Building\BuildingServiceInterface;
 use AppBundle\Service\Building\BuildingUpgradeServiceInterface;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -83,8 +83,8 @@ class BuildingController extends MainController
                 $this->platformService,
                 $scheduledTaskService
             );
-        } catch (Exception $e) {
-            var_dump($e->getMessage()); // TODO flush messaging
+        } catch (GameNotificationException $e) {
+            $this->addFlash('danger', $e->getMessage());
         }
 
         return $this->redirectToRoute('manage_buildings', ['id' => $id]);

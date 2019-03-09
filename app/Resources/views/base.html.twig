@@ -14,17 +14,7 @@
     {%  block header %}
     {% endblock %}
     <div class="container">
-        {% for msg in app.session.flashBag.get('success') %}
-            <div class="alert alert-dismissible alert-success">
-                {{ msg }}
-            </div>
-        {% endfor %}
-
-        {% for msg in app.session.flashBag.get('error') %}
-            <div class="alert alert-dismissible alert-danger">
-                {{ msg }}
-            </div>
-        {% endfor %}
+        {% include 'flash-messages.html.twig' %}
 
         {% block guestBody %}
         {% endblock %}

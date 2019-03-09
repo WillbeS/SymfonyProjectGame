@@ -95,10 +95,12 @@ class MessageController extends MainController
     {
         $reply = new Message();
         $userId = $this->getUser()->getId();
-        $myConvo = $this->messageService->getOneUserTopic($userId,
-                                                          $topicId,
-                                                          true,
-                                                          MessageController::OLD_REPLIES_COUNT);
+        $myConvo = $this->messageService->getOneUserTopic(
+            $userId,
+            $topicId,
+            true,
+            MessageController::OLD_REPLIES_COUNT
+        );
 
         $form = $this->createForm(ReplyType::class, $reply);
         $form->handleRequest($request);
@@ -138,7 +140,6 @@ class MessageController extends MainController
      */
     public function deleteTopicByUserAction(int $id, int $topicId)
     {
-        // Searching for convo by topic and user - to make sure that user's authorized (no need for voter)
         $this->messageService->deleteTopicByUser($this->getUser()->getId(), $topicId);
         $this->addFlash('success', 'Message successfully deleted.');
 

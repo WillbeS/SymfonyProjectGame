@@ -7,6 +7,8 @@ use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
 use AppBundle\Service\User\RegistrationServiceInterface;
 use AppBundle\Service\UserServiceInterface;
+use Doctrine\DBAL\Exception\DatabaseObjectExistsException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -55,8 +57,16 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $registrationService
-                ->register($user, $encoder);
+            try {
+                $registrationService
+                    ->register($user, $encoder);
+            } catch (UniqueConstraintViolationException $e) {
+                $this->addFlash('danger', 'Username must be unique.');
+
+                return $this->render('user/register.html.twig', array(
+                    'form' => $form->createView(),
+                ));
+            }
             
             return $this->redirectToRoute('login');
         }

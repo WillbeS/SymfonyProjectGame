@@ -4,16 +4,16 @@ namespace AppBundle\Service;
 
 
 use AppBundle\Entity\User;
-use AppBundle\Repository\MessageRepository;
-use AppBundle\Repository\RoleRepository;
 use AppBundle\Repository\UserRepository;
 use AppBundle\Service\Utils\FileServiceInterface;
-use AppBundle\Service\Utils\PersistedEntitiesServiceInterface;
+use AppBundle\Traits\AssertFound;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UserService implements UserServiceInterface
 {
+    use AssertFound;
+
     /**
      * @var EntityManagerInterface
      */
@@ -54,21 +54,14 @@ class UserService implements UserServiceInterface
 
         if (null !== $file) {
             $fileName = $fileService->upload($file);
+
             if (User::DEFAULT_AVATAR !== $user->getAvatar()) {
                 $fileService->delete( $user->getAvatar());
             }
 
             $user->setAvatar($fileName);
         }
+
         $this->em->flush();
-    }
-
-    //TODO - make it common for all services
-    private function assertFound($entity)
-    {
-        if(!$entity) {
-
-            throw new NotFoundHttpException('Page Not Found');
-        }
     }
 }
