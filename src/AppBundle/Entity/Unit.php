@@ -257,7 +257,7 @@ class Unit implements PlatformUnitInterface
 
     public function getTotal()
     {
-        return $this->inBattle + $this->iddle;
+        return $this->inBattle + $this->iddle + $this->inTraining;
     }
 
     /**

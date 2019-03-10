@@ -10,25 +10,17 @@
     </tr>
     </thead>
     <tbody>
-    <tr class="table-secondary">
-        <td class="table-img">
-            <a href="unit-detail.html"><img src="images/design/guard.jpg" /></a>
-        </td>
-        <td class="align-middle">Guard</td>
-        <td class="align-middle">5</td>
-        <td class="align-middle">15</td>
-        <td class="align-middle">10</td>
-        <td class="align-middle">10</td>
-    </tr>
-    <tr class="table-secondary">
-        <td class="table-img">
-            <a href="unit-detail.html"><img src="images/design/guard.jpg" /></a>
-        </td>
-        <td class="align-middle">Guard</td>
-        <td class="align-middle">5</td>
-        <td class="align-middle">15</td>
-        <td class="align-middle">10</td>
-        <td class="align-middle">10</td>
-    </tr>
+    {% for unit in units %}
+        <tr class="table-secondary">
+            <td class="table-img">
+                <a href="{{ path('view_unit_type', {'id': platform.id, 'unitId': unit.id}) }}"><img src="{{ asset('images/design/' ~ unit.unitType.imageName ~ '.jpg') }}" /></a>
+            </td>
+            <td class="align-middle"><a href="{{ path('view_unit_type', {'id': platform.id, 'unitId': unit.id}) }}">{{ unit.unitType.name }}</a></td>
+            <td class="align-middle">{{ unit.iddle }}</td>
+            <td class="align-middle">{{ unit.inBattle }}</td>
+            <td class="align-middle">{{ unit.inTraining }}</td>
+            <td class="align-middle">{{ unit.total }}</td>
+        </tr>
+    {% endfor %}
     </tbody>
 </table>

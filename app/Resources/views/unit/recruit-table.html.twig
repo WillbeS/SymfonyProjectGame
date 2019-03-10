@@ -2,13 +2,13 @@
     <thead>
     <tr class="table-dark">
         <th scope="col">Unit</th>
-        <th scope="col">Name</th>
+        <th class="w-25" scope="col">Name</th>
         <th scope="col">Food</th>
         <th scope="col">Wood</th>
         <th scope="col">Supplies</th>
-        <th scope="col">Build Time</th>
-        <th scope="col">In Training</th>
-        <th scope="col">Recruit</th>
+        <th class="w-25" scope="col">Build Time</th>
+        <th class="w-25" scope="col">In Training</th>
+        <th class="w-25" scope="col">Recruit</th>
     </tr>
     </thead>
     <tbody>
@@ -23,20 +23,16 @@
             <td class="align-middle">{{ unit.unitType.suppliesCost }}</td>
             <td class="align-middle">{{ unit.unitType.buildTime|formatTime }}</td>
             <td class="align-middle">{{ unit.inTraining }}</td>
-            <td class="align-middle">
-                <form class="table-input" method="post" action="{{ path('recruit_unit', {'id': platform.id, 'unitId': unit.id}) }}">
-                    <div class="form-group">
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <input type="number" name="count" class="form-control">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn-info btn">Recruit</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </td>
+            {% if unit.trainingTask %}
+                <td class="align-middle timer" data-seconds="{{ getTimeUntilDue(unit.trainingTask.dueDate) }}"></td>
+            {% else %}
+                <td class="align-middle">
+                    {{ render(controller(
+                    'AppBundle:Unit:recruitUnit',
+                    { 'id': platform.id, 'unitId': unit.id }
+                    )) }}
+                </td>
+            {% endif %}
         </tr>
     {% endfor %}
     </tbody>

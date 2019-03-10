@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Unit;
+use AppBundle\Form\PlatformUnitsCountType;
 use AppBundle\Form\UnitCountType;
 use AppBundle\Service\App\GameNotificationException;
 use AppBundle\Service\App\GameStateServiceInterface;
@@ -46,19 +47,6 @@ class UnitController extends MainController
         $this->buildingService = $buildingService;
     }
 
-
-    /**
-     * @Route("/units/manage", name="manage_units")
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function manageAllAction()
-    {
-        return $this->render('unit/training-camp.html.twig', [
-            'currentPage' => 'unit'
-        ]);
-    }
-
     /**
      * @Route("/unit/info/{unitId}",
      *          name="view_unit_type",
@@ -79,6 +67,21 @@ class UnitController extends MainController
         ]);
     }
 
+
+
+    /**
+     * @Route("/units/manage", name="manage_units")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function manageAllAction()
+    {
+        return $this->render('unit/training-camp.html.twig', [
+            'currentPage' => 'unit',
+        ]);
+    }
+
+
     /**
      * @Route("/unit/recruit/{unitId}",
      *     name="recruit_unit",
@@ -86,12 +89,40 @@ class UnitController extends MainController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function recruitUnitAction(int $unitId,
+    public function recruitUnitAction(int $id,
+                                      int $unitId,
                                       Request $request,
-                                      UnitTrainingServiceInterface $unitTrainingService)
+                                      UnitTrainingServiceInterface $unitTrainingService,
+                                      ScheduledTaskServiceInterface $scheduledTaskService)
     {
-        dump($request);
-        exit;
+        $form = $this->createForm(UnitCountType::class, null, [
+            'action' => $this->generateUrl('recruit_unit', ['id' => $id, 'unitId' => $unitId]),
+            'method' => 'POST',
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $count = $form->getData()['count'];
+            try {
+                $this->validateCount($count);
+                $unitTrainingService->startTraining(
+                    $form->getData()['count'],
+                    $unitId,
+                    $this->platformService,
+                    $scheduledTaskService
+                );
+            } catch (GameNotificationException $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
+
+//            return $this->redirectToRoute('recruit', ['id' => $id, 'unitId' => $unitId]);
+            return $this->redirectToRoute('manage_units', ['id' => $id]);
+        }
+
+        return $this->render('unit/recruit-unit.html.twig', [
+            'form' => $form->createView(),
+            'currentPage' => 'unit'
+        ]);
     }
 
     /**
