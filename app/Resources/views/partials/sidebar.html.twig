@@ -1,30 +1,37 @@
 {# @var platform \AppBundle\Entity\Platform #}
 {% set platform = platform_data.currentPlatform %}
-{% if common_data.getEnemyAttacksCount > 0 %}
-    <div ><a style="color: red" href="{{ path('show_attacks', {'id': platform.id}) }}">Enemy Attacks ({{ common_data.getEnemyAttacksCount }})</a></div>
-{% endif %}
-<h2>{{ platform.name }}</h2>
 
-<h2>Resources</h2>
-{% for resource in platform.resources %}
-    <b>{{ resource.resourceType.name }}:</b> {{ resource.total|round(0, 'floor') }} <br />
-{% endfor %}
-<hr />
+<div class="row pb-3">
+    <div class="col-sm-12 bg-primary">
+        <div class="card-header bg-primary d-flex">
+            <div class="mr-auto">
+                <span class="mr-2">Resources:</span>
+                {% for resource in platform.resources %}
+                    <span class="mr-2">{{ resource.resourceType.name }}: {{ resource.total|round(0, 'floor') }}</span>
+                {% endfor %}
+            </div>
 
-<h2>Income per hour</h2>
-{% for resource in platform.resources %}
-    <b>{{ resource.resourceType.name }}:</b> {{ getIncome(resource) }}<br />
-{% endfor %}
-<hr />
+            <div class="mr-auto">
+                <span class="mr-2">Income per hour:</span>
+                {% for resource in platform.resources %}
+                    <span class="mr-2">{{ resource.resourceType.name }}: {{ getIncome(resource) }}</span>
+                {% endfor %}
+            </div>
 
-<h2>Units</h2>
-<p>
-    {% for unit in platform.units %}
-        {% if unit.iddle > 0 %}
-        <b>{{ unit.unitType.name }}:</b> {{ unit.iddle }} <br />
-        {% endif %}
-    {% endfor %}
-</p>
-<br/>
+            <div class="mr-auto">
+                <span class="mr-2">Troops:</span>
+                {% for unit in platform.units %}
+                    <span class="mr-2">{{ unit.unitType.name }}: {{ unit.iddle }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 
-<p class="small"><i>This information is for the current settlement.</i></p>
+{#Todo - move this in header#}
+{#{% if common_data.getEnemyAttacksCount > 0 %}#}
+    {#<div ><a style="color: red" href="{{ path('show_attacks', {'id': platform.id}) }}">Enemy Attacks ({{ common_data.getEnemyAttacksCount }})</a></div>#}
+{#{% endif %}#}
+{#Todo - move this in header#}
+
+

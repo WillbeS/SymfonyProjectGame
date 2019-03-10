@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Unit;
 use AppBundle\Form\UnitCountType;
 use AppBundle\Service\App\GameNotificationException;
 use AppBundle\Service\App\GameStateServiceInterface;
@@ -47,13 +48,13 @@ class UnitController extends MainController
 
 
     /**
-     * @Route("/units/all", name="manage_units")
+     * @Route("/units/manage", name="manage_units")
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAllAction()
+    public function manageAllAction()
     {
-        return $this->render('unit/all.html.twig', [
+        return $this->render('unit/training-camp.html.twig', [
             'currentPage' => 'unit'
         ]);
     }
@@ -79,13 +80,28 @@ class UnitController extends MainController
     }
 
     /**
+     * @Route("/unit/recruit/{unitId}",
+     *     name="recruit_unit",
+     *     requirements={"id" = "\d+", "unitId" = "\d+"})
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function recruitUnitAction(int $unitId,
+                                      Request $request,
+                                      UnitTrainingServiceInterface $unitTrainingService)
+    {
+        dump($request);
+        exit;
+    }
+
+    /**
      * @Route("/recruit/{unitId}",
      *     name="recruit",
      *     requirements={"unitId" = "\d+"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function recruit(int $id,
+    public function recruitAction(int $id,
                             int $unitId,
                             Request $request,
                             PlatformDataServiceInterface $platformDataService,
@@ -113,10 +129,11 @@ class UnitController extends MainController
                 $this->addFlash('danger', $e->getMessage());
             }
 
-            return $this->redirectToRoute('recruit', ['id' => $id, 'unitId' => $unitId]);
+//            return $this->redirectToRoute('recruit', ['id' => $id, 'unitId' => $unitId]);
+            return $this->redirectToRoute('manage_units', ['id' => $id]);
         }
 
-        return $this->render('unit/recruit.html.twig', [
+        return $this->render('unit/recruit-form.html.twig', [
             'platform' => $platform,
             'unit' => $unit,
             'form' => $form->createView(),

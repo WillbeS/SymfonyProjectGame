@@ -12,7 +12,7 @@ use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 interface UnitTrainingServiceInterface
 {
     public function startTraining(int $count,
-                                  Unit $unit,
+                                  int $unitId,
                                   PlatformServiceInterface $platformService,
                                   ScheduledTaskServiceInterface $scheduledTaskService);
 

@@ -1,4 +1,6 @@
 {% extends 'base.html.twig' %}
+{# @var platform \AppBundle\Entity\Platform #}
+{% set platform = platform_data.currentPlatform %}
 
 {% block header %}
     {% include 'partials/header.html.twig' %}
@@ -9,12 +11,21 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ building.name }}</h1>
+    <div class="row card-body">
+        <div class="col-md-5 border-primary mb-5 mt-2">
+            <img src="{{ asset('images/design/' ~ building.imageName ~ '.jpg') }}">
+        </div>
 
-    <img src="{{ asset('images/design/' ~ building.imageName ~ '.jpg') }}">
-    <hr />
-
-    <p>{{ building.gameBuilding.description }}</p>
-
-    <a href="{{ path('homepage') }}">Back to your settlement</a>
+        <div class="col-md-7  mt-2">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h4 class="card-title">{{ building.name }}</h4>
+                    <p class="card-text">{{ building.gameBuilding.description }}</p>
+                </div>
+                <div class="card-body">
+                    <a href="{{ path('manage_buildings', {'id': platform.id}) }}" class="card-link">Back to all buildings</a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

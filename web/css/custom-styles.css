@@ -1,0 +1,108 @@
+.home-image {
+    background-image: url("../images/design/town.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 440px;
+    /*padding-top: 20px;*/
+}
+
+.btn-circle {
+    width: 130px;
+    height: 130px;
+    padding: 10px;
+    border-radius: 70px;
+    text-align: center;
+    font-size: .8em;
+    border: 7px solid #303030;
+    padding-top: 20px;
+}
+
+.btn-circle i {
+    display: block;
+    font-size: 3.9em;
+}
+
+#bottom-menu .active {
+    border: 7px solid #303030;
+    color: #303030;
+}
+
+#bottom-menu .active i {
+    color: #303030;
+}
+
+.table-img img {
+    width: 70px;
+    height: auto;
+    padding-top: 0;
+}
+
+.table-img span {
+    display: block;
+    font-size: .9em;
+}
+
+/*
+------------------------ Login -----------------------
+ */
+div.jumbotron {
+    background-image: url("../images/design/zombies2.jpg");
+}
+
+div.login-bg {
+    background:rgba(0,0,0,0.7);
+}
+
+#login {
+    color: #FFFFFF;
+}
+
+h1.guest {
+    font-size: 2.2em;
+}
+
+/*
+------------------------ Unit Recruiting Form -----------------------
+ */
+
+/*removes the up / down arrows from a numeric input field*/
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+/*
+------------------------ Profile -----------------------
+ */
+
+.avatar {
+    width: 150px;
+    height: 150px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

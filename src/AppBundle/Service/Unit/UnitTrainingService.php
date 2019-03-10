@@ -40,12 +40,13 @@ class UnitTrainingService implements UnitTrainingServiceInterface
 
 
     public function startTraining(int $count,
-                                  Unit $unit,
+                                  int $unitId,
                                   PlatformServiceInterface $platformService,
                                   ScheduledTaskServiceInterface $scheduledTaskService)
     {
 
 
+        $unit = $this->unitRepository->find($unitId);
         $platformService->payPrice($unit->getPlatform(), $unit->getPrice($count));
 
         $trainingTask = $scheduledTaskService->createPlatformUnitTask(

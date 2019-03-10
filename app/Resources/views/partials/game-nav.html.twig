@@ -1,0 +1,27 @@
+{# @var platform \AppBundle\Entity\Platform #}
+{% set platform = platform_data.currentPlatform %}
+
+<div class="container-fluid">
+    <div class="row justify-content-md-center bg-light pb-3" id="bottom-menu">
+        <div class="col-md-auto mt-n4">
+            <a href="{{ path('homepage') }}" class="btn btn-info btn-lg btn-circle mr-4{% if currentPage is defined and currentPage == 'platform' %} active{% endif %}">
+                <i class="fas fa-home mb-1"></i>Home
+            </a>
+            <a href="{{ path('manage_buildings', {'id': platform.id}) }}" class="btn btn-info btn-lg btn-circle mr-4{% if currentPage is defined and currentPage == 'building' %} active{% endif %}">
+                <i class="fas fa-hammer mb-1"></i>Buildings
+            </a>
+            <a href="{{ path('manage_units', {'id': platform.id}) }}" class="btn btn-info btn-lg btn-circle mr-4{% if currentPage is defined and currentPage == 'unit' %} active{% endif %}">
+                <i class="fas fa-fighter-jet mb-1"></i>Training Camp
+            </a>
+            <a href="{{ path('show_attacks', {'id': platform.id}) }}" class="btn btn-info btn-lg btn-circle mr-4{% if currentPage is defined and currentPage == 'attacks' %} active{% endif %}">
+                <i class="fas fa-binoculars mb-1"></i>Attacks
+            </a>
+            <a href="{{ path('map_local', {'id': platform.id}) }}" class="btn btn-info btn-lg btn-circle mr-4{% if currentPage is defined and currentPage == 'map' %} active{% endif %}">
+                <i class="fas fa-globe mb-1"></i>Map
+            </a>
+            <a href="{{ path('players_all', {'id': platform.id}) }}" class="btn btn-info btn-lg btn-circle mr-4{% if currentPage is defined and currentPage == 'player' %} active{% endif %}">
+                <i class="fas fa-users mb-1"></i>Players
+            </a>
+        </div>
+    </div>
+</div>

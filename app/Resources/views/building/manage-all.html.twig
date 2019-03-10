@@ -11,40 +11,48 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Manage Buildings</h1>
-    <p><i>All buildings and their cost for next level.</i></p>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Level</th>
-            <th>Wood</th>
-            <th>Food</th>
-            <th>Supplies</th>
-            <th>BuildTime</th>
-            <th>Upgrade</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for building in platform.buildings %}
-            <tr>
-                <td>{{ building.name }}</td>
-                <td>{{ building.level }}</td>
-                <td>{{ getCostPerLevel(building.gameBuilding.woodCost, building.level) }}</td>
-                <td>{{ getCostPerLevel(building.gameBuilding.foodCost, building.level) }}</td>
-                <td>{{ getCostPerLevel(building.gameBuilding.suppliesCost, building.level) }}</td>
-                <td>{{ getBuildTime(building)|formatTime }}</td>
-                <td>
-                    {% if building.upgradeTask %}
-                        <span class="timer" data-seconds="{{ getTimeUntilDue(building.upgradeTask.dueDate) }}"></span>
-                    {% else %}
-                        <a href="{{ path('start_upgrade', {'id': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
-                    {% endif %}
-                </td>
+    <div class="card-body">
+        <h4 class="card-title">Manage Buildings</h4>
+        <small class="ml-auto">All buildings and their upgrade cost for next level.</small>
+        <table class="table table-hover text-center">
+            <thead>
+            <tr class="table-dark">
+                <th scope="col">Building</th>
+                <th scope="col">Name</th>
+                <th scope="col">Level</th>
+                <th scope="col">Food</th>
+                <th scope="col">Wood</th>
+                <th scope="col">Supplies</th>
+                <th scope="col">Build Time</th>
+                <th scope="col">Upgrade</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for building in platform.buildings %}
+                <tr class="table-secondary">
+                    <td class="table-img">
+                        <a href="{{ path('show_building_info', {'id': platform.id, 'buildingId': building.id}) }}">
+                            <img src="{{ asset('images/design/' ~ building.imageName ~ '.jpg') }}" alt="{{ building.name }}" />
+                        </a>
+                    </td>
+                    <td class="align-middle">{{ building.name }}</td>
+                    <td class="align-middle">{{ building.level }}</td>
+                    <td class="align-middle">{{ getCostPerLevel(building.gameBuilding.foodCost, building.level) }}</td>
+                    <td class="align-middle">{{ getCostPerLevel(building.gameBuilding.woodCost, building.level) }}</td>
+                    <td class="align-middle">{{ getCostPerLevel(building.gameBuilding.suppliesCost, building.level) }}</td>
+                    <td class="align-middle">{{ getBuildTime(building)|formatTime }}</td>
+                    <td class="align-middle">
+                        {% if building.upgradeTask %}
+                            <span class="timer" data-seconds="{{ getTimeUntilDue(building.upgradeTask.dueDate) }}"></span>
+                        {% else %}
+                            <a href="{{ path('start_upgrade', {'id': platform.id, 'buildingId': building.id}) }}">Upgrade</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block javascripts %}

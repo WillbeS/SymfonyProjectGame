@@ -1,0 +1,43 @@
+<table class="table table-hover text-center">
+    <thead>
+    <tr class="table-dark">
+        <th scope="col">Unit</th>
+        <th scope="col">Name</th>
+        <th scope="col">Food</th>
+        <th scope="col">Wood</th>
+        <th scope="col">Supplies</th>
+        <th scope="col">Build Time</th>
+        <th scope="col">In Training</th>
+        <th scope="col">Recruit</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for unit in units %}
+        <tr class="table-secondary">
+            <td class="table-img">
+                <a href="{{ path('view_unit_type', {'id': platform.id, 'unitId': unit.id}) }}"><img src="{{ asset('images/design/' ~ unit.unitType.imageName ~ '.jpg') }}" /></a>
+            </td>
+            <td class="align-middle"><a href="{{ path('view_unit_type', {'id': platform.id, 'unitId': unit.id}) }}">{{ unit.unitType.name }}</a></td>
+            <td class="align-middle">{{ unit.unitType.foodCost }}</td>
+            <td class="align-middle">{{ unit.unitType.woodCost }}</td>
+            <td class="align-middle">{{ unit.unitType.suppliesCost }}</td>
+            <td class="align-middle">{{ unit.unitType.buildTime|formatTime }}</td>
+            <td class="align-middle">{{ unit.inTraining }}</td>
+            <td class="align-middle">
+                <form class="table-input" method="post" action="{{ path('recruit_unit', {'id': platform.id, 'unitId': unit.id}) }}">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <input type="number" name="count" class="form-control">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn-info btn">Recruit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

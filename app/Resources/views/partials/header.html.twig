@@ -1,37 +1,40 @@
 {# @var platform \AppBundle\Entity\Platform #}
 {% set platform = platform_data.currentPlatform %}
-<header>
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">GameName</a>
-            </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
-                <ul class="nav navbar-nav">
-                    <li {% if currentPage is defined and currentPage == 'platform' %} class="active" {% endif %}><a href="{{ path('homepage') }}">Home</a></li>
-                    <li {% if currentPage is defined and currentPage == 'building' %} class="active" {% endif %}><a href="{{ path('manage_buildings', {'id': platform.id}) }}">Buildings</a></li>
-                    <li {% if currentPage is defined and currentPage == 'unit' %} class="active" {% endif %}><a href="{{ path('manage_units', {'id': platform.id}) }}">Units</a></li>
-                    <li {% if currentPage is defined and currentPage == 'map' %} class="active" {% endif %}><a href="{{ path('map_local', {'id': platform.id}) }}">Map</a></li>
-                    <li {% if currentPage is defined and currentPage == 'player' %} class="active" {% endif %}><a href="{{ path('players_all', {'id': platform.id}) }}">Players</a></li>
-                    <li {% if currentPage is defined and currentPage == 'attacks' %} class="active" {% endif %}><a href="{{ path('show_attacks', {'id': platform.id}) }}">Attacks</a></li>
-                    <li {% if currentPage is defined and currentPage == 'reports' %} class="active" {% endif %}><a href="{{ path('show_reports', {'id': platform.id}) }}">Battle Reports ({{ common_data.newReportsCount }})</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="{{ path('user_mailbox', {'id': platform.id}) }}">
-                            <span class="glyphicon glyphicon-envelope"></span> Mailbox
-                            ({{ common_data.newMessagesCount }})
-                        </a>
-                    </li>
-                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> {{ app.user.username }}</a></li>
-                    <li><a href="{{ path('security_logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
+{% set className = 'nav-item mr-3' %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-light">
+    <a class="navbar-brand" href="{{ path('homepage') }}">{{ platform.name }}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav ml-auto">
+            <li class="{{ className }}{% if currentPage is defined and currentPage == 'reports' %}' active'{% endif %}">
+                <a class="nav-link" href="{{ path('show_reports', {'id': platform.id}) }}"><i class="far fa-file mr-1"></i>Battle Reports ({{ common_data.newReportsCount }})</a>
+            </li>
+            <li class="{{ className }}{% if currentPage is defined and currentPage == 'mailbox' %}' active'{% endif %}">
+                <a class="nav-link" href="{{ path('user_mailbox', {'id': platform.id}) }}"><i class="far fa-envelope mr-1"></i> Mailbox ({{ common_data.newMessagesCount }})</a>
+            </li>
+            <li class="{{ className }}{% if currentPage is defined and currentPage == 'profile' %}' active'{% endif %}">
+                <a class="nav-link" href="{{ path('edit_profile', {'id': platform.id}) }}"><i class="fas fa-user mr-1"></i> {{ app.user.username }}</a>
+            </li>
+            <li class="{{ className }}">
+                <a class="nav-link" href="{{ path('security_logout') }}"><i class="fas fa-sign-out-alt mr-1"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+
+
+
+
+
+                    {#<li {% if currentPage is defined and currentPage == 'platform' %} class="active" {% endif %}><a href="{{ path('homepage') }}">Home</a></li>#}
+                    {#<li {% if currentPage is defined and currentPage == 'building' %} class="active" {% endif %}><a href="{{ path('manage_buildings', {'id': platform.id}) }}">Buildings</a></li>#}
+                    {#<li {% if currentPage is defined and currentPage == 'unit' %} class="active" {% endif %}><a href="{{ path('manage_units', {'id': platform.id}) }}">Units</a></li>#}
+                    {#<li {% if currentPage is defined and currentPage == 'map' %} class="active" {% endif %}><a href="{{ path('map_local', {'id': platform.id}) }}">Map</a></li>#}
+                    {#<li {% if currentPage is defined and currentPage == 'player' %} class="active" {% endif %}><a href="{{ path('players_all', {'id': platform.id}) }}">Players</a></li>#}
+                    {#<li {% if currentPage is defined and currentPage == 'attacks' %} class="active" {% endif %}><a href="{{ path('show_attacks', {'id': platform.id}) }}">Attacks</a></li>#}

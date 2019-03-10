@@ -10,26 +10,5 @@
     {% include 'partials/sidebar.html.twig' %}
 {% endblock %}
 
-{% block body %}
-
-    <h1>{{ platform.name }}</h1>
-    <p>This is your first settlement. Try and keep it save from the dead walking outside your walls.</p>
-
-    <h3>Buildings</h3>
-    <div id="buildings-map">
-        <div class="row">
-        {% for building in platform.buildings %}
-            <div class="col-md-4">
-                <div class="thumbnail">
-                    <a href="{{ path('show_building_info', {'id': platform.id, 'buildingId': building.id}) }}">
-                        <img class="img-rounded" src="{{ asset('images/design/' ~ building.imageName ~ '.jpg') }}" alt="{{ building.name }}" style="width:100%">
-                    </a>
-                    <div class="caption">
-                        <p>{{ building.name }} <span class="small">Level: {{ building.level }}</span></p>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-        </div>
-    </div>
+{% block game %}
 {% endblock %}
