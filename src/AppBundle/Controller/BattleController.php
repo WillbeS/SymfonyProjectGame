@@ -54,7 +54,7 @@ class BattleController extends MainController
 
         $form = $this->getUnitsForm($currentUser);
 
-        return $this->render('battle/send-attack-new.html.twig', [
+        return $this->render('battle/send-attack.html.twig', [
             'defender' => $target,
             'units_form' => $form->createView()
         ]);

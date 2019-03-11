@@ -9,28 +9,31 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Map</h1>
-    <table id="map">
-        {% for x in range(0, size - 1)  %}
-            <tr>
-                {% for y in range(x * size, x * size + (size - 1))  %}
-                    {% set cell = map[y] %}
-                    {% set tdStyle = cell.terrain.name %}
-                    {% if cell.platform %}
-                        {% set tdStyle = cell.terrain.name ~ ' platform' %}
-                    {% endif %}
-
-                    <td class="{{ tdStyle }} local">
-
+    <div class="card-body p-5">
+        <h4 class="card-title">Map</h4>
+        <table id="map">
+            {% for x in range(0, size - 1)  %}
+                <tr>
+                    {% for y in range(x * size, x * size + (size - 1))  %}
+                        {% set cell = map[y] %}
+                        {% set tdStyle = cell.terrain.name %}
                         {% if cell.platform %}
-                            <div class="platform-map">
-                            <a href="#" title="{{ cell.platform.name }}">{{ cell.row }}:{{ cell.col }}</a>
-                            </div>
+                            {% set tdStyle = cell.terrain.name ~ ' platform' %}
                         {% endif %}
-                    </td>
-                {% endfor %}
-            </tr>
-        {% endfor %}
-    </table>
+
+                        <td class="{{ tdStyle }} local">
+
+                            {% if cell.platform %}
+                                <div class="platform-map">
+                                    <a href="#" title="{{ cell.platform.name }}">{{ cell.row }}:{{ cell.col }}</a>
+                                </div>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
 
 {% endblock %}

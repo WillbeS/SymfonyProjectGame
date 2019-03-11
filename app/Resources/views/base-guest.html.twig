@@ -16,14 +16,7 @@
     </head>
 
     <body>
-
-    {%  block header %}
-    {% endblock %}
-
-    <div class="container-fluid home-image">
-        {% block platformCommon %}
-        {% endblock %}
-
+    <div class="container-fluid">
         <div class="row justify-content-md-center">
             <div class="col-md-9 mb-2">
                 {% include 'flash-messages.html.twig' %}
@@ -31,22 +24,9 @@
         </div>
 
 
-        {% block guestBody %}
-        {% endblock %}
-
-        {% block game %}
-            <div class="row justify-content-md-center">
-                <div class="col-md-9 card border-primary mb-5">
-                    {% block body %}
-                    {% endblock %}
-                </div>
-            </div>
+        {% block body %}
         {% endblock %}
     </div>
-
-    {% block game_nav %}
-        {{ include('partials/game-nav.html.twig') }}
-    {% endblock %}
 
 
 

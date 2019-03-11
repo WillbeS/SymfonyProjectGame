@@ -2,8 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Unit;
-use AppBundle\Form\PlatformUnitsCountType;
 use AppBundle\Form\UnitCountType;
 use AppBundle\Service\App\GameNotificationException;
 use AppBundle\Service\App\GameStateServiceInterface;
@@ -120,53 +118,6 @@ class UnitController extends MainController
         }
 
         return $this->render('unit/recruit-unit.html.twig', [
-            'form' => $form->createView(),
-            'currentPage' => 'unit'
-        ]);
-    }
-
-    /**
-     * @Route("/recruit/{unitId}",
-     *     name="recruit",
-     *     requirements={"unitId" = "\d+"})
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function recruitAction(int $id,
-                            int $unitId,
-                            Request $request,
-                            PlatformDataServiceInterface $platformDataService,
-                            UnitTrainingServiceInterface $unitTrainingService,
-                            ScheduledTaskServiceInterface $scheduledTaskService)
-    {
-        $platform = $platformDataService->getCurrentPlatform();
-        $unit = $this->platformService->getPlatfomUnit($unitId, $platform);
-        $this->denyAccessUnlessGranted('edit', $unit);
-
-        $form = $this->createForm(UnitCountType::class);
-        $form->handleRequest($request);
-
-        if($form->isValid()) {
-            $count = $form->getData()['count'];
-            try {
-                $this->validateCount($count);
-                $unitTrainingService->startTraining(
-                    $form->getData()['count'],
-                    $unit,
-                    $this->platformService,
-                    $scheduledTaskService
-                );
-            } catch (GameNotificationException $e) {
-                $this->addFlash('danger', $e->getMessage());
-            }
-
-//            return $this->redirectToRoute('recruit', ['id' => $id, 'unitId' => $unitId]);
-            return $this->redirectToRoute('manage_units', ['id' => $id]);
-        }
-
-        return $this->render('unit/recruit-form.html.twig', [
-            'platform' => $platform,
-            'unit' => $unit,
             'form' => $form->createView(),
             'currentPage' => 'unit'
         ]);

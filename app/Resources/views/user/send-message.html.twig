@@ -11,10 +11,12 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Send Message</h1>
-    <h3><span>To: </span>{{ recipient.username }}</h3>
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-    {{ form_widget(form) }}
-    <input type="submit" value="Send" class="btn btn-primary" />
-    {{ form_end(form) }}
+    <div class="card-body p-5">
+        <h4 class="mb-4">Send Message</h4>
+        <h5><span class="mr-3">To:</span>{{ recipient.username }}</h5>
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        {{ form_widget(form) }}
+        <input type="submit" value="Send message" class="btn btn-primary" />
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

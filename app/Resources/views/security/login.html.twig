@@ -1,14 +1,14 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-guest.html.twig' %}
 
-{% block guestBody %}
-    <div class="row text-center">
-    <div class="col-sm-6 col-sm-offset-3">
+{% block body %}
+    <div class="row justify-content-md-center">
+    <div class="col-sm-6 text-center">
         <h1 class="guest">After The End</h1>
         <h3>A multiplayer strategy game.</h3>
     </div>
     </div>
     <div class="jumbotron text-center">
-        <div class="row" id="login">
+        <div class="row justify-content-md-center" id="login">
             <div class="col-sm-4 col-sm-offset-4 login-bg">
                 <p>Login</p>
                 <form method="post">

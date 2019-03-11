@@ -16,7 +16,11 @@ class MessageType extends AbstractType
     {
         $builder
             ->add('topic', MessageTopicType::class, ['label' => 'About'])
-            ->add('content', TextareaType::class);
+            ->add('content', TextareaType::class, [
+                'attr' => [
+                    'rows' => '3',
+                ]
+            ]);
 
 
     }

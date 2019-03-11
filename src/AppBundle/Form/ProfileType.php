@@ -22,14 +22,22 @@ class ProfileType extends AbstractType
     {
         $builder
             ->add('file', FileType::class, [
-                'label' => 'Avatar',
+                'label' => false,
+                'required' => false,
+                'attr' => [
+                    'class' => 'custom-file-input',
+                ]
+            ])
+            ->add('description', TextareaType::class, [
+                'required' => false,
+                'attr' => [
+                    'rows' => '5',
+                ]
+            ])
+            ->add('email', EmailType::class, [
                 'required' => false,
             ])
-            ->add('description', TextareaType::class)
-            ->add('email', EmailType::class)
-            ->add('submit', SubmitType::class, [
-                'label' => 'Save'
-            ]);
+        ;
     }
 
     /**

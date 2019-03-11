@@ -1,19 +1,21 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-guest.html.twig' %}
 
-{% block guestBody %}
-    <div class="row">
-        <div class="col-sm-4 col-sm-offset-4">
-            <h1>User registration</h1>
-            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-            {{ form_widget(form) }}
-            {{  form_row(form._token) }}
-            <button type="submit" class="btn btn-primary" formnovalidate>Register</button>
-            {{ form_end(form) }}
+{% block body %}
+    <div class="row justify-content-md-center">
+        <div class="col-md-4 mb-2">
+            <div class="card-body p-3 bg-secondary mt-4">
+                <h4 class="mb-3 text-center">User registration</h4>
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                {{ form_widget(form) }}
+                {{  form_row(form._token) }}
+                <div class="row justify-content-md-center">
+                    <button type="submit" class="btn btn-primary" formnovalidate>Register</button>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+
         </div>
     </div>
-    <div class="margin-bottom-20"></div>
-    <p class="text-center">If you already have an account: <a href="/login">Login</a> from here!</p>
-{% endblock %}
-
-{% block game %}
+    <p class="text-center">If you already have an account: <a href="{{ path('login') }}">Login</a> from here!</p>
 {% endblock %}

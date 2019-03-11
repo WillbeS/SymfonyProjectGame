@@ -9,11 +9,25 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Enemy Attacks</h2>
-    {% include 'battle/attacks-table.html.twig' with {'attacks': enemyAttacks} %}
+    <div class="card-body p-5">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#own">Own Attacks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#enemy">Enemy Attacks</a>
+            </li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade show active" id="own">
+                {% include 'battle/attacks-table.html.twig' with {'attacks': ownAttacks} %}
+            </div>
 
-    <h2>Own Attacks</h2>
-    {% include 'battle/attacks-table.html.twig' with {'attacks': ownAttacks} %}
+            <div class="tab-pane fade" id="enemy">
+                {% include 'battle/attacks-table.html.twig' with {'attacks': enemyAttacks} %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 

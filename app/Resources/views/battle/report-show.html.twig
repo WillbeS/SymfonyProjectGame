@@ -11,51 +11,60 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ userReport.report.name }}</h1>
+    <div class="card-body p-5">
+        <h4 class="mb-1">{{ userReport.report.name }}</h4>
+        <p class="mb-1">Date: {{ userReport.report.createdOn | date('F jS \\a\\t g:ia ', 'Europe/Sofia') }}</p>
+        <p class="mb-1">Attacker: {{ userReport.report.attacker.username }}</p>
+        <p class="mb-1">Defender: {{ userReport.report.defender.username }}</p>
+        <div class="d-flex w-100 justify-content-between">
+            <p>Winnerr: {{ userReport.report.winner.username }}</p>
+            <button type="button" class="btn btn-outline-danger" data-toggle="popover"  data-trigger="focus" data-content="Are you sure you want to delete this report? <div class='text-center'><a  href='{{ path('delete_report', {'id': platform.id, 'reportId': userReport.report.id}) }}'>Delete!</a></div>">Delete</button>
+        </div>
+        <hr />
 
-    <div>
-        <b>Date: </b>{{ userReport.report.createdOn | date('F jS \\a\\t g:ia ', 'Europe/Sofia') }}<br />
-        <b>Attacker: </b>{{ userReport.report.attacker.username }}<br />
-        <b>Defender: </b>{{ userReport.report.defender.username }}<br />
-        <b>Winner: </b>{{ userReport.report.winner.username }}
-        <div class="pull-right">
-            <a href="#" class="btn btn-danger" data-toggle="popover"  data-trigger="focus" data-content="Are you sure you want to delete this report? <div class='text-center'><a  href='{{ path('delete_report', {'id': platform.id, 'reportId': userReport.report.id}) }}'>Delete!</a></div>">Delete</a>
-        </div><br />
+        <div class="card-body">
+            <div class="list-group">
+                <h5 class="mb-1">Units before the battle:</h5>
+                <div class="list-group-item flex-column align-items-start">
+                    <span class="font-weight-bold mr-2">Attacker army:</span>
+                    {% for unit, count in userReport.report.attackerStartArmy %}
+                        <span class="mr-3">{{ unit }}: {{ count }}</span>
+                    {% endfor %}
+                </div>
+                <div class="list-group-item flex-column align-items-start">
+                    <span class="font-weight-bold mr-2">Defender army:</span>
+                    {% for unit, count in userReport.report.defenderStartArmy %}
+                        <span class="mr-3">{{ unit }}: {{ count }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="list-group">
+                <h5 class="mb-1">Units after the battle:</h5>
+                <div class="list-group-item flex-column align-items-start">
+                    <span class="font-weight-bold mr-4">Attacker army:</span>
+                    {% for unit, count in userReport.report.attackerEndArmy %}
+                        <span class="mr-3">{{ unit }}: {{ count }}</span>
+                    {% endfor %}
+                </div>
+                <div class="list-group-item flex-column align-items-start">
+                    <span class="font-weight-bold mr-4">Defender army:</span>
+                    {% for unit, count in userReport.report.defenderEndArmy %}
+                        <span class="mr-3">{{ unit }}: {{ count }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
-
-    <hr />
-    <h3>Units before battle:</h3>
-    <p><b>Attacker Army: </b>
-        {% for unit, count in userReport.report.attackerStartArmy %}
-            {{ unit }}: {{ count }} |
-        {% endfor %}
-    </p>
-    <p><b>Defender Army: </b>
-        {% for unit, count in userReport.report.defenderStartArmy %}
-            {{ unit }}: {{ count }} |
-        {% endfor %}
-    </p>
-    <hr />
-    <h3>Units after battle:</h3>
-    <p><b>Attacker Army: </b>
-        {% for unit, count in userReport.report.attackerEndArmy %}
-            {{ unit }}: {{ count }} |
-        {% endfor %}
-    </p>
-    <p><b>Defender Army: </b>
-        {% for unit, count in userReport.report.defenderEndArmy %}
-            {{ unit }}: {{ count }} |
-        {% endfor %}
-    </p>
-    <hr />
-
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script>
         $(document).ready(function(){
-            var popoverBtn = $("[data-toggle=popover]");
+            let popoverBtn = $("[data-toggle=popover]");
             popoverBtn.click(function (event) {
                 event.preventDefault();
             });

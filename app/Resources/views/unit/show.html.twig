@@ -9,43 +9,50 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ unitType.name }}</h1>
+    <div class="row card-body">
+        <div class="col-md-5 border-primary mb-5 mt-2">
+            <img src="{{ asset('images/design/' ~ unitType.imageName ~ '.jpg') }}">
+            <div class="card-body">
+                <h4 class="card-title">{{ unitType.name }}</h4>
+                <p class="card-text">{{ unitType.description }}</p>
+            </div>
+        </div>
 
-    <img src="{{ asset('images/design/' ~ unitType.imageName ~ '.jpg') }}">
-    <hr />
-    <p>{{ unitType.description }}</p>
-    <hr />
+        <div class="col-md-7  mt-2">
+            <div class="card mb-3">
+                <div class="card-body">
 
-    <h2>Stats</h2>
-    <table class="table">
-        <tr>
-            <th>Attack</th>
-            <th>Defense</th>
-            <th>HP</th>
-            <th>Speed</th>
-            <th>Wood</th>
-            <th>Food</th>
-            <th>Supplies</th>
-        </tr>
-        <tr>
-            <td>{{ unitType.attack }}</td>
-            <td>{{ unitType.defense }}</td>
-            <td>{{ unitType.health }}</td>
-            <td>{{ unitType.speed }}</td>
-            <td>{{ unitType.woodCost }}</td>
-            <td>{{ unitType.foodCost }}</td>
-            <td>{{ unitType.suppliesCost }}</td>
-        </tr>
-    </table>
 
-    <h2>Requirements</h2>
+                    <h5 class="card-title">Unit details</h5>
+                    <small class="ml-auto">Speed is measured in minutes per grid cell</small>
+                    <table class="table table-hover text-center">
+                        <thead>
+                        <tr class="table-dark">
+                            <th scope="col">Attack</th>
+                            <th scope="col">Health</th>
+                            <th scope="col">Speed</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="table-secondary">
+                            <td class="align-middle">{{ unitType.attack }}</td>
+                            <td class="align-middle">{{ unitType.health }}</td>
+                            <td class="align-middle">{{ unitType.speed }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
 
-    <ul>
-        {% for requirement in unitType.requirements %}
-            <li>{{ requirement.buildingAndLevel }}</li>
-        {% endfor %}
-    </ul>
-
-    <a href="{{ path('manage_units', {'id': platform.id}) }}">Back to all units</a>
-
+                    Requirements:
+                    <ul class="list-group list-group-flush">
+                        {% for requirement in unitType.requirements %}
+                            <li class="list-group-item">{{ requirement.buildingAndLevel }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <a href="{{ path('manage_units', {'id': platform.id}) }}" class="card-link">Back to all units</a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -11,26 +11,29 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Player Profile</h1>
-    <div class="col-sm-5">
-        <img width="150" height="150" src="{{ asset('images/avatars/' ~ player.avatar) }}">
+    <div class="card-body p-5">
+        <div class="d-flex w-100 justify-content-between">
+            <h4 class="mb-1">Player Profile</h4>
+
+            {% if app.user and app.user.id == player.id %}
+                <a class="btn btn-outline-success" href="{{ path('edit_profile', {'id': platform.id}) }}">Edit Profile</a>
+            {% endif %}
+        </div>
+        <img class="avatar" src="{{ asset('images/avatars/' ~ player.avatar) }}">
         <hr />
-        <table class="table">
-            <tr>
-                <th>Name</th>
-                <td>{{ player.username }}</td>
-            </tr>
-            <tr>
-                <th>Settlement</th>
-                <td>{{ player.currentPlatform.name }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ player.description }}</td>
-            </tr>
-        </table>
+        <div class="list-group">
+            <div class="list-group-item flex-column align-items-start">
+                <span class="font-weight-bold mr-2">Name:</span>
+                <span class="mr-2">{{ player.username }}</span>
+            </div>
+            <div class="list-group-item flex-column align-items-start">
+                <span class="font-weight-bold mr-2">Settlement:</span>
+                <span class="mr-2">{{ player.currentPlatform.name }}</span>
+            </div>
+            <div class="list-group-item flex-column align-items-start">
+                <span class="font-weight-bold mr-2">Description:</span>
+                <span class="mr-2">{{ player.description }}</span>
+            </div>
+        </div>
     </div>
-    {% if app.user and app.user.id == player.id %}
-        <a class="btn btn-success" href="{{ path('edit_profile', {'id': platform.id}) }}">Edit Profile</a>
-    {% endif %}
 {% endblock %}

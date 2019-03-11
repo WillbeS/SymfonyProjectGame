@@ -11,31 +11,44 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Send Attack</h1>
-    <h3>Target: {{ defender.username }}</h3>
-    <h3>Choose your troops:</h3>
-    <form method="post">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Unit</th>
-            <th>Available</th>
-            <th>Add</th>
-        </tr>
-        </thead>
-        <tbody>
+    <div class="card-body p-5">
+    <h4 class="card-title">Start Military Campaign</h4>
+        <h5 class="mb-2">Target: {{ defender.username }}</h5>
 
-        {% for unit in platform.units %}
-            <tr>
-                <td>{{ unit.unitType.name }}</td>
-                <td>{{ unit.iddle }}</td>
-                <td class="unit-count">
-                    <input type="number" name="{{ unit.id }}" value="0" />
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-        <input type="submit" value="Send" />
-    </form>
+        <div class="card-body">
+            <p>Choose your troops:</p>
+            {{ form_start(units_form) }}
+            <table class="table table-hover text-center">
+                <thead>
+                <tr class="table-dark">
+                    <th scope="col">Unit</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Available</th>
+                    <th class="w-25" scope="col">Add</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for unit in platform.units %}
+                    <tr class="table-secondary">
+                        <td class="table-img">
+                            <a href="{{ path('view_unit_type', {'id': platform.id, 'unitId': unit.id}) }}"><img src="{{ asset('images/design/' ~ unit.unitType.imageName ~ '.jpg') }}" /></a>
+                        </td>
+                        <td class="align-middle">{{ unit.unitType.name }}</td>
+                        <td class="align-middle">{{ unit.iddle }}</td>
+                        <td class="align-middle unit-count">
+                            {{ form_widget(attribute(units_form, unit.id)) }}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="row justify-content-md-center">
+                <input type="submit" class="btn-info btn" value="Send attack" />
+            </div>
+
+            {{ form_end(units_form) }}
+        </div>
+
+    </div>
 {% endblock %}

@@ -11,27 +11,50 @@
 {% endblock %}
 
 {% block body %}
-    <h1>All Players</h1>
+    <div class="card-body p-5">
+        <h4 class="card-title">All Players</h4>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Settlement</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for player in players %}
-            <tr>
-                <td><a href="{{ path('view_public_profile', {'id': platform.id, 'userId': player.id}) }}" title="Got to profile">{{ player.username }}</a></td>
-                <td>{{ player.currentPlatform.name }}</td>
-                <td>
-                    <a href="{{ path('send_message', {'id': platform.id, 'recipientId': player.id}) }}">Send Message</a>
-                    | <a href="{{ path('send_attack', {'id': platform.id, 'playerId': player.id }) }}">Attack</a>
-                </td>
+        <table class="table table-hover text-center">
+            <thead>
+            <tr class="table-dark">
+                <th scope="col">Avatar</th>
+                <th scope="col">Name</th>
+                <th scope="col">Settlement</th>
+                <th scope="col">Message</th>
+                <th scope="col">Attack</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for player in players %}
+            <tr class="table-secondary">
+                <td class="table-img">
+                    <a href="{{ path('view_public_profile', {'id': platform.id, 'userId': player.id}) }}" title="Got to profile">
+                        <img src="{{ asset('images/avatars/' ~ player.avatar) }}" alt="{{ player.username }}" />
+                    </a>
+                </td>
+
+                <td class="align-middle"><a href="{{ path('view_public_profile', {'id': platform.id, 'userId': player.id}) }}" title="Got to profile">{{ player.username }}</a></td>
+                <td class="align-middle">{{ player.currentPlatform.name }}</td>
+                <td class="align-middle"><a href="{{ path('send_message', {'id': platform.id, 'recipientId': player.id}) }}">Send Message</a></td>
+                <td class="align-middle"><a href="{{ path('send_attack', {'id': platform.id, 'playerId': player.id }) }}">Attack</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+
+        {#<tbody>#}
+        {#{% for player in players %}#}
+            {#<tr>#}
+                {#<td><a href="{{ path('view_public_profile', {'id': platform.id, 'userId': player.id}) }}" title="Got to profile">{{ player.username }}</a></td>#}
+                {#<td>{{ player.currentPlatform.name }}</td>#}
+                {#<td>#}
+                    {#<a href="{{ path('send_message', {'id': platform.id, 'recipientId': player.id}) }}">Send Message</a>#}
+                    {#| <a href="{{ path('send_attack', {'id': platform.id, 'playerId': player.id }) }}">Attack</a>#}
+                {#</td>#}
+            {#</tr>#}
+        {#{% endfor %}#}
+        {#</tbody>#}
+
 {% endblock %}
