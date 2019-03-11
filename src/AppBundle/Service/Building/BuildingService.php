@@ -47,6 +47,7 @@ class BuildingService implements BuildingServiceInterface
          * @var Building $building
          */
         $building = $this->buildingRepo->find($id);
+
         return $building;
     }
 

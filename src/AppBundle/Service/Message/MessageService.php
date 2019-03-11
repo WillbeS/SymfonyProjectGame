@@ -9,11 +9,14 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\UserTopic;
 use AppBundle\Repository\MessageRepository;
 use AppBundle\Repository\UserTopicRepository;
+use AppBundle\Traits\AssertFound;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MessageService implements MessageServiceInterface
 {
+    use AssertFound;
+
     /**
      * @var EntityManagerInterface
      */
@@ -139,15 +142,6 @@ class MessageService implements MessageServiceInterface
             ->setUpdatedOn(new \DateTime('now'));
 
         $this->em->persist($topic);
-    }
-
-    //TODO - make it common for all services
-    private function assertFound($entity)
-    {
-        if(!$entity) {
-
-            throw new NotFoundHttpException('Page Not Found');
-        }
     }
 
     private function getOrCreateUserTopic(User $user, MessageTopic $topic): UserTopic

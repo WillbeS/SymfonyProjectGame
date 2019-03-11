@@ -62,7 +62,6 @@ class ProcessDueTasksService implements ProcessDueTasksServiceInterface
         $this->militaryCampaignRepository = $militaryCampaignRepository;
     }
 
-    //TODO - really try and use events if there's time!!!
     public function processDueTasks(array $dueTasks)
     {
         if (0 === count($dueTasks)) {
@@ -91,8 +90,6 @@ class ProcessDueTasksService implements ProcessDueTasksServiceInterface
                     break;
             }
         }
-
-        //todo - decide if put the flush here for all or keep it inside
     }
 
     public function processDueTasksByPlatform(int $platformId)

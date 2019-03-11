@@ -10,12 +10,12 @@ use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use AppBundle\Service\ScheduledTask\TimeCalculatorServiceInterface;
 use AppBundle\Service\Utils\PriceCalculatorServiceInterface;
-use AppBundle\Traits\Findable;
+use AppBundle\Traits\AssertFound;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BuildingUpgradeService implements BuildingUpgradeServiceInterface
 {
-    use Findable;
+    use AssertFound;
 
     /**
      * @var EntityManagerInterface

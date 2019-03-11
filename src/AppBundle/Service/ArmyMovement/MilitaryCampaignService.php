@@ -11,12 +11,12 @@ use AppBundle\Service\Battle\ArmyServiceInterface;
 use AppBundle\Service\Battle\BattleServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
 use AppBundle\Service\Utils\GeometryServiceInterface;
-use AppBundle\Traits\Findable;
+use AppBundle\Traits\AssertFound;
 use Doctrine\ORM\EntityManagerInterface;
 
 class MilitaryCampaignService implements MilitaryCampaignServiceInterface
 {
-    use Findable;
+    use AssertFound;
 
     const SECONDS_PER_GRID_CELL = 60;
 

@@ -14,11 +14,12 @@ use AppBundle\Repository\GameBuildingRepository;
 use AppBundle\Repository\ResourceTypeRepository;
 use AppBundle\Repository\UnitTypeRepository;
 use AppBundle\Service\Map\MapServiceInterface;
+use AppBundle\Traits\AssertFound;
 use AppBundle\Traits\Findable;
 
 class PlatformCreationService implements PlatformCreationServiceInterface
 {
-    use Findable;
+    use AssertFound;
 
     const START_RESOURCE_AMOUNT = 1000;
 

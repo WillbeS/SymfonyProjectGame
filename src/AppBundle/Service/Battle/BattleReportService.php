@@ -6,12 +6,12 @@ namespace AppBundle\Service\Battle;
 use AppBundle\Entity\UserReport;
 use AppBundle\Repository\BattleReportRepository;
 use AppBundle\Repository\UserReportRepository;
-use AppBundle\Traits\Findable;
+use AppBundle\Traits\AssertFound;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BattleReportService implements BattleReportServiceInterface
 {
-    use Findable;
+    use AssertFound;
     /**
      * @var UserReportRepository
      */

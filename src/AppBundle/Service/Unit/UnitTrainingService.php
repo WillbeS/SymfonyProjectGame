@@ -10,12 +10,13 @@ use AppBundle\Repository\UnitRepository;
 use AppBundle\Service\App\GameNotificationException;
 use AppBundle\Service\Platform\PlatformServiceInterface;
 use AppBundle\Service\ScheduledTask\ScheduledTaskServiceInterface;
+use AppBundle\Traits\AssertFound;
 use AppBundle\Traits\Findable;
 use Doctrine\ORM\EntityManagerInterface;
 
 class UnitTrainingService implements UnitTrainingServiceInterface
 {
-    use Findable;
+    use AssertFound;
 
     /**
      * @var EntityManagerInterface

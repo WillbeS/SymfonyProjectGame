@@ -3,8 +3,6 @@
 namespace AppBundle\Service\Battle;
 
 
-use AppBundle\Entity\BattleReport;
-
 //Simple fight strategy
 class BattleProcessService implements BattleProcessServiceInterface
 {
