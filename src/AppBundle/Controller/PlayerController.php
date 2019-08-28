@@ -59,6 +59,17 @@ class PlayerController extends MainController
         $form = $this->createForm(ProfileType::class, $user);
         $form->handleRequest($request);
 
+        $errors = $form->getErrors(true, false);
+
+        if ($errors) {
+            foreach ($errors as $error) {
+                if ($error->getForm()->getName() == 'file') {
+                    $this->addFlash('danger', $error->current()->getMessage());
+                }
+            }
+        }
+
+
         if($form->isValid()) {
             $this->userService->editProfile($user, $fileService);
             $this->addFlash('success', 'Profile was updated successfully.');
